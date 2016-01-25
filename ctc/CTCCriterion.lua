@@ -29,7 +29,7 @@ function CTCCriterion:updateOutput(inputAndSizes,target)
     local grads = torch.FloatTensor()
     local labels = target
     local size = inputAndSizes[2]
-    self.output = reduce(cpu_ctc(act, grads, labels, size))
+    self.output = averageCosts(cpu_ctc(act, grads, labels, size))
     return self.output
 end
 

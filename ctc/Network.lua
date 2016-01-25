@@ -3,6 +3,7 @@ require 'nn'
 require 'CTCCriterion'
 require 'optim'
 require 'rnn'
+require 'CTCBatcher'
 
 local Network = {}
 
@@ -76,45 +77,6 @@ function createDataSet(inputJson, labelJson)
     return dataset
 end
 
-function convertToSequenceData(gradientOutput, numberOfSequences)
-    local gradients = {}
-    for i = 1, numberOfSequences do
-        table.insert(gradients,{})
-    end
-    for i = 1, gradientOutput:size(1) do
-        local index = math.fmod(i, numberOfSequences)
-        if(index == 0) then index = numberOfSequences end
-        table.insert(gradients[index],torch.totable(gradientOutput[i]))
-    end
-    local returnTensors = {}
-    for i = 1, numberOfSequences do
-        table.insert(returnTensors,torch.Tensor(gradients[i]))
-    end
-    return returnTensors
-end
-
-function createInterleavedPrediction(maxSize,tensors)
-    local columnMajor = {}
-    for i = 1,maxSize do
-        for index,tensor in ipairs(tensors) do
-            table.insert(columnMajor,getTensorValue(tensor,i))
-        end
-    end
-    local resultTensor = torch.Tensor(columnMajor)
-    return resultTensor
-end
-
-function getTensorValue(tensor,index)
-    local tensorValue
-    if(tensor:size(1) >= index) then tensorValue = tensor[index] end
-    if(tensorValue == nil) then
-        local emptyTensor = torch.totable(tensor[1]:zero())
-        return emptyTensor
-    else
-        local tableTensorValue = torch.totable(tensorValue)
-        return tableTensorValue end
-end
-
 
 function Network.predict(net,inputTensors)
     local prediction = net:forward({inputTensors})[1]
@@ -129,15 +91,14 @@ function Network.trainNetwork(net, jsonInputs, jsonLabels)
     local function feval(params)
         local inputs,targets = dataset:nextData()
         gradParameters:zero()
-        local allSizes,maxSize = findMaxSize(inputs)
-        local prediction = net:forward(inputs)
-        local interleavedPrediction = createInterleavedPrediction(maxSize,prediction)
-        local predictionWithSizes = {interleavedPrediction,allSizes }
-
+        local predictions = net:forward(inputs)
+        local allSizes,maxSize = findMaxSize(predictions)
+        local interleavedPrediction = convertToCTCBatchSequence(predictions)
+        local predictionWithSizes = {interleavedPrediction,allSizes}
         local loss = ctcCriterion:forward(predictionWithSizes,targets)
         net:zeroGradParameters()
         local gradOutput = ctcCriterion:backward(predictionWithSizes,targets)
-        gradOutput = convertToSequenceData(gradOutput,#inputs)
+        gradOutput = convertToNetSequence(gradOutput,#inputs)
         net:backward(inputs,gradOutput)
         return loss, gradParameters
     end
@@ -150,7 +111,7 @@ function Network.trainNetwork(net, jsonInputs, jsonLabels)
     }
     local currentLoss = 1000
     local i = 0
-    while i < 1000 do
+    while i < 200  do
         currentLoss = 0
         i = i + 1
         local _,fs = optim.sgd(feval,x,sgd_params)
