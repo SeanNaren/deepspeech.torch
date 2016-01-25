@@ -19,6 +19,7 @@ function convertToCTCBatchSequence(tensors)
     local resultTensor = torch.Tensor(columnMajor)
     return resultTensor
 end
+
 --Reverses the batching process to give the gradientOutput for
 --backwards propagation on the net.
 --Example:
