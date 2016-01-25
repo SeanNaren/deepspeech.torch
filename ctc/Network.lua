@@ -1,6 +1,6 @@
 module(...,package.seeall)
 require 'nn'
-require 'BatchCTCCriterion'
+require 'CTCCriterion'
 require 'optim'
 require 'rnn'
 
@@ -123,7 +123,7 @@ function Network.predict(net,inputTensors)
 end
 
 function Network.trainNetwork(net, jsonInputs, jsonLabels)
-    local ctcCriterion = BatchCTCCriterion()
+    local ctcCriterion = CTCCriterion()
     local x, gradParameters = net:getParameters()
     local dataset = createDataSet(jsonInputs, jsonLabels)
     local function feval(params)
