@@ -4,9 +4,11 @@ require 'CTCCriterion'
 require 'optim'
 require 'rnn'
 require 'CTCBatcher'
+require 'gnuplot'
 
 local Network = {}
-
+local evaluations = {}
+local epoch= {}
 function Network.createNewNetwork()
     local totalNet = nn.Sequential()
     torch.manualSeed(12345)
@@ -15,6 +17,7 @@ function Network.createNewNetwork()
     totalNet:add(nn.Sequencer(nn.TemporalMaxPooling(2,2)))
     totalNet:add(nn.Sequencer(nn.TemporalConvolution(200,170,1,1)))
     totalNet:add(nn.Sequencer(nn.ReLU()))
+    totalNet:add(nn.Sequencer(nn.TemporalMaxPooling(2,2)))
     totalNet:add(nn.Sequencer(nn.TemporalConvolution(170,150,1,1)))
     totalNet:add(nn.Sequencer(nn.ReLU()))
     totalNet:add(nn.Sequencer(nn.BatchNormalization(150)))
@@ -56,7 +59,7 @@ end
 
 function createDataSet(inputJson, labelJson)
     local dataset = {}
-    local batchSize = 10
+    local batchSize = 20
     for t = 1,#inputJson,batchSize do
         local inputs = {}
         local targets = {}
@@ -104,20 +107,31 @@ function Network.trainNetwork(net, jsonInputs, jsonLabels)
     end
 
     local sgd_params = {
-        learningRate = 0.0001,
+        learningRate = 0.001,
         learningRateDecay = 1e-9,
         weightDecay = 0,
         momentum = 0.9
     }
     local currentLoss = 1000
     local i = 0
-    while i < 200  do
+    while i < 1000  do
         currentLoss = 0
         i = i + 1
         local _,fs = optim.sgd(feval,x,sgd_params)
         currentLoss = currentLoss + fs[1]
+        table.insert(evaluations,currentLoss)
+        table.insert(epoch,i)
         print("Loss: ",currentLoss, " iteration: ", i)
     end
+    createGraph()
 
+end
+
+function createGraph()
+    gnuplot.pngfigure('plot.png')
+    gnuplot.plot({'sgd',torch.Tensor(epoch), torch.Tensor(evaluations),'-'})
+    gnuplot.xlabel('epochs (s)')
+    gnuplot.ylabel('loss')
+    gnuplot.plotflush()
 end
 return Network
