@@ -107,9 +107,9 @@ function Network.trainNetwork(net, jsonInputs, jsonLabels)
         local inputs,targets = dataset:nextData()
         gradParameters:zero()
         local predictions = net:forward(inputs)
-        local allSizes,maxSize = findMaxSize(predictions)
+        local sequenceSizes,maxSize = findMaxSize(predictions)
         local interleavedPrediction = convertToCTCBatchSequence(predictions)
-        local predictionWithSizes = {interleavedPrediction,allSizes}
+        local predictionWithSizes = {interleavedPrediction, sequenceSizes}
         local loss = ctcCriterion:forward(predictionWithSizes,targets)
         net:zeroGradParameters()
         local gradOutput = ctcCriterion:backward(predictionWithSizes,targets)

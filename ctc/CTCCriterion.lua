@@ -29,7 +29,7 @@ function CTCCriterion:updateOutput(inputAndSizes,target)
     local grads = torch.FloatTensor()
     local labels = target
     local size = inputAndSizes[2]
-    self.output = averageCosts(cpu_ctc(act, grads, labels, size))
+    self.output = reduce(cpu_ctc(act, grads, labels, size))
     return self.output
 end
 
@@ -56,7 +56,7 @@ function CTCCriterion:updateGradInput(inputAndSizes,target)
     return self.gradInput
 end
 
---If batching occurs multiple costs are returned. We average them and return 1 value.
+--If batching occurs multiple costs are returned. We average th
 function averageCosts(list)
     local acc
     for k, v in ipairs(list) do
