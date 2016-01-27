@@ -5,7 +5,7 @@
 module(...,package.seeall)
 require 'nn'
 require 'warp_ctc'
-
+require 'CTCBatcher'
 local CTCCriterion, parent = torch.class('CTCCriterion','nn.Criterion')
 
 function CTCCriterion:__init()
@@ -23,13 +23,13 @@ end
 --sizes would be: {2,2}
 --And the final input to the function would be would be: {inputData,sizes}
 --target is the expected labels i.e {{1,2},{3,3}} (for 2 sequences).
-function CTCCriterion:updateOutput(inputAndSizes,target)
-    local input = inputAndSizes[1]
+function CTCCriterion:updateOutput(networkOutput,target)
+    local input = convertToCTCBatchSequence(networkOutput)
     local act = torch.FloatTensor(input:size()):copy(input)
     local grads = torch.FloatTensor()
     local labels = target
-    local size = inputAndSizes[2]
-    self.output = reduce(cpu_ctc(act, grads, labels, size))
+    local size = tensorSizes(networkOutput)
+    self.output = averageCosts(cpu_ctc(act, grads, labels, size))
     return self.output
 end
 
@@ -44,17 +44,28 @@ end
 --sizes would be: {2,2}
 --And the final input to the function would be would be: {inputData,sizes}
 --target is the expected labels i.e {{1,2},{3,3}} (for 2 sequences).
-function CTCCriterion:updateGradInput(inputAndSizes,target)
-    local input = inputAndSizes[1]
+function CTCCriterion:updateGradInput(networkOutput,target)
+    local input = convertToCTCBatchSequence(networkOutput)
     local act = torch.FloatTensor(input:size()):copy(input)
     local temp = nn.SoftMax():updateOutput(input:double()):float()
     local grads = temp:clone():zero()
     local labels = target
-    local size = inputAndSizes[2]
+    local size = tensorSizes(networkOutput)
     cpu_ctc(act,grads,labels,size)
-    self.gradInput = grads:float()
+    self.gradInput = convertToNetSequence(grads:float(),#networkOutput)
     return self.gradInput
 end
+
+--Returns the largest tensor size and all sizes in a table of tensors
+function tensorSizes(tensors)
+    local allSizes = {}
+    for i=1,#tensors do
+        local tensorSize = tensors[i]:size(1)
+        table.insert(allSizes,tensorSize)
+    end
+    return allSizes
+end
+
 
 --If batching occurs multiple costs are returned. We average th
 function averageCosts(list)

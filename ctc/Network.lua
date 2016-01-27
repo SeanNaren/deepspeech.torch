@@ -5,7 +5,6 @@ require 'nn'
 require 'CTCCriterion'
 require 'optim'
 require 'rnn'
-require 'CTCBatcher'
 require 'gnuplot'
 
 local Network = {}
@@ -107,13 +106,9 @@ function Network.trainNetwork(net, jsonInputs, jsonLabels)
         local inputs,targets = dataset:nextData()
         gradParameters:zero()
         local predictions = net:forward(inputs)
-        local sequenceSizes,maxSize = findMaxSize(predictions)
-        local interleavedPrediction = convertToCTCBatchSequence(predictions)
-        local predictionWithSizes = {interleavedPrediction, sequenceSizes}
-        local loss = ctcCriterion:forward(predictionWithSizes,targets)
+        local loss = ctcCriterion:forward(predictions,targets)
         net:zeroGradParameters()
-        local gradOutput = ctcCriterion:backward(predictionWithSizes,targets)
-        gradOutput = convertToNetSequence(gradOutput,#inputs)
+        local gradOutput = ctcCriterion:backward(predictions,targets)
         net:backward(inputs,gradOutput)
         return loss, gradParameters
     end
@@ -136,7 +131,6 @@ function Network.trainNetwork(net, jsonInputs, jsonLabels)
         print("Loss: ",currentLoss, " iteration: ", i)
     end
     createGraph()
-
 end
 
 --Creates a graph of the loss against the iteration number.

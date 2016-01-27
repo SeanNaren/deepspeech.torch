@@ -29,7 +29,7 @@
         <entry file="file://$PROJECT_DIR$/ctc/CTCCriterion.lua">
           <provider selected="true" editor-type-id="text-editor">
             <state vertical-scroll-proportion="0.0">
-              <caret line="56" column="3" selection-start-line="56" selection-start-column="3" selection-end-line="56" selection-end-column="3" />
+              <caret line="22" column="23" selection-start-line="22" selection-start-column="23" selection-end-line="22" selection-end-column="23" />
               <folding />
             </state>
           </provider>
@@ -38,8 +38,8 @@
       <file leaf-file-name="Network.lua" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/ctc/Network.lua">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.4376013">
-              <caret line="111" column="72" selection-start-line="111" selection-start-column="72" selection-end-line="111" selection-end-column="72" />
+            <state vertical-scroll-proportion="0.2706645">
+              <caret line="107" column="30" selection-start-line="107" selection-start-column="30" selection-end-line="107" selection-end-column="30" />
               <folding />
             </state>
           </provider>
@@ -519,7 +519,13 @@
       <option name="project" value="LOCAL" />
       <updated>1453902578280</updated>
     </task>
-    <option name="localTasksCounter" value="6" />
+    <task id="LOCAL-00006" summary="clarified variables">
+      <created>1453921679417</created>
+      <option name="number" value="00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1453921679417</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
     <servers />
   </component>
   <component name="ToolWindowManager">
@@ -585,7 +591,8 @@
     <MESSAGE value="added space in documentation" />
     <MESSAGE value="various changes with tests and added plot" />
     <MESSAGE value="added comments to network script and re-ran training set" />
-    <option name="LAST_COMMIT_MESSAGE" value="added comments to network script and re-ran training set" />
+    <MESSAGE value="clarified variables" />
+    <option name="LAST_COMMIT_MESSAGE" value="clarified variables" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager />
@@ -679,15 +686,15 @@
     <entry file="file://$PROJECT_DIR$/ctc/CTCCriterion.lua">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
-          <caret line="56" column="3" selection-start-line="56" selection-start-column="3" selection-end-line="56" selection-end-column="3" />
+          <caret line="22" column="23" selection-start-line="22" selection-start-column="23" selection-end-line="22" selection-end-column="23" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/ctc/Network.lua">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.4376013">
-          <caret line="111" column="72" selection-start-line="111" selection-start-column="72" selection-end-line="111" selection-end-column="72" />
+        <state vertical-scroll-proportion="0.2706645">
+          <caret line="107" column="30" selection-start-line="107" selection-start-column="30" selection-end-line="107" selection-end-column="30" />
           <folding />
         </state>
       </provider>
