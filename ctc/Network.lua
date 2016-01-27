@@ -1,3 +1,5 @@
+--Handles the interaction of a fixed size deep neural network of 256 input, 27 output
+--for speech recognition.
 module(...,package.seeall)
 require 'nn'
 require 'CTCCriterion'
@@ -9,27 +11,34 @@ require 'gnuplot'
 local Network = {}
 local evaluations = {}
 local epoch= {}
+
+--Returns a new network based on the speech recognition stack.
 function Network.createNewNetwork()
-    local totalNet = nn.Sequential()
+    local net = nn.Sequential()
     torch.manualSeed(12345)
-    totalNet:add(nn.Sequencer(nn.TemporalConvolution(256,200,1,1)))
-    totalNet:add(nn.Sequencer(nn.ReLU()))
-    totalNet:add(nn.Sequencer(nn.TemporalMaxPooling(2,2)))
-    totalNet:add(nn.Sequencer(nn.TemporalConvolution(200,170,1,1)))
-    totalNet:add(nn.Sequencer(nn.ReLU()))
-    totalNet:add(nn.Sequencer(nn.TemporalMaxPooling(2,2)))
-    totalNet:add(nn.Sequencer(nn.TemporalConvolution(170,150,1,1)))
-    totalNet:add(nn.Sequencer(nn.ReLU()))
-    totalNet:add(nn.Sequencer(nn.BatchNormalization(150)))
-    totalNet:add(nn.Sequencer(nn.Linear(150,120)))
-    totalNet:add(nn.Sequencer(nn.ReLU()))
-    totalNet:add(nn.BiSequencer(nn.FastLSTM(120,40),nn.FastLSTM(120,40)))
-    totalNet:add(nn.Sequencer(nn.BatchNormalization(40*2)))
-    totalNet:add(nn.Sequencer(nn.Linear(40*2,27)))
-    totalNet:add(nn.Sequencer(nn.SoftMax()))
-    return totalNet
+    net:add(nn.Sequencer(nn.TemporalConvolution(256,200,1,1)))
+    net:add(nn.Sequencer(nn.ReLU()))
+    net:add(nn.Sequencer(nn.TemporalMaxPooling(2,2)))
+    net:add(nn.Sequencer(nn.TemporalConvolution(200,170,1,1)))
+    net:add(nn.Sequencer(nn.ReLU()))
+    net:add(nn.Sequencer(nn.TemporalMaxPooling(2,2)))
+    net:add(nn.Sequencer(nn.TemporalConvolution(170,150,1,1)))
+    net:add(nn.Sequencer(nn.ReLU()))
+    net:add(nn.Sequencer(nn.BatchNormalization(150)))
+    net:add(nn.Sequencer(nn.Linear(150,120)))
+    net:add(nn.Sequencer(nn.ReLU()))
+    net:add(nn.BiSequencer(nn.FastLSTM(120,40),nn.FastLSTM(120,40)))
+    net:add(nn.Sequencer(nn.BatchNormalization(40*2)))
+    net:add(nn.BiSequencer(nn.FastLSTM(40*2,30),nn.FastLSTM(40*2,30)))
+    net:add(nn.Sequencer(nn.BatchNormalization(30*2)))
+    net:add(nn.BiSequencer(nn.FastLSTM(30*2,20),nn.FastLSTM(30*2,20)))
+    net:add(nn.Sequencer(nn.BatchNormalization(20*2)))
+    net:add(nn.Sequencer(nn.Linear(20*2,27)))
+    net:add(nn.Sequencer(nn.SoftMax()))
+    return net
 end
 
+--Returns the largest tensor size and all sizes in a table of tensors
 function findMaxSize(tensors)
     local maxSize = 0
     local allSizes = {}
@@ -41,6 +50,7 @@ function findMaxSize(tensors)
     return allSizes,maxSize
 end
 
+--Pads a dataset with 0's so all tensors are off the same size.
 function padDataset(totalInput)
     local allSizes,maxSize = findMaxSize(totalInput)
     local emptyMax = {}
@@ -80,13 +90,15 @@ function createDataSet(inputJson, labelJson)
     return dataset
 end
 
-
+--Returns a prediction of the input net and input tensors.
 function Network.predict(net,inputTensors)
     local prediction = net:forward({inputTensors})[1]
     local results = torch.totable(prediction)
     return results
 end
 
+--Trains the network using SGD and the defined feval.
+--Uses warp-ctc cost evaluation.
 function Network.trainNetwork(net, jsonInputs, jsonLabels)
     local ctcCriterion = CTCCriterion()
     local x, gradParameters = net:getParameters()
@@ -107,7 +119,7 @@ function Network.trainNetwork(net, jsonInputs, jsonLabels)
     end
 
     local sgd_params = {
-        learningRate = 0.001,
+        learningRate = 0.0001,
         learningRateDecay = 1e-9,
         weightDecay = 0,
         momentum = 0.9
@@ -127,6 +139,7 @@ function Network.trainNetwork(net, jsonInputs, jsonLabels)
 
 end
 
+--Creates a graph of the loss against the iteration number.
 function createGraph()
     gnuplot.pngfigure('plot.png')
     gnuplot.plot({'sgd',torch.Tensor(epoch), torch.Tensor(evaluations),'-'})
