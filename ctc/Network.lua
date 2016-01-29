@@ -63,6 +63,32 @@ function Network.createAn4Network()
     return net
 end
 
+--Returns a new network based on the speech recognition stack.
+function Network.createAn4SmallNetwork()
+    local net = nn.Sequential()
+    torch.manualSeed(12345)
+    net:add(nn.Sequencer(nn.TemporalConvolution(251,200,1,1)))
+    net:add(nn.Sequencer(nn.ReLU()))
+    net:add(nn.Sequencer(nn.TemporalMaxPooling(2,2)))
+    net:add(nn.Sequencer(nn.TemporalConvolution(200,170,1,1)))
+    net:add(nn.Sequencer(nn.ReLU()))
+    net:add(nn.Sequencer(nn.TemporalMaxPooling(2,2)))
+    net:add(nn.Sequencer(nn.TemporalConvolution(170,150,1,1)))
+    net:add(nn.Sequencer(nn.ReLU()))
+    net:add(nn.Sequencer(nn.BatchNormalization(150)))
+    net:add(nn.Sequencer(nn.Linear(150,120)))
+    net:add(nn.Sequencer(nn.ReLU()))
+    net:add(nn.BiSequencer(nn.FastLSTM(120,40),nn.FastLSTM(120,40)))
+    net:add(nn.Sequencer(nn.BatchNormalization(40*2)))
+    net:add(nn.BiSequencer(nn.FastLSTM(40*2,30),nn.FastLSTM(40*2,30)))
+    net:add(nn.Sequencer(nn.BatchNormalization(30*2)))
+    net:add(nn.BiSequencer(nn.FastLSTM(30*2,20),nn.FastLSTM(30*2,20)))
+    net:add(nn.Sequencer(nn.BatchNormalization(20*2)))
+    net:add(nn.Sequencer(nn.Linear(20*2,27)))
+    net:add(nn.Sequencer(nn.SoftMax()))
+    return net
+end
+
 --Returns the largest tensor size and all sizes in a table of tensors
 function findMaxSize(tensors)
     local maxSize = 0

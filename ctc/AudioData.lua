@@ -21,7 +21,7 @@ function AudioData.retrieveAN4DataSet(folderDirPath)
     for audioPath in io.lines(audioLocationPath) do
         counter = counter + 1
         local audioData = audio.load(folderDirPath .. "/wav/" .. audioPath .. ".wav")
-        local spectrogram = audio.spectrogram(audioData, 1200, 'hann', 50)
+        local spectrogram = audio.spectrogram(audioData, 500, 'hann', 50)
         local transposedSpectrogram = spectrogram:transpose(1,2)
         table.insert(inputs,transposedSpectrogram)
         if(counter == 10) then break end
