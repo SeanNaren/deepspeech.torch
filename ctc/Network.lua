@@ -37,6 +37,32 @@ function Network.createNewNetwork()
     return net
 end
 
+--Returns a new network based on the speech recognition stack.
+function Network.createAn4Network()
+    local net = nn.Sequential()
+    torch.manualSeed(12345)
+    net:add(nn.Sequencer(nn.TemporalConvolution(601,500,1,1)))
+    net:add(nn.Sequencer(nn.ReLU()))
+    net:add(nn.Sequencer(nn.TemporalMaxPooling(2,2)))
+    net:add(nn.Sequencer(nn.TemporalConvolution(500,450,1,1)))
+    net:add(nn.Sequencer(nn.ReLU()))
+    net:add(nn.Sequencer(nn.TemporalMaxPooling(2,2)))
+    net:add(nn.Sequencer(nn.TemporalConvolution(450,350,1,1)))
+    net:add(nn.Sequencer(nn.ReLU()))
+    net:add(nn.Sequencer(nn.BatchNormalization(350)))
+    net:add(nn.Sequencer(nn.Linear(350,300)))
+    net:add(nn.Sequencer(nn.ReLU()))
+    net:add(nn.BiSequencer(nn.FastLSTM(300,100),nn.FastLSTM(300,100)))
+    net:add(nn.Sequencer(nn.BatchNormalization(100*2)))
+    net:add(nn.BiSequencer(nn.FastLSTM(100*2,50),nn.FastLSTM(100*2,50)))
+    net:add(nn.Sequencer(nn.BatchNormalization(50*2)))
+    net:add(nn.BiSequencer(nn.FastLSTM(50*2,30),nn.FastLSTM(50*2,30)))
+    net:add(nn.Sequencer(nn.BatchNormalization(30*2)))
+    net:add(nn.Sequencer(nn.Linear(30*2,27)))
+    net:add(nn.Sequencer(nn.SoftMax()))
+    return net
+end
+
 --Returns the largest tensor size and all sizes in a table of tensors
 function findMaxSize(tensors)
     local maxSize = 0
@@ -66,9 +92,8 @@ function padDataset(totalInput)
     return totalInput
 end
 
-function createDataSet(inputJson, labelJson)
+function createDataSet(inputJson, labelJson, batchSize)
     local dataset = {}
-    local batchSize = 20
     for t = 1,#inputJson,batchSize do
         local inputs = {}
         local targets = {}
@@ -98,10 +123,10 @@ end
 
 --Trains the network using SGD and the defined feval.
 --Uses warp-ctc cost evaluation.
-function Network.trainNetwork(net, jsonInputs, jsonLabels)
+function Network.trainNetwork(net, inputTensors, labels, batchSize)
     local ctcCriterion = CTCCriterion()
     local x, gradParameters = net:getParameters()
-    local dataset = createDataSet(jsonInputs, jsonLabels)
+    local dataset = createDataSet(inputTensors, labels, batchSize)
     local function feval(params)
         local inputs,targets = dataset:nextData()
         gradParameters:zero()
