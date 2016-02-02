@@ -9,60 +9,9 @@ require 'gnuplot'
 local Network = {}
 local evaluations = {}
 local epoch= {}
---Returns a new network based on the speech recognition stack.
-function Network.createNewNetwork()
-    local net = nn.Sequential()
-    torch.manualSeed(12345)
-    net:add(nn.Sequencer(nn.TemporalConvolution(256,200,1,1)))
-    net:add(nn.Sequencer(nn.ReLU()))
-    net:add(nn.Sequencer(nn.TemporalMaxPooling(2,2)))
-    net:add(nn.Sequencer(nn.TemporalConvolution(200,170,1,1)))
-    net:add(nn.Sequencer(nn.ReLU()))
-    net:add(nn.Sequencer(nn.TemporalMaxPooling(2,2)))
-    net:add(nn.Sequencer(nn.TemporalConvolution(170,150,1,1)))
-    net:add(nn.Sequencer(nn.ReLU()))
-    net:add(nn.Sequencer(nn.BatchNormalization(150)))
-    net:add(nn.Sequencer(nn.Linear(150,120)))
-    net:add(nn.Sequencer(nn.ReLU()))
-    net:add(nn.BiSequencer(nn.FastLSTM(120,40),nn.FastLSTM(120,40)))
-    net:add(nn.Sequencer(nn.BatchNormalization(40*2)))
-    net:add(nn.BiSequencer(nn.FastLSTM(40*2,30),nn.FastLSTM(40*2,30)))
-    net:add(nn.Sequencer(nn.BatchNormalization(30*2)))
-    net:add(nn.BiSequencer(nn.FastLSTM(30*2,20),nn.FastLSTM(30*2,20)))
-    net:add(nn.Sequencer(nn.BatchNormalization(20*2)))
-    net:add(nn.Sequencer(nn.Linear(20*2,27)))
-    net:add(nn.Sequencer(nn.SoftMax()))
-    return net
-end
 
 --Returns a new network based on the speech recognition stack.
-function Network.createAn4Network()
-    local net = nn.Sequential()
-    torch.manualSeed(12345)
-    net:add(nn.Sequencer(nn.TemporalConvolution(601,500,1,1)))
-    net:add(nn.Sequencer(nn.ReLU()))
-    net:add(nn.Sequencer(nn.TemporalMaxPooling(2,2)))
-    net:add(nn.Sequencer(nn.TemporalConvolution(500,450,1,1)))
-    net:add(nn.Sequencer(nn.ReLU()))
-    net:add(nn.Sequencer(nn.TemporalMaxPooling(2,2)))
-    net:add(nn.Sequencer(nn.TemporalConvolution(450,350,1,1)))
-    net:add(nn.Sequencer(nn.ReLU()))
-    net:add(nn.Sequencer(nn.BatchNormalization(350)))
-    net:add(nn.Sequencer(nn.Linear(350,300)))
-    net:add(nn.Sequencer(nn.ReLU()))
-    net:add(nn.BiSequencer(nn.FastLSTM(300,100),nn.FastLSTM(300,100)))
-    net:add(nn.Sequencer(nn.BatchNormalization(100*2)))
-    net:add(nn.BiSequencer(nn.FastLSTM(100*2,50),nn.FastLSTM(100*2,50)))
-    net:add(nn.Sequencer(nn.BatchNormalization(50*2)))
-    net:add(nn.BiSequencer(nn.FastLSTM(50*2,30),nn.FastLSTM(50*2,30)))
-    net:add(nn.Sequencer(nn.BatchNormalization(30*2)))
-    net:add(nn.Sequencer(nn.Linear(30*2,27)))
-    net:add(nn.Sequencer(nn.SoftMax()))
-    return net
-end
-
---Returns a new network based on the speech recognition stack.
-function Network.createAn4SmallNetwork()
+function Network.createSpeechNetwork()
     local net = nn.Sequential()
     torch.manualSeed(12345)
     net:add(nn.Sequencer(nn.TemporalConvolution(251,200,1,1)))

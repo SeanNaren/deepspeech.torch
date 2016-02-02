@@ -2,13 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="5d65a61a-bce7-4171-86ff-d54a04b674a0" name="Default" comment="">
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/CTCNetworkClient.iml" afterPath="" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/.name" afterPath="$PROJECT_DIR$/.idea/.name" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/misc.xml" afterPath="$PROJECT_DIR$/.idea/misc.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/modules.xml" afterPath="$PROJECT_DIR$/.idea/modules.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/ctc/AN4Test.lua" afterPath="$PROJECT_DIR$/ctc/AN4Test.lua" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/ctc/AudioData.lua" afterPath="$PROJECT_DIR$/ctc/AudioData.lua" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/ctc/Network.lua" afterPath="$PROJECT_DIR$/ctc/Network.lua" />
     </list>
     <ignored path="CTCSpeechRecognition.iws" />
@@ -31,11 +26,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="AN4Test.lua" pinned="false" current-in-tab="true">
+      <file leaf-file-name="AN4Test.lua" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/ctc/AN4Test.lua">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.15126051">
-              <caret line="8" column="16" selection-start-line="8" selection-start-column="16" selection-end-line="8" selection-end-column="16" />
+            <state vertical-scroll-proportion="0.0">
+              <caret line="4" column="39" selection-start-line="4" selection-start-column="39" selection-end-line="4" selection-end-column="39" />
               <folding />
             </state>
           </provider>
@@ -71,11 +66,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="Network.lua" pinned="false" current-in-tab="false">
+      <file leaf-file-name="Network.lua" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/ctc/Network.lua">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0">
-              <caret line="143" column="21" selection-start-line="143" selection-start-column="21" selection-end-line="143" selection-end-column="21" />
+            <state vertical-scroll-proportion="0.28151262">
+              <caret line="17" column="36" selection-start-line="17" selection-start-column="36" selection-end-line="17" selection-end-column="36" />
               <folding />
             </state>
           </provider>
@@ -96,9 +91,9 @@
       <list>
         <option value="$PROJECT_DIR$/ctc/CTCBatcher.lua" />
         <option value="$PROJECT_DIR$/ctc/CTCCriterion.lua" />
-        <option value="$PROJECT_DIR$/ctc/AN4Test.lua" />
-        <option value="$PROJECT_DIR$/ctc/Network.lua" />
         <option value="$PROJECT_DIR$/ctc/AudioData.lua" />
+        <option value="$PROJECT_DIR$/ctc/Network.lua" />
+        <option value="$PROJECT_DIR$/ctc/AN4Test.lua" />
       </list>
     </option>
   </component>
@@ -441,6 +436,13 @@
       <option name="number" value="Default" />
       <updated>1454281555200</updated>
     </task>
+    <task id="LOCAL-00001" summary="restructured files">
+      <created>1454455796761</created>
+      <option name="number" value="00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1454455796761</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="ToolWindowManager">
@@ -457,6 +459,7 @@
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
@@ -481,6 +484,10 @@
   </component>
   <component name="VcsContentAnnotationSettings">
     <option name="myLimit" value="2678400000" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="restructured files" />
+    <option name="LAST_COMMIT_MESSAGE" value="restructured files" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager />
@@ -540,14 +547,6 @@
         <state />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/ctc/Network.lua">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="143" column="21" selection-start-line="143" selection-start-column="21" selection-end-line="143" selection-end-column="21" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/ctc/CTCCriterion.lua">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
@@ -574,8 +573,16 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/ctc/AN4Test.lua">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.15126051">
-          <caret line="8" column="16" selection-start-line="8" selection-start-column="16" selection-end-line="8" selection-end-column="16" />
+        <state vertical-scroll-proportion="0.0">
+          <caret line="4" column="39" selection-start-line="4" selection-start-column="39" selection-end-line="4" selection-end-column="39" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/ctc/Network.lua">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.28151262">
+          <caret line="17" column="36" selection-start-line="17" selection-start-column="36" selection-end-line="17" selection-end-column="36" />
           <folding />
         </state>
       </provider>
