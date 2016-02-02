@@ -28,8 +28,8 @@
       <file leaf-file-name="AN4Test.lua" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/ctc/AN4Test.lua">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.037815128">
-              <caret line="2" column="0" selection-start-line="2" selection-start-column="0" selection-end-line="2" selection-end-column="0" />
+            <state vertical-scroll-proportion="0.18907563">
+              <caret line="10" column="69" selection-start-line="10" selection-start-column="69" selection-end-line="10" selection-end-column="69" />
               <folding />
             </state>
           </provider>
@@ -447,7 +447,13 @@
       <option name="project" value="LOCAL" />
       <updated>1454455882303</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="reduced sizes, added indentations">
+      <created>1454455991048</created>
+      <option name="number" value="00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1454455991048</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="ToolWindowManager">
@@ -493,7 +499,8 @@
   <component name="VcsManagerConfiguration">
     <MESSAGE value="restructured files" />
     <MESSAGE value="removed network builders" />
-    <option name="LAST_COMMIT_MESSAGE" value="removed network builders" />
+    <MESSAGE value="reduced sizes, added indentations" />
+    <option name="LAST_COMMIT_MESSAGE" value="reduced sizes, added indentations" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager />
@@ -587,8 +594,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/ctc/AN4Test.lua">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.037815128">
-          <caret line="2" column="0" selection-start-line="2" selection-start-column="0" selection-end-line="2" selection-end-column="0" />
+        <state vertical-scroll-proportion="0.18907563">
+          <caret line="10" column="69" selection-start-line="10" selection-start-column="69" selection-end-line="10" selection-end-column="69" />
           <folding />
         </state>
       </provider>
