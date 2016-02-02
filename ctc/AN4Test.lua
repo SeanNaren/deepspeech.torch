@@ -1,10 +1,11 @@
 local AudioData = require 'AudioData'
 local Network = require 'Network'
+
 local an4FolderDir = "/root/CTCSpeechRecognition/Audio/an4"
 local inputs,targets = AudioData.retrieveAN4TrainingDataSet(an4FolderDir)
 local net = Network.createSpeechNetwork()
-local batchSize = 100
-local epochs = 50
+local batchSize = 50
+local epochs = 500
 local inputs,targets = AudioData.retrieveAN4TestDataSet(an4FolderDir)
 Network.trainNetwork(net, inputs, targets, batchSize, epochs)
 
