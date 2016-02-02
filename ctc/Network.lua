@@ -1,16 +1,14 @@
 --Handles the interaction of a fixed size deep neural network of 256 input, 27 output
 --for speech recognition.
 module(...,package.seeall)
-require 'nn'
+require 'cunn'
 require 'CTCCriterion'
 require 'optim'
 require 'rnn'
 require 'gnuplot'
-
 local Network = {}
 local evaluations = {}
 local epoch= {}
-
 --Returns a new network based on the speech recognition stack.
 function Network.createNewNetwork()
     local net = nn.Sequential()
@@ -142,14 +140,13 @@ end
 
 --Returns a prediction of the input net and input tensors.
 function Network.predict(net,inputTensors)
-    local prediction = net:forward({inputTensors})[1]
-    local results = torch.totable(prediction)
-    return results
+    local prediction = net:forward(inputTensors)
+    return prediction
 end
 
 --Trains the network using SGD and the defined feval.
 --Uses warp-ctc cost evaluation.
-function Network.trainNetwork(net, inputTensors, labels, batchSize)
+function Network.trainNetwork(net, inputTensors, labels, batchSize, epochs)
     local ctcCriterion = CTCCriterion()
     local x, gradParameters = net:getParameters()
     local dataset = createDataSet(inputTensors, labels, batchSize)
@@ -170,9 +167,9 @@ function Network.trainNetwork(net, inputTensors, labels, batchSize)
         weightDecay = 0,
         momentum = 0.9
     }
-    local currentLoss = 1000
+    local currentLoss = 0
     local i = 0
-    while i < 1000  do
+    while i < epochs  do
         currentLoss = 0
         i = i + 1
         local _,fs = optim.sgd(feval,x,sgd_params)

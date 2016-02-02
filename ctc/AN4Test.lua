@@ -1,6 +1,11 @@
 local AudioData = require 'AudioData'
 local Network = require 'Network'
-local inputs,targets = AudioData.retrieveAN4DataSet("/root/IdeaProjects/CTCNetworkClient/Audio/an4")
+local an4FolderDir = "/root/CTCSpeechRecognition/Audio/an4"
+local inputs,targets = AudioData.retrieveAN4TrainingDataSet(an4FolderDir)
 local net = Network.createAn4SmallNetwork()
-local batchSize = 20
-Network.trainNetwork(net, inputs, targets, batchSize)
+local batchSize = 100
+local epochs = 50
+local inputs,targets = AudioData.retrieveAN4TestDataSet(an4FolderDir)
+Network.trainNetwork(net, inputs, targets, batchSize, epochs)
+
+print(Network.predict(net,inputs))
