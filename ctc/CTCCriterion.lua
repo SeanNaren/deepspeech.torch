@@ -69,3 +69,5 @@ function averageCosts(list)
     end
     return acc / #list
 end
+
+return CTCCriterion

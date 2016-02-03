@@ -115,7 +115,7 @@ function Network.trainNetwork(net, inputTensors, labels, batchSize, epochs)
         weightDecay = 0,
         momentum = 0.9
     }
-    local currentLoss = 0
+    local currentLoss
     local i = 0
     while i < epochs  do
         currentLoss = 0
@@ -126,7 +126,7 @@ function Network.trainNetwork(net, inputTensors, labels, batchSize, epochs)
         table.insert(epoch,i)
         print("Loss: ",currentLoss, " iteration: ", i)
     end
-    createGraph()
+    --createGraph()
 end
 
 --Creates a graph of the loss against the iteration number.
