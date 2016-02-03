@@ -126,7 +126,7 @@ function Network.trainNetwork(net, inputTensors, labels, batchSize, epochs)
         table.insert(epoch,i)
         print("Loss: ",currentLoss, " iteration: ", i)
     end
-    --createGraph()
+    createGraph()
 end
 
 --Creates a graph of the loss against the iteration number.
