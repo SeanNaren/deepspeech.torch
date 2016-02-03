@@ -3,6 +3,7 @@
 --and correctly classifies them to 3 labels.
  ]]
 require 'nn'
+require 'cunn'
 require 'CTCTestCriterion'
 require 'optim'
 require 'rnn'
