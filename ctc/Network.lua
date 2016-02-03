@@ -6,10 +6,12 @@ require 'CTCCriterion'
 require 'optim'
 require 'rnn'
 require 'gnuplot'
-local Network = {}
-local evaluations = {}
-local epoch= {}
 
+local Network = {}
+
+local logger = optim.Logger('train.log')
+logger:setNames{'loss'}
+logger:style{'-'}
 --Returns a new network based on the speech recognition stack.
 function Network.createSpeechNetwork()
     local net = nn.Sequential()
@@ -122,19 +124,10 @@ function Network.trainNetwork(net, inputTensors, labels, batchSize, epochs)
         i = i + 1
         local _,fs = optim.sgd(feval,x,sgd_params)
         currentLoss = currentLoss + fs[1]
-        table.insert(evaluations,currentLoss)
-        table.insert(epoch,i)
+        logger:add{currentLoss}
         print("Loss: ",currentLoss, " iteration: ", i)
     end
-    createGraph()
+    logger:plot()
 end
 
---Creates a graph of the loss against the iteration number.
-function createGraph()
-    gnuplot.pngfigure('plot.png')
-    gnuplot.plot({'sgd',torch.Tensor(epoch), torch.Tensor(evaluations),'-'})
-    gnuplot.xlabel('epochs (s)')
-    gnuplot.ylabel('loss')
-    gnuplot.plotflush()
-end
 return Network
