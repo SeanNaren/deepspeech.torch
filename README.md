@@ -2,6 +2,8 @@
 
 Implementation of the <a href="https://github.com/baidu-research/warp-ctc/">Baidu Warp-CTC</a> using torch7.
 
+Work in progress.
+
 Main method located at AN4Test.lua.
 
 The current network is as follows (the input to the network is numberOfTimeFrames x frequencies where frequencies is 251).
