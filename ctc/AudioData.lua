@@ -1,34 +1,40 @@
-require'lfs'
+require 'lfs'
 require 'audio'
 require 'image'
 cutorch = require 'cutorch'
 local AudioData = {}
-local alphabet = {' ','A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R',
-    'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'}
+local alphabet = {
+    ' ', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R',
+    'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'
+}
 
 local alphabetMapping = {}
 local indexMapping = {}
-for index,character in ipairs(alphabet) do
+for index, character in ipairs(alphabet) do
     alphabetMapping[character] = index - 1
     indexMapping[index - 1] = character
 end
 
-function AudioData.retrieveAN4TrainingDataSet(folderDirPath)
+function AudioData.retrieveAN4TrainingDataSet(folderDirPath, windowSize, stride)
     local audioLocationPath = folderDirPath .. "/etc/an4_train.fileids"
     local transcriptPath = folderDirPath .. "/etc/an4_train.transcription"
-    local inputs,targets = an4Dataset(folderDirPath,audioLocationPath,transcriptPath)
-    return inputs,targets
+    local inputs, targets = an4Dataset(folderDirPath, audioLocationPath, transcriptPath, windowSize,stride)
+    return inputs, targets
 end
 
 
-function AudioData.retrieveAN4TestDataSet(folderDirPath)
+function AudioData.retrieveAN4TestDataSet(folderDirPath, windowSize,stride)
     local audioLocationPath = folderDirPath .. "/etc/an4_test.fileids"
     local transcriptPath = folderDirPath .. "/etc/an4_test.transcription"
-    local inputs,targets = an4Dataset(folderDirPath,audioLocationPath,transcriptPath)
-    return inputs,targets
+    local inputs, targets = an4Dataset(folderDirPath, audioLocationPath, transcriptPath, windowSize,stride)
+    return inputs, targets
 end
 
-function an4Dataset(folderDirPath,audioLocationPath,transcriptPath)
+function AudioData.findLetter(index)
+    return alphabet[index]
+end
+
+function an4Dataset(folderDirPath, audioLocationPath, transcriptPath, windowSize,stride)
     local inputs = {}
     local targets = {}
     local counter = 0
@@ -36,18 +42,24 @@ function an4Dataset(folderDirPath,audioLocationPath,transcriptPath)
     for audioPath in audioPaths do
         counter = counter + 1
         local audioData = audio.load(folderDirPath .. "/wav/" .. audioPath .. ".wav")
-        local spectrogram = audio.spectrogram(audioData, 500, 'hann', 50)
-        local transposedSpectrogram = spectrogram:transpose(1,2)
-        table.insert(inputs,transposedSpectrogram)
-        if(math.fmod(counter,100) == 0) then print(counter," completed") end
+        local spectrogram = audio.spectrogram(audioData, windowSize, 'hamming', stride)
+        local transposedSpectrogram = spectrogram:transpose(1, 2)
+        table.insert(inputs, transposedSpectrogram)
+        if (math.fmod(counter, 100) == 0) then print(counter, " completed") end
+        --        image.display(spectrogram)
+        --        break
     end
     for line in io.lines(transcriptPath) do
         local label = {}
         for character in string.gmatch(line, "([A-Z])") do
-            table.insert(label,alphabetMapping[character])
+            table.insert(label, alphabetMapping[character])
         end
-        table.insert(targets,label)
+        table.insert(targets, label)
     end
-    return inputs,targets
+    return inputs, targets
 end
+
+--local an4FolderDir = "/root/CTCSpeechRecognition/Audio/an4"
+--local inputs,targets = AudioData.retrieveAN4TrainingDataSet(an4FolderDir)
+--while(true) do end
 return AudioData

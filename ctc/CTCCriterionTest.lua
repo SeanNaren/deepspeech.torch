@@ -36,9 +36,9 @@ end
 
 function assertion(outputCost,expectedCost,testName)
     if (tostring(outputCost) == tostring(expectedCost)) then
-        print(testName," success")
+        print(testName,"success")
     else
-        print(testName," failed")
+        print(testName,"failed")
     end
 end
 

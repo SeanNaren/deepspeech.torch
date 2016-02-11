@@ -16,23 +16,53 @@ logger:style{'-'}
 function Network.createSpeechNetwork()
     local net = nn.Sequential()
     torch.manualSeed(12345)
-    net:add(nn.Sequencer(nn.TemporalConvolution(251,251,5,1)))
+    net:add(nn.Sequencer(nn.TemporalConvolution(129,129,5,1)))
     net:add(nn.Sequencer(nn.ReLU()))
     net:add(nn.Sequencer(nn.TemporalMaxPooling(2,2)))
-    net:add(nn.Sequencer(nn.TemporalConvolution(251,251,5,1)))
+    net:add(nn.Sequencer(nn.TemporalConvolution(129,384,5,1)))
     net:add(nn.Sequencer(nn.ReLU()))
-    net:add(nn.Sequencer(nn.TemporalConvolution(251,251,5,1)))
+    net:add(nn.Sequencer(nn.TemporalMaxPooling(2,2)))
+    net:add(nn.Sequencer(nn.TemporalConvolution(384,384,5,1)))
     net:add(nn.Sequencer(nn.ReLU()))
-    net:add(nn.Sequencer(nn.BatchNormalization(251)))
-    net:add(nn.Sequencer(nn.Linear(251,251)))
+    net:add(nn.Sequencer(nn.Linear(384,250)))
     net:add(nn.Sequencer(nn.ReLU()))
-    net:add(nn.BiSequencer(nn.FastLSTM(251,40),nn.FastLSTM(251,40)))
-    net:add(nn.Sequencer(nn.BatchNormalization(40*2)))
-    net:add(nn.BiSequencer(nn.FastLSTM(40*2,30),nn.FastLSTM(40*2,30)))
-    net:add(nn.Sequencer(nn.BatchNormalization(30*2)))
-    net:add(nn.BiSequencer(nn.FastLSTM(30*2,20),nn.FastLSTM(30*2,20)))
-    net:add(nn.Sequencer(nn.BatchNormalization(20*2)))
-    net:add(nn.Sequencer(nn.Linear(20*2,27)))
+    net:add(nn.BiSequencer(nn.LSTM(250,250),nn.LSTM(250,250)))
+    net:add(nn.BiSequencer(nn.LSTM(250*2,250),nn.LSTM(250*2,250)))
+    net:add(nn.BiSequencer(nn.LSTM(250*2,250),nn.LSTM(250*2,250)))
+    net:add(nn.BiSequencer(nn.LSTM(250*2,250),nn.LSTM(250*2,250)))
+    net:add(nn.BiSequencer(nn.LSTM(250*2,250),nn.LSTM(250*2,250)))
+    net:add(nn.Sequencer(nn.Linear(250*2,27)))
+    net:add(nn.Sequencer(nn.SoftMax()))
+    return net
+end
+
+--Returns a new network based on the speech recognition stack.
+function Network.createTempSpeechNetwork()
+
+    -- forward rnn
+    -- build simple recurrent neural network
+    local fwd = nn.Sequential()
+    fwd:add(nn.Sequencer(nn.FastLSTM(300)))
+    fwd:add(nn.Sequencer(nn.FastLSTM(300)))
+    fwd:add(nn.Sequencer(nn.FastLSTM(300)))
+    fwd:add(nn.Sequencer(nn.FastLSTM(300)))
+    fwd:add(nn.Sequencer(nn.FastLSTM(300)))
+
+
+    local net = nn.Sequential()
+    torch.manualSeed(12345)
+    net:add(nn.Sequencer(nn.TemporalConvolution(129,129,5,1)))
+    net:add(nn.Sequencer(nn.ReLU()))
+    net:add(nn.Sequencer(nn.TemporalMaxPooling(2,2)))
+    net:add(nn.Sequencer(nn.TemporalConvolution(129,384,5,1)))
+    net:add(nn.Sequencer(nn.ReLU()))
+    net:add(nn.Sequencer(nn.TemporalMaxPooling(2,2)))
+    net:add(nn.Sequencer(nn.TemporalConvolution(384,384,5,1)))
+    net:add(nn.Sequencer(nn.ReLU()))
+    net:add(nn.Sequencer(nn.Linear(384,300)))
+    net:add(nn.Sequencer(nn.ReLU()))
+    net:add(nn.BiSequencerLM(fwd))
+    net:add(nn.Sequencer(nn.Linear(300*2,27)))
     net:add(nn.Sequencer(nn.SoftMax()))
     return net
 end
@@ -66,7 +96,7 @@ function padDataset(totalInput)
     return totalInput
 end
 
-function createDataSet(inputJson, labelJson, batchSize)
+function Network.createDataSet(inputJson, labelJson, batchSize)
     local dataset = {}
     for t = 1,#inputJson,batchSize do
         local inputs = {}
@@ -97,10 +127,11 @@ end
 --Trains the network using SGD and the defined feval.
 --Uses warp-ctc cost evaluation.
 function Network.trainNetwork(net, inputTensors, labels, batchSize, epochs)
+    local criterion = nn.SequencerCriterion(nn.CrossEntropyCriterion())
     local ctcCriterion = CTCCriterion()
     local x, gradParameters = net:getParameters()
-    local dataset = createDataSet(inputTensors, labels, batchSize)
-    local function feval(params)
+    local dataset = Network.createDataSet(inputTensors, labels, batchSize)
+    local function feval(x_new)
         local inputs,targets = dataset:nextData()
         gradParameters:zero()
         local predictions = net:forward(inputs)
@@ -112,7 +143,7 @@ function Network.trainNetwork(net, inputTensors, labels, batchSize, epochs)
     end
 
     local sgd_params = {
-        learningRate = 0.0001,
+        learningRate = 10e-4,
         learningRateDecay = 1e-9,
         weightDecay = 0,
         momentum = 0.9
@@ -127,6 +158,9 @@ function Network.trainNetwork(net, inputTensors, labels, batchSize, epochs)
         logger:add{currentLoss}
         print("Loss: ",currentLoss, " iteration: ", i)
     end
+end
+
+function Network.createLossGraph()
     logger:plot()
 end
 

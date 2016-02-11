@@ -25,6 +25,7 @@ function CTCCriterion:updateOutput(networkOutput,target)
     local labels = target
     local size = tensorSizes(networkOutput)
     self.output = averageCosts(cpu_ctc(act, grads, labels, size))
+    if(cpu_ctc(act, grads, labels, size)[1] == 0) then print(act) print(labels) end
     return self.output
 end
 
@@ -57,7 +58,7 @@ function tensorSizes(tensors)
 end
 
 
---If batching occurs multiple costs are returned. We average th
+--If batching occurs multiple costs are returned. We sum the costs and return.
 function averageCosts(list)
     local acc
     for k, v in ipairs(list) do
@@ -67,7 +68,7 @@ function averageCosts(list)
             acc = acc +  v
         end
     end
-    return acc / #list
+    return acc
 end
 
 return CTCCriterion
