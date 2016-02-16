@@ -12,32 +12,9 @@ local Network = {}
 local logger = optim.Logger('train.log')
 logger:setNames{'loss'}
 logger:style{'-'}
---Returns a new network based on the speech recognition stack.
-function Network.createSpeechNetwork()
-    local net = nn.Sequential()
-    torch.manualSeed(12345)
-    net:add(nn.Sequencer(nn.TemporalConvolution(129,129,5,1)))
-    net:add(nn.Sequencer(nn.ReLU()))
-    net:add(nn.Sequencer(nn.TemporalMaxPooling(2,2)))
-    net:add(nn.Sequencer(nn.TemporalConvolution(129,384,5,1)))
-    net:add(nn.Sequencer(nn.ReLU()))
-    net:add(nn.Sequencer(nn.TemporalMaxPooling(2,2)))
-    net:add(nn.Sequencer(nn.TemporalConvolution(384,384,5,1)))
-    net:add(nn.Sequencer(nn.ReLU()))
-    net:add(nn.Sequencer(nn.Linear(384,250)))
-    net:add(nn.Sequencer(nn.ReLU()))
-    net:add(nn.BiSequencer(nn.LSTM(250,250),nn.LSTM(250,250)))
-    net:add(nn.BiSequencer(nn.LSTM(250*2,250),nn.LSTM(250*2,250)))
-    net:add(nn.BiSequencer(nn.LSTM(250*2,250),nn.LSTM(250*2,250)))
-    net:add(nn.BiSequencer(nn.LSTM(250*2,250),nn.LSTM(250*2,250)))
-    net:add(nn.BiSequencer(nn.LSTM(250*2,250),nn.LSTM(250*2,250)))
-    net:add(nn.Sequencer(nn.Linear(250*2,27)))
-    net:add(nn.Sequencer(nn.SoftMax()))
-    return net
-end
 
 --Returns a new network based on the speech recognition stack.
-function Network.createTempSpeechNetwork()
+function Network.createSpeechNetwork()
 
     -- forward rnn
     -- build simple recurrent neural network
