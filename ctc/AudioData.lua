@@ -1,3 +1,4 @@
+--Retrieves audio datasets. Currently retrieves the AN4 dataset by giving the folder directory.
 require 'lfs'
 require 'audio'
 require 'image'
@@ -22,7 +23,6 @@ function AudioData.retrieveAN4TrainingDataSet(folderDirPath, windowSize, stride)
     return inputs, targets
 end
 
-
 function AudioData.retrieveAN4TestDataSet(folderDirPath, windowSize,stride)
     local audioLocationPath = folderDirPath .. "/etc/an4_test.fileids"
     local transcriptPath = folderDirPath .. "/etc/an4_test.transcription"
@@ -30,6 +30,7 @@ function AudioData.retrieveAN4TestDataSet(folderDirPath, windowSize,stride)
     return inputs, targets
 end
 
+--Given an index returns the letter at that index.
 function AudioData.findLetter(index)
     return alphabet[index]
 end
@@ -46,8 +47,6 @@ function an4Dataset(folderDirPath, audioLocationPath, transcriptPath, windowSize
         local transposedSpectrogram = spectrogram:transpose(1, 2)
         table.insert(inputs, transposedSpectrogram)
         if (math.fmod(counter, 100) == 0) then print(counter, " completed") end
-        --        image.display(spectrogram)
-        --        break
     end
     for line in io.lines(transcriptPath) do
         local label = {}
@@ -59,7 +58,4 @@ function an4Dataset(folderDirPath, audioLocationPath, transcriptPath, windowSize
     return inputs, targets
 end
 
---local an4FolderDir = "/root/CTCSpeechRecognition/Audio/an4"
---local inputs,targets = AudioData.retrieveAN4TrainingDataSet(an4FolderDir)
---while(true) do end
 return AudioData
