@@ -100,7 +100,6 @@ end
 --Trains the network using SGD and the defined feval.
 --Uses warp-ctc cost evaluation.
 function Network.trainNetwork(net, inputTensors, labels, batchSize, epochs)
-    local criterion = nn.SequencerCriterion(nn.CrossEntropyCriterion())
     local ctcCriterion = CTCCriterion()
     local x, gradParameters = net:getParameters()
     local dataset = Network.createDataSet(inputTensors, labels, batchSize)
