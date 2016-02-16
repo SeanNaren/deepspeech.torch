@@ -104,6 +104,7 @@ function Network.trainNetwork(net, inputTensors, labels, batchSize, epochs)
     local ctcCriterion = CTCCriterion()
     local x, gradParameters = net:getParameters()
     local dataset = Network.createDataSet(inputTensors, labels, batchSize)
+
     local function feval(x_new)
         local inputs,targets = dataset:nextData()
         gradParameters:zero()
