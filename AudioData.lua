@@ -18,14 +18,14 @@ end
 function AudioData.retrieveAN4TrainingDataSet(folderDirPath, windowSize, stride)
     local audioLocationPath = folderDirPath .. "/etc/an4_train.fileids"
     local transcriptPath = folderDirPath .. "/etc/an4_train.transcription"
-    local inputs, targets = an4Dataset(folderDirPath, audioLocationPath, transcriptPath, windowSize,stride)
+    local inputs, targets = an4Dataset(folderDirPath, audioLocationPath, transcriptPath, windowSize, stride)
     return inputs, targets
 end
 
-function AudioData.retrieveAN4TestDataSet(folderDirPath, windowSize,stride)
+function AudioData.retrieveAN4TestDataSet(folderDirPath, windowSize, stride)
     local audioLocationPath = folderDirPath .. "/etc/an4_test.fileids"
     local transcriptPath = folderDirPath .. "/etc/an4_test.transcription"
-    local inputs, targets = an4Dataset(folderDirPath, audioLocationPath, transcriptPath, windowSize,stride)
+    local inputs, targets = an4Dataset(folderDirPath, audioLocationPath, transcriptPath, windowSize, stride)
     return inputs, targets
 end
 
@@ -34,7 +34,7 @@ function AudioData.findLetter(index)
     return alphabet[index]
 end
 
-function an4Dataset(folderDirPath, audioLocationPath, transcriptPath, windowSize,stride)
+function an4Dataset(folderDirPath, audioLocationPath, transcriptPath, windowSize, stride)
     local inputs = {}
     local targets = {}
     local counter = 0
@@ -48,10 +48,13 @@ function an4Dataset(folderDirPath, audioLocationPath, transcriptPath, windowSize
     end
     for line in io.lines(transcriptPath) do
         local label = {}
-        for character in string.gmatch(line, "([A-Z])") do
-            table.insert(label, alphabetMapping[character])
+        for string in string.gmatch(line, ">([^<]*)<") do
+            for i = 1, #string do
+                local character = string:sub(i, i)
+                table.insert(label, alphabetMapping[character])
+            end
+            table.insert(targets, label)
         end
-        table.insert(targets, label)
     end
     return inputs, targets
 end
