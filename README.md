@@ -38,6 +38,8 @@ luarocks install cunnx
 ```
 Main method located at AN4Test.lua.
 
+Training data is currently the <a href="http://www.speech.cs.cmu.edu/databases/an4/">AN4 Audio database</a>. Within the AN4Test we specify the file path to the an4 dataset. '''Note that the data has to be converted into wav format, a bash script ConvertAN4ToWav.sh has been included to help with this (place this into the an4 directory then run).''' 
+
 The current network is as follows (the input to the network is numberOfTimeFrames x frequencies where frequencies is 251).
 
 ```
