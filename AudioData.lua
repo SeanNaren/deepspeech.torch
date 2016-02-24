@@ -38,8 +38,7 @@ function an4Dataset(folderDirPath, audioLocationPath, transcriptPath, windowSize
     local inputs = {}
     local targets = {}
     local counter = 0
-    local audioPaths = io.lines(audioLocationPath)
-    for audioPath in audioPaths do
+    for audioPath in io.lines(audioLocationPath) do
         counter = counter + 1
         local audioData = audio.load(folderDirPath .. "/wav/" .. audioPath .. ".wav")
         local spectrogram = audio.spectrogram(audioData, windowSize, 'hamming', stride)

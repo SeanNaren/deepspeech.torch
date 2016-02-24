@@ -12,10 +12,10 @@ function maxIndex(table)
 end
 
 --The mini-batch size.
-local batchSize = 80
+local batchSize = 5
 
 --Training parameters
-local epochs = 9
+local epochs = 50
 --Parameters for the stochastic gradient descent (using the optim library).
 local sgdParams = {
     learningRate = 10e-4,
@@ -55,7 +55,7 @@ end
 print("finished")
 
 --Creates the loss plot.
---TODO when high mem usage, this function causes a crash related to gnuplot.
+--TODO when high mem usage, this function causes a crash related to gnuplot running out of memory.
 Network.createLossGraph()
 
 --prevents script from ending to view loss graph.
