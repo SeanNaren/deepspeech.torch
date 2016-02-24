@@ -1,6 +1,8 @@
 # CTCNetworkClient
 
-Work in progress. Implementation of the <a href="https://github.com/baidu-research/warp-ctc/">Baidu Warp-CTC</a> using torch7.
+Work in progress. Implementation of the <a href="https://github.com/baidu-research/warp-ctc/">Baidu Warp-CTC</a> using torch7. Feeds spectrogram data into a neural network using the Torch7 library, training itself with the CTC activation function.
+
+Current implementation is CPU only but can be modified to support the GPU.
 
 To install torch7 follow the guide <a href="http://torch.ch/docs/getting-started.html">here</a>.
 
