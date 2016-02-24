@@ -11,8 +11,8 @@ function maxIndex(table)
     return maxIndex
 end
 --The mini-batch size.
-local batchSize = 10
-local epochs = 100
+local batchSize = 85
+local epochs = 16
 
 --Window size and stride for the spectrogram transformation.
 local windowSize = 256
