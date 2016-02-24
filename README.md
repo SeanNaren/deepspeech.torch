@@ -1,8 +1,12 @@
 # CTCNetworkClient
 
-Implementation of the <a href="https://github.com/baidu-research/warp-ctc/">Baidu Warp-CTC</a> using torch7.
+Work in progress. Implementation of the <a href="https://github.com/baidu-research/warp-ctc/">Baidu Warp-CTC</a> using torch7.
 
-Work in progress.
+To install torch7 follow the guide <a href="http://torch.ch/docs/getting-started.html">here</a>.
+To install the Baidu warp-ctc library follow the guide at the end of the readme <a href="https://github.com/baidu-research/warp-ctc">here</a> .
+
+Other Dependencies can be installed via luarocks:
+luarocks install 
 
 Main method located at AN4Test.lua.
 
