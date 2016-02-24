@@ -4,3 +4,5 @@ systemtests/
 systemtests
 CTC.iml
 CTCSpeechRecognition.iml
+ctc/train.log
+ctc/train.log.eps

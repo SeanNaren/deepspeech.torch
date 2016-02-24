@@ -10,9 +10,18 @@ function maxIndex(table)
     end
     return maxIndex
 end
+
 --The mini-batch size.
-local batchSize = 85
-local epochs = 16
+local batchSize = 80
+
+--Training parameters
+local epochs = 9
+local sgdParams = {
+    learningRate = 10e-4,
+    learningRateDecay = 1e-9,
+    weightDecay = 0,
+    momentum = 0.9
+}
 
 --Window size and stride for the spectrogram transformation.
 local windowSize = 256
@@ -24,7 +33,7 @@ local inputs, targets = AudioData.retrieveAN4TrainingDataSet(an4FolderDir, windo
 
 --Create and train the network based on the parameters and training data.
 local net = Network.createSpeechNetwork()
-Network.trainNetwork(net, inputs, targets, batchSize, epochs)
+Network.trainNetwork(net, inputs, targets, batchSize, epochs, sgdParams)
 
 --The test set in spectrogram tensor form.
 local testInputs, testTargets = AudioData.retrieveAN4TestDataSet(an4FolderDir, windowSize, stride)
@@ -33,7 +42,7 @@ local testInputs, testTargets = AudioData.retrieveAN4TestDataSet(an4FolderDir, w
 local dataset = Network.createDataSet(testInputs, testTargets, batchSize)
 
 --For testing purposes, we predict the first test data in the dataset and retrieve the first prediction.
-local sample1 = torch.totable(Network.predict(net,dataset:nextData())[1])
+local sample1 = torch.totable(Network.predict(net, dataset:nextData())[1])
 
 --iterate through the results of the prediction and output the letter that was predicted in the sample.
 for index, result in ipairs(sample1) do
