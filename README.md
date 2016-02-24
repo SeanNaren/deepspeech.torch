@@ -1,4 +1,4 @@
-# CTCNetworkClient
+# CTCSpeechRecognition
 
 Work in progress. Implementation of the <a href="https://github.com/baidu-research/warp-ctc/">Baidu Warp-CTC</a> using torch7. Feeds spectrogram data into a neural network using the Torch7 library, training itself with the CTC activation function.
 
