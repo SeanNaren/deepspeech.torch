@@ -68,6 +68,7 @@ function padDataset(totalInput)
     return totalInput
 end
 
+--Creates the dataset depending on the batchSize given. We also pad all the inputs so they are the same size.
 function Network.createDataSet(inputJson, labelJson, batchSize)
     local dataset = {}
     for t = 1, #inputJson, batchSize do

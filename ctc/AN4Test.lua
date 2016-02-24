@@ -16,6 +16,7 @@ local batchSize = 80
 
 --Training parameters
 local epochs = 9
+--Parameters for the stochastic gradient descent (using the optim library).
 local sgdParams = {
     learningRate = 10e-4,
     learningRateDecay = 1e-9,
@@ -42,6 +43,7 @@ local testInputs, testTargets = AudioData.retrieveAN4TestDataSet(an4FolderDir, w
 local dataset = Network.createDataSet(testInputs, testTargets, batchSize)
 
 --For testing purposes, we predict the first test data in the dataset and retrieve the first prediction.
+--TODO this should be an accuracy checker where we loop through all samples to retrieve an accuracy value.
 local sample1 = torch.totable(Network.predict(net, dataset:nextData())[1])
 
 --iterate through the results of the prediction and output the letter that was predicted in the sample.
@@ -52,6 +54,7 @@ end
 print("finished")
 
 --Creates the loss plot.
+--TODO when high mem usage, this function causes a crash related to gnuplot.
 Network.createLossGraph()
 
 --prevents script from ending to view loss graph.
