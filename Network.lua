@@ -105,7 +105,6 @@ function Network.trainNetwork(net, inputTensors, labels, batchSize, epochs, sgd_
     local function feval(x_new)
         local inputs, targets = dataset:nextData()
         gradParameters:zero()
-        print(inputs)
         local predictions = net:forward(inputs)
         local loss = ctcCriterion:forward(predictions, targets)
         net:zeroGradParameters()
