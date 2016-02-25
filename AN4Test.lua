@@ -12,10 +12,10 @@ function maxIndex(table)
 end
 
 --The mini-batch size.
-local batchSize = 5
+local batchSize = 1
 
 --Training parameters
-local epochs = 50
+local epochs = 2000
 --Parameters for the stochastic gradient descent (using the optim library).
 local sgdParams = {
     learningRate = 10e-4,

@@ -33,6 +33,7 @@ function Network.createSpeechNetwork()
     net:add(nn.BiSequencer(fwd))
     net:add(nn.Sequencer(nn.Linear(200, 27)))
     net:add(nn.Sequencer(nn.SoftMax()))
+    net:cuda()
     return net
 end
 
@@ -99,12 +100,13 @@ end
 --Trains the network using SGD and the defined feval.
 --Uses warp-ctc cost evaluation.
 function Network.trainNetwork(net, inputTensors, labels, batchSize, epochs, sgd_params)
-    local ctcCriterion = CTCCriterion()
+    local ctcCriterion = CTCCriterion():cuda()
     local x, gradParameters = net:getParameters()
     local dataset = Network.createDataSet(inputTensors, labels, batchSize)
     local function feval(x_new)
         local inputs, targets = dataset:nextData()
         gradParameters:zero()
+        print(inputs)
         local predictions = net:forward(inputs)
         local loss = ctcCriterion:forward(predictions, targets)
         net:zeroGradParameters()
