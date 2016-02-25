@@ -33,7 +33,6 @@ function Network.createSpeechNetwork()
     net:add(nn.BiSequencer(fwd))
     net:add(nn.Sequencer(nn.Linear(200, 27)))
     net:add(nn.Sequencer(nn.SoftMax()))
-    net:cuda()
     return net
 end
 
