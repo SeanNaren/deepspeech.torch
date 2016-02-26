@@ -49,7 +49,6 @@ local sample1 = torch.totable(Network.predict(net, dataset:nextData())[1])
 --iterate through the results of the prediction and output the letter that was predicted in the sample.
 for index, result in ipairs(sample1) do
     --If the index is 1, that means that the character was blank.
-    print(result)
     if (maxIndex(result) ~= 1) then print(AudioData.findLetter((maxIndex(result)))) else print("blank") end
 end
 
