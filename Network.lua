@@ -22,15 +22,20 @@ function Network.createSpeechNetwork()
     fwd:add(nn.FastLSTM(100, 100))
 
     local net = nn.Sequential()
+    net:add(nn.Sequencer(nn.BatchNormalization(129)))
     net:add(nn.Sequencer(nn.TemporalConvolution(129, 384, 5, 1)))
     net:add(nn.Sequencer(nn.ReLU()))
     net:add(nn.Sequencer(nn.TemporalMaxPooling(2, 2)))
     net:add(nn.Sequencer(nn.ReLU()))
+    net:add(nn.Sequencer(nn.BatchNormalization(384)))
     net:add(nn.Sequencer(nn.TemporalConvolution(384, 300, 5, 1)))
     net:add(nn.Sequencer(nn.ReLU()))
+    net:add(nn.Sequencer(nn.BatchNormalization(300)))
     net:add(nn.Sequencer(nn.Linear(300, 300)))
     net:add(nn.Sequencer(nn.ReLU()))
+    net:add(nn.Sequencer(nn.BatchNormalization(300)))
     net:add(nn.BiSequencer(fwd))
+    net:add(nn.Sequencer(nn.BatchNormalization(200)))
     net:add(nn.Sequencer(nn.Linear(200, 27)))
     net:add(nn.Sequencer(nn.SoftMax()))
     return net
@@ -105,8 +110,7 @@ function Network.trainNetwork(net, inputTensors, labels, batchSize, epochs, sgd_
     local function feval(x_new)
         --TODO at the current stage the blank issue occurs when training the network with only 1 sample which is given everytime
         --TODO to the network, which is set below.
-        local tempDataset = dataset[1]
-        local inputs, targets = tempDataset[1],tempDataset[2]
+        local inputs, targets = dataset:nextData()
         gradParameters:zero()
         local predictions = net:forward(inputs)
         local loss = ctcCriterion:forward(predictions, targets)
