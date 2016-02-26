@@ -25,14 +25,17 @@ function turnToNumericalLabels(outputFromNetwork)
 end
 
 --We create two inputs of length 3 to act as our input audio.
+--local input1 = torch.Tensor({{1,2,3,4,5},{6,7,8,9,10},{11,12,13,14,15}})
+--local input2 = torch.Tensor({{11,12,13,14,15},{6,7,8,9,10},{0,0,0,0,0}})
 local input1 = torch.Tensor({{1,2,3,4,5},{6,7,8,9,10},{11,12,13,14,15}})
-local input2 = torch.Tensor({{11,12,13,14,15},{6,7,8,9,10},{0,0,0,0,0}})
+local input2 = torch.Tensor({{16,17,18,19,20},{21,22,23,24,25},{0,0,0,0,0}})
 local totalInput = {input1,input2 }
 --These are the labels of each inputs (BAD and DA)
-local totalTargets = {{2,1,4},{4,1}}
+local totalTargets = {{2,1,4},{6,5}}
 
 --Create a smaller refined network that takes a 5 input and returns 27 labels
 local net = nn.Sequential()
+torch.manualSeed(123456)
 net:add(nn.Sequencer(nn.BatchNormalization(5)))
 net:add(nn.Sequencer(nn.TemporalConvolution(5,4,1,1)))
 net:add(nn.Sequencer(nn.ReLU()))
@@ -72,7 +75,7 @@ local sgd_params = {
 
 local currentLoss
 local iteration = 1
-while iteration < 200 do
+while iteration < 400 do
     currentLoss = 0
     iteration = iteration + 1
     local _,fs = optim.sgd(feval,x,sgd_params)
