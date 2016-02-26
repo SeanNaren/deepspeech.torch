@@ -99,11 +99,14 @@ end
 --Trains the network using SGD and the defined feval.
 --Uses warp-ctc cost evaluation.
 function Network.trainNetwork(net, inputTensors, labels, batchSize, epochs, sgd_params)
-    local ctcCriterion = CTCCriterion():cuda()
+    local ctcCriterion = CTCCriterion()
     local x, gradParameters = net:getParameters()
     local dataset = Network.createDataSet(inputTensors, labels, batchSize)
     local function feval(x_new)
-        local inputs, targets = dataset:nextData()
+        --TODO at the current stage the blank issue occurs when training the network with only 1 sample which is given everytime
+        --TODO to the network, which is set below.
+        local tempDataset = dataset[1]
+        local inputs, targets = tempDataset[1],tempDataset[2]
         gradParameters:zero()
         local predictions = net:forward(inputs)
         local loss = ctcCriterion:forward(predictions, targets)
