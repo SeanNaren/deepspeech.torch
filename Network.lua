@@ -82,6 +82,7 @@ function Network.createDataSet(inputJson, labelJson, batchSize)
         table.insert(dataset, { padDataset(inputs), targets })
     end
     local pointer = 1
+    --TODO the size of dataset should be #dataset, however to limit to 10 samples I have hard coded this.
     function dataset:size() return 10 end
 
     function dataset:nextData()
@@ -107,8 +108,6 @@ function Network.trainNetwork(net, inputTensors, labels, batchSize, epochs, sgd_
     local x, gradParameters = net:getParameters()
     local dataset = Network.createDataSet(inputTensors, labels, batchSize)
     local function feval(x_new)
-        --TODO at the current stage the blank issue occurs when training the network with only 1 sample which is given everytime
-        --TODO to the network, which is set below.
         local inputs, targets = dataset:nextData()
         gradParameters:zero()
         local predictions = net:forward(inputs)
