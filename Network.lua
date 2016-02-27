@@ -83,7 +83,7 @@ function Network.createDataSet(inputJson, labelJson, batchSize)
     end
     local pointer = 1
     --TODO the size of dataset should be #dataset, however to limit to 10 samples I have hard coded this.
-    function dataset:size() return 10 end
+    function dataset:size() return 20 end
 
     function dataset:nextData()
         local sample = dataset[pointer]

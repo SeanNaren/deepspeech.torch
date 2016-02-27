@@ -29,7 +29,7 @@ end
 local batchSize = 1
 
 --Training parameters
-local epochs = 400
+local epochs = 1000
 --Parameters for the stochastic gradient descent (using the optim library).
 local sgdParams = {
     learningRate = 0.001,
@@ -58,7 +58,7 @@ local testInputs, testTargets = AudioData.retrieveAN4TestDataSet(an4FolderDir, w
 --Convert the dataset into a padded dataset of all same sizes.
 local dataset = Network.createDataSet(inputs, targets, batchSize)
 
---For testing purposes, we predict the first test data in the dataset and retrieve the first prediction.
+--For testing purposes, we predict certain items from the dataset.
 --TODO this should be an accuracy checker where we loop through all samples to retrieve an accuracy value.
 printPredictions(torch.totable(Network.predict(net, dataset:nextData())[1]))
 printPredictions(torch.totable(Network.predict(net, dataset:nextData())[1]))
