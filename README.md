@@ -14,12 +14,12 @@ Other Dependencies can be installed via luarocks:
 luarocks install https://raw.githubusercontent.com/soumith/lua---audio/master/audio-0.1-0.rockspec
 ```
 
-<a href="https://github.com/torch/optim">Optim: numeric optimization package for Torch.</a>:
+<a href="https://github.com/torch/optim">Optim: numeric optimization package for Torch</a>:
 ```
 luarocks install optim
 ```
 
-<a href="https://github.com/Element-Research/rnn">rnn: Recurrent Neural Network library for Torch7's nn.</a>:
+<a href="https://github.com/Element-Research/rnn">rnn: Recurrent Neural Network library for Torch7's nn</a>:
 ```
 luarocks install rnn
 ```
