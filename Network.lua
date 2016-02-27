@@ -58,7 +58,7 @@ function padDataset(totalInput)
     local allSizes, maxSize = findMaxSize(totalInput)
     local emptyMax = {}
     for i = 1, totalInput[1]:size(2) do
-        table.insert(emptyMax, 27)
+        table.insert(emptyMax, 0)
     end
     for i = 1, #totalInput do
         local input = torch.totable(totalInput[i])
@@ -111,7 +111,7 @@ function Network.trainNetwork(net, inputTensors, labels, batchSize, epochs, sgd_
         --TODO at the current stage the blank issue occurs when training the network with only 1 sample which is given everytime
         --TODO to the network, which is set below.
         local tempInput = dataset[1]
-        local inputs, targets = tempInput[1],tempInput[2]
+        local inputs, targets = tempInput[1], tempInput[2]
         gradParameters:zero()
         local predictions = net:forward(inputs)
         local loss = ctcCriterion:forward(predictions, targets)
