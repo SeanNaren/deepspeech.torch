@@ -2,20 +2,34 @@ local AudioData = require 'AudioData'
 local Network = require 'Network'
 
 --Finds the index of the max value in the 1d table given. Used when retrieving the prediction from the network.
-function maxIndex(table)
+local function maxIndex(table)
     local maxIndex = 1
     local maxValue = 0
     for index, value in ipairs(table) do
         if (value > maxValue) then maxValue = value maxIndex = index end
     end
-    return maxIndex
+    --We -1 from the index since CTC starts at index 0.
+    return maxIndex - 1
+end
+
+--Takes the resulting predictions from the network and prints the letter equivalent in one string.
+local function printPredictions(predictions)
+    local string = ""
+    --iterate through the results of the prediction and append the letter that was predicted in the sample.
+    for index, result in ipairs(predictions) do
+        --If the index is 0, that means that the character was blank.
+        if (maxIndex(result) ~= 0) then
+            string = string .. " " .. (AudioData.findLetter((maxIndex(result))))
+        end
+    end
+    print(string)
 end
 
 --The mini-batch size.
 local batchSize = 1
 
 --Training parameters
-local epochs = 200
+local epochs = 400
 --Parameters for the stochastic gradient descent (using the optim library).
 local sgdParams = {
     learningRate = 0.001,
@@ -46,13 +60,12 @@ local dataset = Network.createDataSet(inputs, targets, batchSize)
 
 --For testing purposes, we predict the first test data in the dataset and retrieve the first prediction.
 --TODO this should be an accuracy checker where we loop through all samples to retrieve an accuracy value.
-local sample1 = torch.totable(Network.predict(net, dataset:nextData())[1])
+printPredictions(torch.totable(Network.predict(net, dataset:nextData())[1]))
+printPredictions(torch.totable(Network.predict(net, dataset:nextData())[1]))
+printPredictions(torch.totable(Network.predict(net, dataset:nextData())[1]))
+printPredictions(torch.totable(Network.predict(net, dataset:nextData())[1]))
+printPredictions(torch.totable(Network.predict(net, dataset:nextData())[1]))
 
---iterate through the results of the prediction and output the letter that was predicted in the sample.
-for index, result in ipairs(sample1) do
-    --If the index is 1, that means that the character was blank.
-    if (maxIndex(result) ~= 1) then print(AudioData.findLetter((maxIndex(result)))) else print("CTC Blank") end
-end
 
 print("finished")
 

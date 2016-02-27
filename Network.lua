@@ -15,29 +15,28 @@ logger:style { '-' }
 
 --Returns a new network based on the speech recognition stack.
 function Network.createSpeechNetwork()
+    torch.manualSeed(12345)
     --Used to create the bi-directional RNNs. The fwd is clones to create the bwd
     local fwd = nn.Sequential()
-    fwd:add(nn.FastLSTM(300, 200))
-    fwd:add(nn.FastLSTM(200, 100))
-    fwd:add(nn.FastLSTM(100, 100))
-
+    fwd:add(nn.FastLSTM(300, 300))
+    fwd:add(nn.FastLSTM(300, 300))
+    fwd:add(nn.FastLSTM(300, 300))
     local net = nn.Sequential()
     net:add(nn.Sequencer(nn.BatchNormalization(129)))
-    net:add(nn.Sequencer(nn.TemporalConvolution(129, 384, 5, 1)))
+    net:add(nn.Sequencer(nn.TemporalConvolution(129, 584, 5, 1)))
     net:add(nn.Sequencer(nn.ReLU()))
     net:add(nn.Sequencer(nn.TemporalMaxPooling(2, 2)))
     net:add(nn.Sequencer(nn.ReLU()))
-    net:add(nn.Sequencer(nn.BatchNormalization(384)))
-    net:add(nn.Sequencer(nn.TemporalConvolution(384, 300, 5, 1)))
+    net:add(nn.Sequencer(nn.BatchNormalization(584)))
+    net:add(nn.Sequencer(nn.TemporalConvolution(584, 400, 5, 1)))
     net:add(nn.Sequencer(nn.ReLU()))
-    net:add(nn.Sequencer(nn.BatchNormalization(300)))
-    net:add(nn.Sequencer(nn.Linear(300, 300)))
+    net:add(nn.Sequencer(nn.BatchNormalization(400)))
+    net:add(nn.Sequencer(nn.Linear(400, 300)))
     net:add(nn.Sequencer(nn.ReLU()))
     net:add(nn.Sequencer(nn.BatchNormalization(300)))
     net:add(nn.BiSequencer(fwd))
-    net:add(nn.Sequencer(nn.BatchNormalization(200)))
-    net:add(nn.Sequencer(nn.Linear(200, 28)))
-    net:add(nn.Sequencer(nn.SoftMax()))
+    net:add(nn.Sequencer(nn.BatchNormalization(600)))
+    net:add(nn.Sequencer(nn.Linear(600, 28)))
     return net
 end
 
@@ -83,7 +82,7 @@ function Network.createDataSet(inputJson, labelJson, batchSize)
         table.insert(dataset, { padDataset(inputs), targets })
     end
     local pointer = 1
-    function dataset:size() return #dataset end
+    function dataset:size() return 10 end
 
     function dataset:nextData()
         local sample = dataset[pointer]
@@ -110,8 +109,7 @@ function Network.trainNetwork(net, inputTensors, labels, batchSize, epochs, sgd_
     local function feval(x_new)
         --TODO at the current stage the blank issue occurs when training the network with only 1 sample which is given everytime
         --TODO to the network, which is set below.
-        local tempInput = dataset[1]
-        local inputs, targets = tempInput[1], tempInput[2]
+        local inputs, targets = dataset:nextData()
         gradParameters:zero()
         local predictions = net:forward(inputs)
         local loss = ctcCriterion:forward(predictions, targets)

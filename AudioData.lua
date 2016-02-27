@@ -31,7 +31,7 @@ end
 
 --Given an index returns the letter at that index.
 function AudioData.findLetter(index)
-    return alphabet[index - 1]
+    return indexMapping[index]
 end
 
 function an4Dataset(folderDirPath, audioLocationPath, transcriptPath, windowSize, stride)
@@ -51,14 +51,10 @@ function an4Dataset(folderDirPath, audioLocationPath, transcriptPath, windowSize
         for string in string.gmatch(line, ">([^<]*)<") do
             --This line removes the space at the beginning and end of the sentence input.
             string = string:sub(2):sub(1, -2)
-            --Add a 0 to the beginning of the label (to signify the beginning of a sentence using a CTC Blank)
-            table.insert(label, 0)
             for i = 1, #string do
                 local character = string:sub(i, i)
                 table.insert(label, alphabetMapping[character])
             end
-            --Add a 0 to the end of the label (to signify the end of a sentence using a CTC Blank)
-            table.insert(label, 0)
             table.insert(targets, label)
         end
     end
