@@ -36,7 +36,7 @@ function Network.createSpeechNetwork()
     net:add(nn.Sequencer(nn.BatchNormalization(300)))
     net:add(nn.BiSequencer(fwd))
     net:add(nn.Sequencer(nn.BatchNormalization(200)))
-    net:add(nn.Sequencer(nn.Linear(200, 27)))
+    net:add(nn.Sequencer(nn.Linear(200, 28)))
     net:add(nn.Sequencer(nn.SoftMax()))
     return net
 end
@@ -58,7 +58,7 @@ function padDataset(totalInput)
     local allSizes, maxSize = findMaxSize(totalInput)
     local emptyMax = {}
     for i = 1, totalInput[1]:size(2) do
-        table.insert(emptyMax, 0)
+        table.insert(emptyMax, 27)
     end
     for i = 1, #totalInput do
         local input = torch.totable(totalInput[i])
@@ -110,7 +110,8 @@ function Network.trainNetwork(net, inputTensors, labels, batchSize, epochs, sgd_
     local function feval(x_new)
         --TODO at the current stage the blank issue occurs when training the network with only 1 sample which is given everytime
         --TODO to the network, which is set below.
-        local inputs, targets = dataset:nextData()
+        local tempInput = dataset[1]
+        local inputs, targets = tempInput[1],tempInput[2]
         gradParameters:zero()
         local predictions = net:forward(inputs)
         local loss = ctcCriterion:forward(predictions, targets)

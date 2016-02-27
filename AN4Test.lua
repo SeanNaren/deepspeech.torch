@@ -15,10 +15,10 @@ end
 local batchSize = 1
 
 --Training parameters
-local epochs = 500
+local epochs = 200
 --Parameters for the stochastic gradient descent (using the optim library).
 local sgdParams = {
-    learningRate = 10e-4,
+    learningRate = 0.001,
     learningRateDecay = 1e-9,
     weightDecay = 0,
     momentum = 0.9
@@ -39,8 +39,10 @@ Network.trainNetwork(net, inputs, targets, batchSize, epochs, sgdParams)
 --The test set in spectrogram tensor form.
 local testInputs, testTargets = AudioData.retrieveAN4TestDataSet(an4FolderDir, windowSize, stride)
 
+--TODO currently this dataset is AN EXACT REPLICA OF THE ABOVE, and does not use testInputs. This is to see
+--TODO if the network can correctly align the first sample.
 --Convert the dataset into a padded dataset of all same sizes.
-local dataset = Network.createDataSet(testInputs, testTargets, batchSize)
+local dataset = Network.createDataSet(inputs, targets, batchSize)
 
 --For testing purposes, we predict the first test data in the dataset and retrieve the first prediction.
 --TODO this should be an accuracy checker where we loop through all samples to retrieve an accuracy value.
@@ -49,7 +51,7 @@ local sample1 = torch.totable(Network.predict(net, dataset:nextData())[1])
 --iterate through the results of the prediction and output the letter that was predicted in the sample.
 for index, result in ipairs(sample1) do
     --If the index is 1, that means that the character was blank.
-    if (maxIndex(result) ~= 1) then print(AudioData.findLetter((maxIndex(result)))) else print("blank") end
+    if (maxIndex(result) ~= 1) then print(AudioData.findLetter((maxIndex(result)))) else print("CTC Blank") end
 end
 
 print("finished")
