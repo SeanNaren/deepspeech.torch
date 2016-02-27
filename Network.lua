@@ -2,7 +2,8 @@
 --for speech recognition.
 module(..., package.seeall)
 require 'cunn'
-require 'CTCCriterion'
+require 'warp_ctc'
+require 'CTCCriterionGPU'
 require 'optim'
 require 'rnn'
 require 'gnuplot'
@@ -37,6 +38,7 @@ function Network.createSpeechNetwork()
     net:add(nn.BiSequencer(fwd))
     net:add(nn.Sequencer(nn.BatchNormalization(600)))
     net:add(nn.Sequencer(nn.Linear(600, 28)))
+    net:cuda()
     return net
 end
 
@@ -64,7 +66,8 @@ function padDataset(totalInput)
         while (#input < maxSize) do
             table.insert(input, emptyMax)
         end
-        totalInput[i] = torch.Tensor(input)
+        --TODO here we have set the type to cuda, decide whether to hardcore gpu training.
+        totalInput[i] = torch.Tensor(input):cuda()
     end
     return totalInput
 end
@@ -104,7 +107,7 @@ end
 --Trains the network using SGD and the defined feval.
 --Uses warp-ctc cost evaluation.
 function Network.trainNetwork(net, inputTensors, labels, batchSize, epochs, sgd_params)
-    local ctcCriterion = CTCCriterion()
+    local ctcCriterion = CTCCriterionGPU()
     local x, gradParameters = net:getParameters()
     local dataset = Network.createDataSet(inputTensors, labels, batchSize)
     local function feval(x_new)

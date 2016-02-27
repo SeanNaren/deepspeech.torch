@@ -53,8 +53,6 @@ Network.trainNetwork(net, inputs, targets, batchSize, epochs, sgdParams)
 --The test set in spectrogram tensor form.
 local testInputs, testTargets = AudioData.retrieveAN4TestDataSet(an4FolderDir, windowSize, stride)
 
---TODO currently this dataset is AN EXACT REPLICA OF THE ABOVE, and does not use testInputs. This is to see
---TODO if the network can correctly align the first sample.
 --Convert the dataset into a padded dataset of all same sizes.
 local dataset = Network.createDataSet(inputs, targets, batchSize)
 
