@@ -19,83 +19,36 @@ function Network.createSpeechNetwork()
     torch.manualSeed(12345)
     --Used to create the bi-directional RNNs. The fwd is clones to create the bwd
     local fwd = nn.Sequential()
-    fwd:add(nn.FastLSTM(300, 300))
-    fwd:add(nn.FastLSTM(300, 300))
-    fwd:add(nn.FastLSTM(300, 300))
+    fwd:add(nn.FastLSTM(500, 500))
+    fwd:add(nn.FastLSTM(500, 500))
+    fwd:add(nn.FastLSTM(500, 500))
+    fwd:add(nn.FastLSTM(500, 500))
+    fwd:add(nn.FastLSTM(500, 500))
     local net = nn.Sequential()
+
     net:add(nn.Sequencer(nn.BatchNormalization(129)))
-    net:add(nn.Sequencer(nn.TemporalConvolution(129, 584, 5, 1)))
+    net:add(nn.Sequencer(nn.TemporalConvolution(129, 384, 5, 1)))
     net:add(nn.Sequencer(nn.ReLU()))
     net:add(nn.Sequencer(nn.TemporalMaxPooling(2, 2)))
-    net:add(nn.Sequencer(nn.ReLU()))
-    net:add(nn.Sequencer(nn.BatchNormalization(584)))
-    net:add(nn.Sequencer(nn.TemporalConvolution(584, 400, 5, 1)))
+    net:add(nn.Sequencer(nn.BatchNormalization(384)))
+    net:add(nn.Sequencer(nn.TemporalConvolution(384, 400, 5, 1)))
     net:add(nn.Sequencer(nn.ReLU()))
     net:add(nn.Sequencer(nn.BatchNormalization(400)))
-    net:add(nn.Sequencer(nn.Linear(400, 300)))
+    net:add(nn.Sequencer(nn.TemporalConvolution(400, 500, 5, 1)))
     net:add(nn.Sequencer(nn.ReLU()))
-    net:add(nn.Sequencer(nn.BatchNormalization(300)))
+    net:add(nn.Sequencer(nn.TemporalMaxPooling(2, 2)))
+
+    net:add(nn.Sequencer(nn.BatchNormalization(500)))
+    net:add(nn.Sequencer(nn.Linear(500, 500)))
+    net:add(nn.Sequencer(nn.ReLU()))
+    net:add(nn.Sequencer(nn.BatchNormalization(500)))
+    net:add(nn.Sequencer(nn.Linear(500, 500)))
+    net:add(nn.Sequencer(nn.BatchNormalization(500)))
     net:add(nn.BiSequencer(fwd))
-    net:add(nn.Sequencer(nn.BatchNormalization(600)))
-    net:add(nn.Sequencer(nn.Linear(600, 28)))
+    net:add(nn.Sequencer(nn.BatchNormalization(1000)))
+    net:add(nn.Sequencer(nn.Linear(1000, 28)))
     net:cuda()
     return net
-end
-
---Returns the largest tensor size and all sizes in a table of tensors
-function findMaxSize(tensors)
-    local maxSize = 0
-    local allSizes = {}
-    for i = 1, #tensors do
-        local tensorSize = tensors[i]:size(1)
-        if (tensorSize > maxSize) then maxSize = tensorSize end
-        table.insert(allSizes, tensorSize)
-    end
-    return allSizes, maxSize
-end
-
---Pads a dataset with 0's so all tensors are off the same size.
-function padDataset(totalInput)
-    local allSizes, maxSize = findMaxSize(totalInput)
-    local emptyMax = {}
-    for i = 1, totalInput[1]:size(2) do
-        table.insert(emptyMax, 0)
-    end
-    for i = 1, #totalInput do
-        local input = torch.totable(totalInput[i])
-        while (#input < maxSize) do
-            table.insert(input, emptyMax)
-        end
-        --TODO here we have set the type to cuda, decide whether to hardcore gpu training.
-        totalInput[i] = torch.Tensor(input):cuda()
-    end
-    return totalInput
-end
-
---Creates the dataset depending on the batchSize given. We also pad all the inputs so they are the same size.
-function Network.createDataSet(inputJson, labelJson, batchSize)
-    local dataset = {}
-    for t = 1, #inputJson, batchSize do
-        local inputs = {}
-        local targets = {}
-        for i = t, math.min(t + batchSize - 1, #inputJson) do
-            table.insert(inputs, inputJson[i])
-            table.insert(targets, labelJson[i])
-        end
-        table.insert(dataset, { padDataset(inputs), targets })
-    end
-    local pointer = 1
-    --TODO the size of dataset should be #dataset, however to limit to 10 samples I have hard coded this.
-    function dataset:size() return 20 end
-
-    function dataset:nextData()
-        local sample = dataset[pointer]
-        pointer = pointer + 1
-        if (pointer > dataset:size()) then pointer = 1 end
-        return sample[1], sample[2]
-    end
-
-    return dataset
 end
 
 --Returns a prediction of the input net and input tensors.
@@ -106,10 +59,9 @@ end
 
 --Trains the network using SGD and the defined feval.
 --Uses warp-ctc cost evaluation.
-function Network.trainNetwork(net, inputTensors, labels, batchSize, epochs, sgd_params)
+function Network.trainNetwork(net, dataset, epochs, sgd_params)
     local ctcCriterion = CTCCriterionGPU()
     local x, gradParameters = net:getParameters()
-    local dataset = Network.createDataSet(inputTensors, labels, batchSize)
     local function feval(x_new)
         local inputs, targets = dataset:nextData()
         gradParameters:zero()
@@ -123,6 +75,7 @@ function Network.trainNetwork(net, inputTensors, labels, batchSize, epochs, sgd_
 
     local currentLoss
     local i = 0
+    local startTime = os.time()
     while i < epochs do
         currentLoss = 0
         i = i + 1
@@ -131,6 +84,9 @@ function Network.trainNetwork(net, inputTensors, labels, batchSize, epochs, sgd_
         logger:add { currentLoss }
         print("Loss: ", currentLoss, " iteration: ", i)
     end
+    local endTime = os.time()
+    local secondsTaken = endTime - startTime
+    print("Minutes taken to train: ", secondsTaken / 60)
 end
 
 function Network.createLossGraph()
