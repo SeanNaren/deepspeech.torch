@@ -21,7 +21,7 @@ function Network.createSpeechNetwork()
     local fwd = createBiDirectionalNetwork()
     local net = nn.Sequential()
 
-    net:add(nn.Sequencer(nn.BatchNormalization(41)))
+    net:add(nn.Sequencer(nn.BatchNormalization(129)))
     net:add(nn.Sequencer(nn.TemporalConvolution(129, 384, 5, 1)))
     net:add(nn.Sequencer(nn.ReLU()))
     net:add(nn.Sequencer(nn.TemporalMaxPooling(2, 2)))
