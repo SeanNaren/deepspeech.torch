@@ -15,11 +15,16 @@ end
 --Takes the resulting predictions from the network and prints the letter equivalent in one string.
 local function printPredictions(predictions, testSample)
     local string = ""
+    local prevLetter = ""
     --iterate through the results of the prediction and append the letter that was predicted in the sample.
     for index, result in ipairs(torch.totable(predictions)) do
         --If the index is 0, that means that the character was blank.
         if (maxIndex(result) ~= 0) then
-            string = string .. " " .. (AudioData.findLetter((maxIndex(result))))
+            local letter = AudioData.findLetter((maxIndex(result)))
+            if (letter ~= prevLetter) then
+                string = string .. letter
+                prevLetter = letter
+            end
         end
     end
     local targetSentence = ""
@@ -32,7 +37,6 @@ end
 
 --The mini-batch size.
 local batchSize = 1
-
 --Training parameters
 local epochs = 30000
 --Parameters for the stochastic gradient descent (using the optim library).
@@ -40,11 +44,13 @@ local sgdParams = {
     learningRate = 0.001,
     learningRateDecay = 1e-9,
     weightDecay = 0,
-    momentum = 0.9
+    momentum = 0.9,
+    dampening= 0,
+    nesterov = true
 }
 
 --Window size and stride for the spectrogram transformation.
-local windowSize = 256
+local windowSize = 80
 local stride = 128
 
 --The training set in spectrogram tensor form.

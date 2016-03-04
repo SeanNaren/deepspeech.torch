@@ -7,6 +7,7 @@ require 'CTCCriterionGPU'
 require 'optim'
 require 'rnn'
 require 'gnuplot'
+require 'cudnn'
 
 local Network = {}
 
@@ -21,28 +22,27 @@ function Network.createSpeechNetwork()
     local fwd = createBiDirectionalNetwork()
     local net = nn.Sequential()
 
-    net:add(nn.Sequencer(nn.BatchNormalization(129)))
-    net:add(nn.Sequencer(nn.TemporalConvolution(129, 384, 5, 1)))
+    net:add(nn.Sequencer(nn.BatchNormalization(41)))
+    net:add(nn.Sequencer(nn.TemporalConvolution(41, 512, 5, 1)))
     net:add(nn.Sequencer(nn.ReLU()))
     net:add(nn.Sequencer(nn.TemporalMaxPooling(2, 2)))
-    net:add(nn.Sequencer(nn.BatchNormalization(384)))
-    net:add(nn.Sequencer(nn.TemporalConvolution(384, 600, 5, 1)))
+    net:add(nn.Sequencer(nn.BatchNormalization(512)))
+    net:add(nn.Sequencer(nn.TemporalConvolution(512, 512, 5, 1)))
     net:add(nn.Sequencer(nn.ReLU()))
-    net:add(nn.Sequencer(nn.BatchNormalization(600)))
-    net:add(nn.Sequencer(nn.TemporalConvolution(600, 700, 5, 1)))
-    net:add(nn.Sequencer(nn.ReLU()))
-    net:add(nn.Sequencer(nn.BatchNormalization(700)))
-    net:add(nn.Sequencer(nn.TemporalConvolution(700, 700, 5, 1)))
+    net:add(nn.Sequencer(nn.BatchNormalization(512)))
+    net:add(nn.Sequencer(nn.TemporalConvolution(512, 512, 5, 2)))
     net:add(nn.Sequencer(nn.ReLU()))
     net:add(nn.Sequencer(nn.TemporalMaxPooling(2, 2)))
+    net:add(nn.Sequencer(nn.BatchNormalization(512)))
+    net:add(nn.Sequencer(nn.Linear(512, 700)))
+    net:add(nn.Sequencer(nn.ReLU()))
 
     net:add(nn.Sequencer(nn.BatchNormalization(700)))
     net:add(nn.Sequencer(nn.Linear(700, 700)))
-    net:add(nn.Sequencer(nn.ReLU()))
     net:add(nn.Sequencer(nn.BatchNormalization(700)))
-    net:add(nn.Sequencer(nn.Linear(700, 700)))
-    net:add(nn.Sequencer(nn.BatchNormalization(700)))
+
     net:add(nn.BiSequencer(fwd))
+
     net:add(nn.Sequencer(nn.BatchNormalization(1400)))
     net:add(nn.Sequencer(nn.Linear(1400, 700)))
     net:add(nn.Sequencer(nn.BatchNormalization(700)))
@@ -53,6 +53,7 @@ end
 
 function createBiDirectionalNetwork()
     local fwd = nn.Sequential()
+    fwd:add(nn.FastLSTM(700, 700))
     fwd:add(nn.FastLSTM(700, 700))
     fwd:add(nn.FastLSTM(700, 700))
     fwd:add(nn.FastLSTM(700, 700))
@@ -75,6 +76,7 @@ function Network.trainNetwork(net, dataset, epochs, sgd_params)
     local x, gradParameters = net:getParameters()
     local function feval(x_new)
         local inputs, targets = dataset:nextData()
+        inputs = {inputs[1]:cuda()}
         gradParameters:zero()
         local predictions = net:forward(inputs)
         local loss = ctcCriterion:forward(predictions, targets)
