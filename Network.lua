@@ -7,7 +7,6 @@ require 'CTCCriterionGPU'
 require 'optim'
 require 'rnn'
 require 'gnuplot'
-require 'cudnn'
 
 local Network = {}
 
