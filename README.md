@@ -11,7 +11,7 @@ To install the Baidu warp-ctc library follow the guide at the end of the readme 
 
 To install CUDA (CUDA 7.0 is required):
 
-Download the .run file of your platform <a href="https://developer.nvidia.com/cuda-toolkit-70">here</a>:
+Download the .run file of your platform <a href="https://developer.nvidia.com/cuda-toolkit-70">here</a>.
 
 Example for Ubuntu 14.04:
 ```
