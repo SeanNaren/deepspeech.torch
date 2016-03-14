@@ -17,8 +17,9 @@ local function printPredictions(predictions, testSample)
     local string = ""
     local prevLetter = ""
     --iterate through the results of the prediction and append the letter that was predicted in the sample.
-    for index, result in ipairs(torch.totable(predictions)) do
+    for index, result in ipairs(predictions) do
         --If the index is 0, that means that the character was blank.
+        result = torch.totable(result)
         if (maxIndex(result) ~= 0) then
             local letter = AudioData.findLetter((maxIndex(result)))
             if (letter ~= prevLetter) then
@@ -35,8 +36,6 @@ local function printPredictions(predictions, testSample)
     print("Prediction: " .. string)
 end
 
---The mini-batch size.
-local batchSize = 1
 --Training parameters
 local epochs = 30000
 --Parameters for the stochastic gradient descent (using the optim library).
@@ -50,22 +49,19 @@ local sgdParams = {
 }
 
 --Window size and stride for the spectrogram transformation.
-local windowSize = 80
+local windowSize = 256
 local stride = 128
 
 --The training set in spectrogram tensor form.
 local an4FolderDir = "/root/CTCSpeechRecognition/Audio/an4"
---The noise wav file that is used to pad the dataset.
-local noiseFilePath = "/root/CTCSpeechRecognition/noise.wav"
-local trainingDataSet = AudioData.retrieveAN4TrainingDataSet(an4FolderDir, windowSize, stride, batchSize, noiseFilePath)
+local trainingDataSet = AudioData.retrieveAN4TrainingDataSet(an4FolderDir, windowSize, stride)
 
 --Create and train the network based on the parameters and training data.
 local net = Network.createSpeechNetwork()
 Network.trainNetwork(net, trainingDataSet, epochs, sgdParams)
 
 --The test set in spectrogram tensor form.
-local dataset = AudioData.retrieveAN4TestDataSet(an4FolderDir, windowSize, stride, batchSize, noiseFilePath)
-
+local dataset = AudioData.retrieveAN4TestDataSet(an4FolderDir, windowSize, stride)
 
 --Creates the loss plot.
 Network.createLossGraph()
@@ -76,7 +72,7 @@ local numberOfTestSamples = 5
 for i = 0, numberOfTestSamples do
     local inputs, targets = dataset:nextData()
     local predictions = Network.predict(net, inputs)
-    printPredictions(predictions[1], targets[1])
+    printPredictions(predictions, targets[1])
 end
 
 print("finished")

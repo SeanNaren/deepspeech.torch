@@ -11,11 +11,9 @@
 --Returned batched format: torch.Tensor({{1,2,3,4,5},{11,12,13,14,15},{6,7,8,9,10},{0,0,0,0,0}})
 function convertToCTCBatchSequence(tensors)
     local columnMajor = {}
-    for i = 1, tensors[1]:size(1) do
         for index, tensor in ipairs(tensors) do
-            table.insert(columnMajor, getTensorValue(tensor, i))
+            table.insert(columnMajor, getTensorValue(tensor))
         end
-    end
     local resultTensor = torch.Tensor(columnMajor)
     return resultTensor
 end
@@ -39,14 +37,13 @@ function convertToNetSequence(gradientOutput, numberOfSequences)
     end
     local returnTensors = {}
     for i = 1, numberOfSequences do
-        table.insert(returnTensors, torch.Tensor(gradients[i]))
+        table.insert(returnTensors, torch.CudaTensor(gradients[i]):squeeze())
     end
     return returnTensors
 end
 
 --Gets the tensor's value in the sequence.
-function getTensorValue(tensor, index)
-    local tensorValue = tensor[index]
-    local tableTensorValue = torch.totable(tensorValue)
+function getTensorValue(tensor)
+    local tableTensorValue = torch.totable(tensor)
     return tableTensorValue
 end

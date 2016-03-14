@@ -20,7 +20,7 @@ function AudioData.findLetter(index)
     return indexMapping[index]
 end
 
-function AudioData.retrieveAN4TrainingDataSet(folderDirPath, windowSize, stride, batchSize, noiseFilePath)
+function AudioData.retrieveAN4TrainingDataSet(folderDirPath, windowSize, stride)
     local audioLocationPath = folderDirPath .. "/etc/an4_train.fileids"
     local transcriptPath = folderDirPath .. "/etc/an4_train.transcription"
 
@@ -38,11 +38,11 @@ function AudioData.retrieveAN4TrainingDataSet(folderDirPath, windowSize, stride,
             table.insert(targets, label)
         end
     end
-    local inputs, targets = an4Dataset(folderDirPath, audioLocationPath, windowSize, stride, batchSize, noiseFilePath, targets)
+    local inputs, targets = an4Dataset(folderDirPath, audioLocationPath, windowSize, stride, targets)
     return inputs, targets
 end
 
-function AudioData.retrieveAN4TestDataSet(folderDirPath, windowSize, stride, batchSize, noiseFilePath)
+function AudioData.retrieveAN4TestDataSet(folderDirPath, windowSize, stride)
     local audioLocationPath = folderDirPath .. "/etc/an4_test.fileids"
     local transcriptPath = folderDirPath .. "/etc/an4_test.transcription"
 
@@ -59,11 +59,11 @@ function AudioData.retrieveAN4TestDataSet(folderDirPath, windowSize, stride, bat
         end
         table.insert(targets, label)
     end
-    local inputs, targets = an4Dataset(folderDirPath, audioLocationPath, windowSize, stride, batchSize, noiseFilePath, targets)
+    local inputs, targets = an4Dataset(folderDirPath, audioLocationPath, windowSize, stride, targets)
     return inputs, targets
 end
 
-function an4Dataset(folderDirPath, audioLocationPath, windowSize, stride, batchSize, noiseFilePath, targets)
+function an4Dataset(folderDirPath, audioLocationPath, windowSize, stride, targets)
     local inputs = {}
     local counter = 0
     for audioPath in io.lines(audioLocationPath) do
@@ -74,25 +74,16 @@ function an4Dataset(folderDirPath, audioLocationPath, windowSize, stride, batchS
         table.insert(inputs, spectrogram)
         if (math.fmod(counter, 100) == 0) then print(counter, " completed") end
     end
-
-    local noiseFile = audio.load(noiseFilePath)
-    local noiseSpectrogram = audio.spectrogram(noiseFile, windowSize, 'hamming', stride):transpose(1, 2)
-    local dataset = createDataSet(inputs, targets, batchSize, noiseSpectrogram)
+    local dataset = createDataSet(inputs, targets)
     return dataset
 end
 
---Creates the dataset depending on the batchSize given. We also pad all the inputs so they are the same size using the
---noise tensor to fill every tensor to the same size via padding.
-function createDataSet(inputs, targets, batchSize, noiseTensor)
+function createDataSet(inputs, targets)
     local dataset = {}
-    for t = 1, #inputs, batchSize do
-        local inputsBatch = {}
-        local targetsBatch = {}
-        for i = t, math.min(t + batchSize - 1, #inputs) do
-            table.insert(inputsBatch, inputs[i])
-            table.insert(targetsBatch, targets[i])
-        end
-        table.insert(dataset, { padDataset(inputsBatch, noiseTensor), targetsBatch })
+    for i = 1, #inputs do
+        --Wrap the targets into a table (batches would go into the table, but no batching supported).
+        --Convert the tensor into a cuda tensor for gpu calculations.
+        table.insert(dataset, { inputs[i]:cuda(), {targets[i]} })
     end
     local pointer = 1
     function dataset:size() return #dataset end
@@ -100,52 +91,11 @@ function createDataSet(inputs, targets, batchSize, noiseTensor)
     function dataset:nextData()
         local sample = dataset[pointer]
         pointer = pointer + 1
-        if (pointer > dataset:size()) then pointer = 1 end
+        if (pointer > #dataset) then pointer = 1 end
         return sample[1], sample[2]
     end
 
     return dataset
-end
-
---Pads a dataset with 0's so all tensors are off the same size.
-function padDataset(totalInput, noiseTensor)
-    local allSizes, maxSize = findMaxSize(totalInput)
-    local noiseTimeStepIterator = createNoiseIterator(noiseTensor)
-    for i = 1, #totalInput do
-        local input = torch.totable(totalInput[i])
-        while (#input < maxSize) do
-            table.insert(input, noiseTimeStepIterator:nextNoiseTimeStep())
-        end
-        --TODO here we have set the type to cuda, decide whether to hardcore gpu training.
-        totalInput[i] = torch.Tensor(input):cuda()
-    end
-    return totalInput
-end
-
-function createNoiseIterator(noiseTensor)
-    local noiseTensorTable = torch.totable(noiseTensor)
-    local pointer = 1
-    local noiseSize = #noiseTensorTable
-    function noiseTensorTable:nextNoiseTimeStep()
-        local noiseTimeStep = noiseTensorTable[pointer]
-        pointer = pointer + 1
-        if (pointer > noiseSize) then pointer = 1 end
-        return noiseTimeStep
-    end
-
-    return noiseTensorTable
-end
-
---Returns the largest tensor size and all sizes in a table of tensors
-function findMaxSize(tensors)
-    local maxSize = 0
-    local allSizes = {}
-    for i = 1, #tensors do
-        local tensorSize = tensors[i]:size(1)
-        if (tensorSize > maxSize) then maxSize = tensorSize end
-        table.insert(allSizes, tensorSize)
-    end
-    return allSizes, maxSize
 end
 
 

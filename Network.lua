@@ -2,12 +2,11 @@
 --for speech recognition.
 module(..., package.seeall)
 require 'cunn'
-require 'warp_ctc'
-require 'CTCCriterionGPU'
+require 'cudnn'
+require 'CTCCriterion'
 require 'optim'
 require 'rnn'
 require 'gnuplot'
-
 local Network = {}
 
 local logger = optim.Logger('train.log')
@@ -16,49 +15,31 @@ logger:style { '-' }
 
 --Returns a new network based on the speech recognition stack.
 function Network.createSpeechNetwork()
-    torch.manualSeed(12345)
-    --Used to create the bi-directional RNNs. The fwd is clones to create the bwd
-    local fwd = createBiDirectionalNetwork()
-    local net = nn.Sequential()
+    local cnn = nn.Sequential()
+    cnn:add(nn.BatchNormalization(129))
+    cnn:add(nn.TemporalConvolution(129, 256, 5, 1))
+    cnn:add(cudnn.ReLU())
+    cnn:add(nn.TemporalMaxPooling(2, 2))
+    cnn:add(nn.BatchNormalization(256))
+    cnn:add(nn.TemporalConvolution(256, 500, 5, 1))
+    cnn:add(cudnn.ReLU())
+    cnn:add(nn.TemporalMaxPooling(2, 2))
 
-    net:add(nn.Sequencer(nn.BatchNormalization(41)))
-    net:add(nn.Sequencer(nn.TemporalConvolution(41, 512, 5, 1)))
-    net:add(nn.Sequencer(nn.ReLU()))
-    net:add(nn.Sequencer(nn.TemporalMaxPooling(2, 2)))
-    net:add(nn.Sequencer(nn.BatchNormalization(512)))
-    net:add(nn.Sequencer(nn.TemporalConvolution(512, 512, 5, 1)))
-    net:add(nn.Sequencer(nn.ReLU()))
-    net:add(nn.Sequencer(nn.BatchNormalization(512)))
-    net:add(nn.Sequencer(nn.TemporalConvolution(512, 512, 5, 2)))
-    net:add(nn.Sequencer(nn.ReLU()))
-    net:add(nn.Sequencer(nn.TemporalMaxPooling(2, 2)))
-    net:add(nn.Sequencer(nn.BatchNormalization(512)))
-    net:add(nn.Sequencer(nn.Linear(512, 700)))
-    net:add(nn.Sequencer(nn.ReLU()))
-
-    net:add(nn.Sequencer(nn.BatchNormalization(700)))
-    net:add(nn.Sequencer(nn.Linear(700, 700)))
-    net:add(nn.Sequencer(nn.BatchNormalization(700)))
-
-    net:add(nn.BiSequencer(fwd))
-
-    net:add(nn.Sequencer(nn.BatchNormalization(1400)))
-    net:add(nn.Sequencer(nn.Linear(1400, 700)))
-    net:add(nn.Sequencer(nn.BatchNormalization(700)))
-    net:add(nn.Sequencer(nn.Linear(700, 28)))
-    net:cuda()
-    return net
+    local model = nn.Sequential()
+    model:add(cnn) --  seqlen x inputsize
+    cnn:add(nn.BatchNormalization(500))
+    model:add(nn.SplitTable(1))
+    model:add(nn.BiSequencer(createBiDirectionalNetwork()))
+    model:add(nn.Sequencer(nn.Linear(1000, 28)))
+    model:cuda()
+    return model
 end
 
 function createBiDirectionalNetwork()
     local fwd = nn.Sequential()
-    fwd:add(nn.FastLSTM(700, 700))
-    fwd:add(nn.FastLSTM(700, 700))
-    fwd:add(nn.FastLSTM(700, 700))
-    fwd:add(nn.FastLSTM(700, 700))
-    fwd:add(nn.FastLSTM(700, 700))
-    fwd:add(nn.FastLSTM(700, 700))
-    fwd:add(nn.FastLSTM(700, 700))
+    fwd:add(nn.FastLSTM(500, 500))
+    fwd:add(nn.FastLSTM(500, 500))
+    fwd:add(nn.FastLSTM(500, 500))
     return fwd;
 end
 
@@ -71,11 +52,11 @@ end
 --Trains the network using SGD and the defined feval.
 --Uses warp-ctc cost evaluation.
 function Network.trainNetwork(net, dataset, epochs, sgd_params)
-    local ctcCriterion = CTCCriterionGPU()
+    local ctcCriterion = CTCCriterion()
     local x, gradParameters = net:getParameters()
     local function feval(x_new)
         local inputs, targets = dataset:nextData()
-        inputs = {inputs[1]:cuda()}
+        inputs = inputs
         gradParameters:zero()
         local predictions = net:forward(inputs)
         local loss = ctcCriterion:forward(predictions, targets)
