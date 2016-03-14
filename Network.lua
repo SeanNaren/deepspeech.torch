@@ -19,15 +19,27 @@ function Network.createSpeechNetwork()
     cnn:add(nn.BatchNormalization(129))
     cnn:add(nn.TemporalConvolution(129, 256, 5, 1))
     cnn:add(cudnn.ReLU())
+    cnn:add(nn.TemporalConvolution(256, 256, 5, 1))
+    cnn:add(cudnn.ReLU())
     cnn:add(nn.TemporalMaxPooling(2, 2))
+    cnn:add(nn.Dropout(0.25))
+
     cnn:add(nn.BatchNormalization(256))
     cnn:add(nn.TemporalConvolution(256, 500, 5, 1))
     cnn:add(cudnn.ReLU())
+    cnn:add(nn.TemporalConvolution(500, 500, 5, 1))
+    cnn:add(cudnn.ReLU())
     cnn:add(nn.TemporalMaxPooling(2, 2))
+    cnn:add(nn.Dropout(0.25))
+
+    cnn:add(nn.BatchNormalization(500))
+    cnn:add(nn.Linear(500,500))
+    cnn:add(cudnn.ReLU())
+    cnn:add(nn.Dropout(0.5))
+
 
     local model = nn.Sequential()
     model:add(cnn) --  seqlen x inputsize
-    cnn:add(nn.BatchNormalization(500))
     model:add(nn.SplitTable(1))
     model:add(nn.BiSequencer(createBiDirectionalNetwork()))
     model:add(nn.Sequencer(nn.Linear(1000, 28)))

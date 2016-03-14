@@ -37,7 +37,7 @@ local function printPredictions(predictions, testSample)
 end
 
 --Training parameters
-local epochs = 30000
+local epochs = 45000
 --Parameters for the stochastic gradient descent (using the optim library).
 local sgdParams = {
     learningRate = 0.001,
