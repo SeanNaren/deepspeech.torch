@@ -49,6 +49,11 @@ luarocks install optim
 luarocks install rnn
 ```
 
+<a href="https://github.com/torch/xlua">xlua: A set of useful extensions to Lua</a>:
+```
+luarocks install xlua
+```
+
 It is also suggested to update the following libraries:
 ```
 luarocks install torch
