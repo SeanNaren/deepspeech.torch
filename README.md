@@ -61,7 +61,7 @@ luarocks install cutorch
 luarocks install cunn
 luarocks install cunnx
 ```
-Main method located at AN4Test.lua.
+Main method located at AN4CTCTrain.lua.
 
 Training data is currently the <a href="http://www.speech.cs.cmu.edu/databases/an4/">AN4 Audio database</a>. 
 
