@@ -38,8 +38,8 @@ local function printPredictions(predictions, testSample)
 end
 
 --Training parameters
-local epochs = 40000
-local saveNetwork = false
+local epochs = 45000
+local saveNetwork = true
 local saveName = "CTCNetwork"
 --Parameters for the stochastic gradient descent (using the optim library).
 local sgdParams = {
@@ -85,7 +85,6 @@ if (saveNetwork) then
 end
 
 print("finished")
-
 
 --prevents script from ending to view loss graph.
 while (true) do end

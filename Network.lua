@@ -100,4 +100,13 @@ function Network.createLossGraph()
     logger:plot()
 end
 
+function Network.saveNetwork(model, saveName)
+    torch.save(saveName, model)
+end
+
+function Network.loadNetwork(saveName)
+    local model = torch.load(saveName)
+    return model
+end
+
 return Network
