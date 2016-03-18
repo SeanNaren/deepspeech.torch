@@ -39,8 +39,12 @@ end
 
 --Training parameters
 local epochs = 45000
-local saveNetwork = true
-local saveName = "CTCNetwork"
+
+local networkParams = {
+    loadModel = false,
+    saveModel = true,
+    fileName = "CTCNetwork"
+}
 --Parameters for the stochastic gradient descent (using the optim library).
 local sgdParams = {
     learningRate = 0.001,
@@ -60,28 +64,23 @@ local an4FolderDir = "/root/CTCSpeechRecognition/Audio/an4"
 local trainingDataSet = AudioData.retrieveAN4TrainingDataSet(an4FolderDir, windowSize, stride)
 
 --Create and train the network based on the parameters and training data.
-local net = Network.createSpeechNetwork()
-Network.trainNetwork(net, trainingDataSet, epochs, sgdParams)
+Network:init(networkParams)
+
+Network:trainNetwork(trainingDataSet, epochs, sgdParams)
 
 --The test set in spectrogram tensor form.
 local dataset = AudioData.retrieveAN4TestDataSet(an4FolderDir, windowSize, stride)
 
 --Creates the loss plot.
-Network.createLossGraph()
+Network:createLossGraph()
 
 --For testing purposes, we predict certain items from the dataset.
 --TODO this should be an accuracy checker where we loop through all samples to retrieve an accuracy value.
 local numberOfTestSamples = 5
 for i = 0, numberOfTestSamples do
     local inputs, targets = dataset:nextData()
-    local predictions = Network.predict(net, inputs)
+    local predictions = Network:predict(inputs)
     printPredictions(predictions, targets[1])
-end
-
---Save the network
-
-if (saveNetwork) then
-    Network.saveNetwork(net, saveName)
 end
 
 print("finished")
