@@ -6,6 +6,7 @@ require 'CTCCriterion'
 require 'optim'
 require 'rnn'
 require 'gnuplot'
+require 'xlua'
 local Network = {}
 
 local logger = optim.Logger('train.log')
@@ -93,18 +94,22 @@ function Network:trainNetwork(dataset, epochs, sgd_params)
         return loss, gradParameters
     end
 
-    -- TODO - one epoch is one iteration of the entire dataset. Update below accordingly.
     local currentLoss
-    local i = 0
     local startTime = os.time()
-    while i < epochs do
-        currentLoss = 0
-        i = i + 1
-        local _, fs = optim.sgd(feval, x, sgd_params)
-        currentLoss = currentLoss + fs[1]
-        logger:add { currentLoss }
-        -- TODO - consider changing this to use an xlua progress bar for each epoch (loop of training set).
-        print("Loss: ", currentLoss, " iteration: ", i)
+    local dataSetSize = dataset:size()
+    for i = 1, epochs do
+        local averageLoss = 0
+        print(string.format("Training Epoch: %d", i))
+        for j = 1, dataSetSize do
+            currentLoss = 0
+            local _, fs = optim.sgd(feval, x, sgd_params)
+            currentLoss = currentLoss + fs[1]
+            logger:add { currentLoss } -- Add the current loss value to the logger.
+            xlua.progress(j, dataSetSize)
+            averageLoss = averageLoss + currentLoss
+        end
+        averageLoss = averageLoss / dataSetSize -- Calculate the average loss at this epoch.
+        print(string.format("Training Epoch: %d Average Loss: %f", i, averageLoss))
     end
     local endTime = os.time()
     local secondsTaken = endTime - startTime
