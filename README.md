@@ -70,8 +70,8 @@ Main method located at AN4CTCTrain.lua.
 
 Training data is currently the <a href="http://www.speech.cs.cmu.edu/databases/an4/">AN4 Audio database</a>. 
 
-Within the AN4Test we specify the file path to the an4 dataset which can be downloaded <a href="http://www.speech.cs.cmu.edu/databases/an4/an4_raw.bigendian.tar.gz">here</a>. 
+Within the AN4CTCTrain we specify the file path to the an4 dataset which can be downloaded <a href="http://www.speech.cs.cmu.edu/databases/an4/an4_raw.bigendian.tar.gz">here</a>.
 
-Extract the folder and give the filepath in the AN4Test.lua script. 
+Extract the folder and give the filepath in the AN4CTCTrain.lua script.
 
 **Note that the data has to be converted into wav format, a bash script ConvertAN4ToWav.sh has been included to help with this (place this into the an4 directory then run).**
