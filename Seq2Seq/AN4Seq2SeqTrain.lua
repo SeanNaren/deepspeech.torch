@@ -1,5 +1,5 @@
 local Seq2Seq = require('Seq2Seq')
-local AudioData = require('AudioData')
+local AudioData = require('../AudioData')
 local Shuffler = require('Shuffler')
 local an4FolderDir = "/root/CTCSpeechRecognition/Audio/an4"
 
