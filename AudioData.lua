@@ -63,6 +63,35 @@ function AudioData.retrieveAN4TestDataSet(folderDirPath, windowSize, stride)
     return inputs, targets
 end
 
+--Used by the Seq2Seq model. Retrieves both the test and training transcripts for AN4.
+function AudioData.retrieveAN4TranscriptSet(folderDirPath)
+    local transcriptPathTrain = folderDirPath .. "/etc/an4_train.transcription"
+    local transcriptPathTest = folderDirPath .. "/etc/an4_test.transcription"
+
+    local trainingTranscripts = {}
+    local testTranscripts = {}
+
+    local function convertToLabel(transcripts, line)
+        local label = {}
+        local string = line:gsub('%b()', '')
+        --Remove the space at the end of the line.
+        string = string:sub(1, -2)
+        for i = 1, #string do
+            local character = string:sub(i, i)
+            table.insert(label, alphabetMapping[character])
+        end
+        table.insert(transcripts, label)
+    end
+
+    for line in io.lines(transcriptPathTrain) do
+        convertToLabel(trainingTranscripts, line)
+    end
+    for line in io.lines(transcriptPathTest) do
+        convertToLabel(testTranscripts, line)
+    end
+    return trainingTranscripts
+end
+
 function an4Dataset(folderDirPath, audioLocationPath, windowSize, stride, targets)
     local inputs = {}
     local counter = 0
@@ -83,7 +112,7 @@ function createDataSet(inputs, targets)
     for i = 1, #inputs do
         --Wrap the targets into a table (batches would go into the table, but no batching supported).
         --Convert the tensor into a cuda tensor for gpu calculations.
-        table.insert(dataset, { inputs[i]:cuda(), {targets[i]} })
+        table.insert(dataset, {inputs[i]:cuda(), {targets[i]}})
     end
     local pointer = 1
     function dataset:size() return #dataset end

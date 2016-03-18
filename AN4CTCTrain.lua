@@ -3,8 +3,9 @@ local Network = require 'Network'
 
 --Finds the index of the max value in the 1d table given. Used when retrieving the prediction from the network.
 local function maxIndex(table)
+    --Initialize the max index to the first element in the table.
     local maxIndex = 1
-    local maxValue = 0
+    local maxValue = table[1]
     for index, value in ipairs(table) do
         if (value > maxValue) then maxValue = value maxIndex = index end
     end
@@ -37,14 +38,16 @@ local function printPredictions(predictions, testSample)
 end
 
 --Training parameters
-local epochs = 45000
+local epochs = 40000
+local saveNetwork = false
+local saveName = "CTCNetwork"
 --Parameters for the stochastic gradient descent (using the optim library).
 local sgdParams = {
     learningRate = 0.001,
     learningRateDecay = 1e-9,
     weightDecay = 0,
     momentum = 0.9,
-    dampening= 0,
+    dampening = 0,
     nesterov = true
 }
 
@@ -73,6 +76,12 @@ for i = 0, numberOfTestSamples do
     local inputs, targets = dataset:nextData()
     local predictions = Network.predict(net, inputs)
     printPredictions(predictions, targets[1])
+end
+
+--Save the network
+
+if (saveNetwork) then
+    Network.saveNetwork(net, saveName)
 end
 
 print("finished")

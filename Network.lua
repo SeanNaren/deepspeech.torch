@@ -52,6 +52,8 @@ function createBiDirectionalNetwork()
     fwd:add(nn.FastLSTM(500, 500))
     fwd:add(nn.FastLSTM(500, 500))
     fwd:add(nn.FastLSTM(500, 500))
+    fwd:add(nn.FastLSTM(500, 500))
+    fwd:add(nn.FastLSTM(500, 500))
     return fwd;
 end
 
