@@ -2,6 +2,7 @@
 require 'lfs'
 require 'audio'
 cutorch = require 'cutorch'
+require 'xlua'
 local AudioData = {}
 local alphabet = {
     '$', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R',
@@ -23,6 +24,7 @@ end
 function AudioData.retrieveAN4TrainingDataSet(folderDirPath, windowSize, stride)
     local audioLocationPath = folderDirPath .. "/etc/an4_train.fileids"
     local transcriptPath = folderDirPath .. "/etc/an4_train.transcription"
+    local nbSamples = 948 -- Amount of samples found in the AN4 training set.
 
     local targets = {}
 
@@ -38,14 +40,14 @@ function AudioData.retrieveAN4TrainingDataSet(folderDirPath, windowSize, stride)
             table.insert(targets, label)
         end
     end
-    local inputs, targets = an4Dataset(folderDirPath, audioLocationPath, windowSize, stride, targets)
+    local inputs, targets = an4Dataset(folderDirPath, audioLocationPath, windowSize, stride, targets, nbSamples)
     return inputs, targets
 end
 
 function AudioData.retrieveAN4TestDataSet(folderDirPath, windowSize, stride)
     local audioLocationPath = folderDirPath .. "/etc/an4_test.fileids"
     local transcriptPath = folderDirPath .. "/etc/an4_test.transcription"
-
+    local nbSamples = 130 -- Amount of samples found in the AN4 test set.
     local targets = {}
 
     for line in io.lines(transcriptPath) do
@@ -59,7 +61,7 @@ function AudioData.retrieveAN4TestDataSet(folderDirPath, windowSize, stride)
         end
         table.insert(targets, label)
     end
-    local inputs, targets = an4Dataset(folderDirPath, audioLocationPath, windowSize, stride, targets)
+    local inputs, targets = an4Dataset(folderDirPath, audioLocationPath, windowSize, stride, targets, nbSamples)
     return inputs, targets
 end
 
@@ -92,16 +94,16 @@ function AudioData.retrieveAN4TranscriptSet(folderDirPath)
     return trainingTranscripts
 end
 
-function an4Dataset(folderDirPath, audioLocationPath, windowSize, stride, targets)
+function an4Dataset(folderDirPath, audioLocationPath, windowSize, stride, targets, nbOfSamples)
     local inputs = {}
     local counter = 0
     for audioPath in io.lines(audioLocationPath) do
         counter = counter + 1
         local audioData = audio.load(folderDirPath .. "/wav/" .. audioPath .. ".wav")
-        --We transpose the frequency/time to now put time on the x axis, frequency on the y axis.
+        -- We transpose the frequency/time to now put time on the x axis, frequency on the y axis.
         local spectrogram = audio.spectrogram(audioData, windowSize, 'hamming', stride):transpose(1, 2)
         table.insert(inputs, spectrogram)
-        if (math.fmod(counter, 100) == 0) then print(counter, " completed") end
+        xlua.progress(counter,nbOfSamples)
     end
     local dataset = createDataSet(inputs, targets)
     return dataset
