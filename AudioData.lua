@@ -122,7 +122,7 @@ function createDataSet(inputs, targets)
     function dataset:nextData()
         local sample = dataset[pointer]
         pointer = pointer + 1
-        if (pointer > #dataset) then pointer = 1 end
+        if (pointer > dataset:size()) then pointer = 1 end
         return sample[1], sample[2]
     end
 
