@@ -1,28 +1,18 @@
 local AudioData = require 'AudioData'
 local Network = require 'Network'
 
---Finds the index of the max value in the 1d table given. Used when retrieving the prediction from the network.
-local function maxIndex(table)
-    --Initialize the max index to the first element in the table.
-    local maxIndex = 1
-    local maxValue = table[1]
-    for index, value in ipairs(table) do
-        if (value > maxValue) then maxValue = value maxIndex = index end
-    end
-    --We -1 from the index since CTC starts at index 0.
-    return maxIndex - 1
-end
-
---Takes the resulting predictions from the network and prints the letter equivalent in one string.
+--[[Takes the resulting predictions from the network and prints the letter equivalent in one string.]]
 local function printPredictions(predictions, testSample)
     local string = ""
     local prevLetter = ""
-    --iterate through the results of the prediction and append the letter that was predicted in the sample.
-    for index, result in ipairs(predictions) do
-        --If the index is 0, that means that the character was blank.
-        result = torch.totable(result)
-        if (maxIndex(result) ~= 0) then
-            local letter = AudioData.findLetter((maxIndex(result)))
+    -- Iterate through the results of the prediction and append the letter that was predicted in the sample.
+    for index, prediction in ipairs(predictions) do
+        local maxValue, maxIndex = torch.max(prediction, 1)
+        -- We minus 1 to the index because a CTC blank has the index of 0.
+        maxIndex = maxIndex[1] - 1
+        -- If the index is 0, that means that the character was blank.
+        if (maxIndex ~= 0) then
+            local letter = AudioData.findLetter(maxIndex)
             if (letter ~= prevLetter) then
                 string = string .. letter
                 prevLetter = letter
@@ -38,7 +28,7 @@ local function printPredictions(predictions, testSample)
 end
 
 --Training parameters
-local epochs = 9
+local epochs = 45000
 
 local networkParams = {
     loadModel = false,
