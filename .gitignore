@@ -6,4 +6,4 @@ CTC.iml
 CTCSpeechRecognition.iml
 ctc/train.log
 ctc/train.log.eps
-Seq2Seq/EncoderDecoderTest.lua
+Seq2Seq/
