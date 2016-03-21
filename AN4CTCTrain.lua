@@ -28,7 +28,7 @@ local function printPredictions(predictions, testSample)
 end
 
 --Training parameters
-local epochs = 45000
+local epochs = 15
 
 local networkParams = {
     loadModel = false,
