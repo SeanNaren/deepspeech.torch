@@ -33,7 +33,7 @@ export LD_LIBRARY_PATH=/usr/local/cuda-7.0/lib64:$LD_LIBRARY_PATH
 ```
 Restart the terminal for changes to take effect.
 
-Other Dependencies can be installed via luarocks:
+Other dependencies can be installed via luarocks:
 <a href="https://github.com/soumith/lua---audio">Audio Library for Torch</a>:
 ```
 luarocks install https://raw.githubusercontent.com/soumith/lua---audio/master/audio-0.1-0.rockspec
