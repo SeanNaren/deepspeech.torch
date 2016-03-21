@@ -6,7 +6,6 @@ module(..., package.seeall)
 require 'nn'
 require 'cutorch'
 require 'warp_ctc'
-require 'CTCBatcher'
 local CTCCriterion, parent = torch.class('CTCCriterion', 'nn.Criterion')
 
 function CTCCriterion:__init()
@@ -20,11 +19,10 @@ end
 --networkOutput: {torch.Tensor({{1,2,3,4,5},{6,7,8,9,10}}),torch.Tensor({{11,12,13,14,15},{16,17,18,19,20}})}
 --target is the expected labels i.e {{1,2},{3,3}} (for 2 sequences as above).
 function CTCCriterion:updateOutput(networkOutput, target)
-    local input = convertToCTCBatchSequence(networkOutput)
-    local act = input:cuda()
+    local act = CTCCriterion.convertToCTCBatchSequence(networkOutput):cuda()
     local grads = torch.CudaTensor()
     local labels = target
-    local size = tensorSizes(networkOutput)
+    local size = {#networkOutput}
     self.output = averageCosts(gpu_ctc(act, grads, labels, size))
     return self.output
 end
@@ -36,22 +34,15 @@ end
 --networkOutput: {torch.Tensor({{1,2,3,4,5},{6,7,8,9,10}}),torch.Tensor({{11,12,13,14,15},{16,17,18,19,20}})}
 --target is the expected labels i.e {{1,2},{3,3}} (for 2 sequences as above).
 function CTCCriterion:updateGradInput(networkOutput, target)
-    local input = convertToCTCBatchSequence(networkOutput)
-    local act = input:cuda()
-    local temp = nn.SoftMax():updateOutput(input:double()):cuda()
+    local act = CTCCriterion.convertToCTCBatchSequence(networkOutput):cuda()
+    local temp = nn.SoftMax():updateOutput(act:double()):cuda()
     local grads = temp:clone():zero()
     local labels = target
-    local size = tensorSizes(networkOutput)
+    local size = {#networkOutput}
     gpu_ctc(act, grads, labels, size)
-    self.gradInput = convertToNetSequence(grads:float(), #networkOutput)
+    self.gradInput = CTCCriterion.convertToNetSequence(grads:float(), #networkOutput)
     return self.gradInput
 end
-
---Returns the largest tensor size and all sizes in a table of tensors
-function tensorSizes(tensors)
-    return { #tensors }
-end
-
 
 --If batching occurs multiple costs are returned. We sum the costs and return.
 function averageCosts(list)
@@ -64,6 +55,41 @@ function averageCosts(list)
         end
     end
     return acc
+end
+
+--TODO batching does not currently work, so do not pass batches from the final LSTM layers. Single inputs
+--TODO (like examples below) work fine, the WARP-CTC batching method is not implemented.
+
+--input to function: {torch.Tensor({1,2,3,4,5}),torch.Tensor({11,12,13,14,15})}
+--Returned batched format: torch.Tensor({{1,2,3,4,5},{11,12,13,14,15}})
+function CTCCriterion.convertToCTCBatchSequence(tensors)
+    local columnMajor = {}
+    for index, tensor in ipairs(tensors) do
+        table.insert(columnMajor, torch.totable(tensor))
+    end
+    local resultTensor = torch.Tensor(columnMajor)
+    return resultTensor
+end
+
+--Reverses the batching process to give the gradientOutput for
+--backwards propagation on the net.
+--Example:
+--input to function (output of the CTCCriterion):
+--torch.Tensor({{1,2,3,4,5},{11,12,13,14,15},{6,7,8,9,10},{0,0,0,0,0}})
+--Returned format:
+--{torch.Tensor({{1,2,3,4,5},{6,7,8,9,10}}),torch.Tensor({{11,12,13,14,15},{0,0,0,0,0}})}
+function CTCCriterion.convertToNetSequence(gradientOutput, numberOfSequences)
+    local gradients = {}
+    for i = 1, gradientOutput:size(1) do
+        local index = math.fmod(i, numberOfSequences)
+        if (index == 0) then index = numberOfSequences end
+        gradients[index] =  torch.totable(gradientOutput[i])
+    end
+    local returnTensors = {}
+    for i = 1, numberOfSequences do
+        table.insert(returnTensors, torch.CudaTensor(gradients[i]))
+    end
+    return returnTensors
 end
 
 return CTCCriterion
