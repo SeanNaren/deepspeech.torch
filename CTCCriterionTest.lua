@@ -56,9 +56,9 @@ end
 
 -- Tests are modelled around examples given in the CTCBatcher class
 
-function convertToCTCBatchSequenceTest()
+function convertToCTCSequenceTest()
     local input = {torch.Tensor({1,2,3,4,5}),torch.Tensor({6,7,8,9,10})}
-    local output = CTCCriterion.convertToCTCBatchSequence(input)
+    local output = CTCCriterion.convertToCTCSequence(input)
     local expected = torch.Tensor({{1,2,3,4,5},{6,7,8,9,10}})
     assertion(output, expected, "convertToCTCBatchSequenceTest")
 end
@@ -85,6 +85,6 @@ mediumTest()
 mediumNegativeTest()
 batchTest()
 
---CTC batching tests.
-convertToCTCBatchSequenceTest()
+--CTC sequencing tests.
+convertToCTCSequenceTest()
 convertToNetSequenceTest()

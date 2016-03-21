@@ -19,7 +19,7 @@ end
 --networkOutput: {torch.Tensor({{1,2,3,4,5},{6,7,8,9,10}}),torch.Tensor({{11,12,13,14,15},{16,17,18,19,20}})}
 --target is the expected labels i.e {{1,2},{3,3}} (for 2 sequences as above).
 function CTCCriterion:updateOutput(networkOutput, target)
-    local act = CTCCriterion.convertToCTCBatchSequence(networkOutput):cuda()
+    local act = CTCCriterion.convertToCTCSequence(networkOutput):cuda()
     local grads = torch.CudaTensor()
     local labels = target
     local size = {#networkOutput}
@@ -34,7 +34,7 @@ end
 --networkOutput: {torch.Tensor({{1,2,3,4,5},{6,7,8,9,10}}),torch.Tensor({{11,12,13,14,15},{16,17,18,19,20}})}
 --target is the expected labels i.e {{1,2},{3,3}} (for 2 sequences as above).
 function CTCCriterion:updateGradInput(networkOutput, target)
-    local act = CTCCriterion.convertToCTCBatchSequence(networkOutput):cuda()
+    local act = CTCCriterion.convertToCTCSequence(networkOutput):cuda()
     local temp = nn.SoftMax():updateOutput(act:double()):cuda()
     local grads = temp:clone():zero()
     local labels = target
@@ -57,12 +57,9 @@ function averageCosts(list)
     return acc
 end
 
---TODO batching does not currently work, so do not pass batches from the final LSTM layers. Single inputs
---TODO (like examples below) work fine, the WARP-CTC batching method is not implemented.
-
 --input to function: {torch.Tensor({1,2,3,4,5}),torch.Tensor({11,12,13,14,15})}
 --Returned batched format: torch.Tensor({{1,2,3,4,5},{11,12,13,14,15}})
-function CTCCriterion.convertToCTCBatchSequence(tensors)
+function CTCCriterion.convertToCTCSequence(tensors)
     local columnMajor = {}
     for index, tensor in ipairs(tensors) do
         table.insert(columnMajor, torch.totable(tensor))
