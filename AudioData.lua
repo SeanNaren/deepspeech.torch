@@ -30,6 +30,7 @@ function AudioData.retrieveAN4TrainingDataSet(folderDirPath, windowSize, stride)
 
     for line in io.lines(transcriptPath) do
         local label = {}
+        line = string.lower(line)
         for string in string.gmatch(line, ">([^<]*)<") do
             --This line removes the space at the beginning and end of the sentence input.
             string = string:sub(2):sub(1, -2)
@@ -53,6 +54,7 @@ function AudioData.retrieveAN4TestDataSet(folderDirPath, windowSize, stride)
 
     for line in io.lines(transcriptPath) do
         local label = {}
+        line = string.lower(line)
         local line = line:gsub('%b()', '')
         --Remove the space at the end of the line.
         line = line:sub(1, -2)
@@ -61,7 +63,7 @@ function AudioData.retrieveAN4TestDataSet(folderDirPath, windowSize, stride)
             table.insert(label, alphabetMapping[character])
         end
         table.insert(targets, label)
-        table.insert(transcripts, string.lower(line))
+        table.insert(transcripts, line)
     end
     local dataSet = an4Dataset(folderDirPath, audioLocationPath, windowSize, stride, targets, nbSamples)
     return dataSet, transcripts
