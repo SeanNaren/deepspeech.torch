@@ -33,7 +33,7 @@ local epochs = 47
 local networkParams = {
     loadModel = false,
     saveModel = true,
-    fileName = "CTCNetwork"
+    fileName = "CTCNetwork.model"
 }
 --Parameters for the stochastic gradient descent (using the optim library).
 local sgdParams = {
