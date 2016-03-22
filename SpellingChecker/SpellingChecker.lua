@@ -1,5 +1,6 @@
 --[[
 -- VERY basic spell checker based on Peter Norvig's spell correct model.
+-- http://norvig.com/spell-correct.html
 ]]
 
 require 'lfs'
@@ -13,8 +14,8 @@ local alphabet = {
     's', 't', 'u', 'v', 'w', 'x', 'y', 'z'
 }
 
-function SpellingChecker:init(wordFile)
-    for line in io.lines(wordFile) do
+function SpellingChecker:init(wordsFilePath)
+    for line in io.lines(wordsFilePath) do
         line = string.lower(line)
         for word in string.gmatch(line, '%w+') do
             local count = words[word]
@@ -27,6 +28,8 @@ function SpellingChecker:init(wordFile)
     end
 end
 
+-- Input is a word in string format.
+-- Returns a list of edits to the words based on deleting/transposing/replacing/inserting characters.
 local function edits(word)
     local results = {}
     for i = 1, word:len() do
