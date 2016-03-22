@@ -40,8 +40,8 @@ function AudioData.retrieveAN4TrainingDataSet(folderDirPath, windowSize, stride)
             table.insert(targets, label)
         end
     end
-    local inputs, targets = an4Dataset(folderDirPath, audioLocationPath, windowSize, stride, targets, nbSamples)
-    return inputs, targets
+    local dataSet = an4Dataset(folderDirPath, audioLocationPath, windowSize, stride, targets, nbSamples)
+    return dataSet
 end
 
 function AudioData.retrieveAN4TestDataSet(folderDirPath, windowSize, stride)
@@ -49,6 +49,7 @@ function AudioData.retrieveAN4TestDataSet(folderDirPath, windowSize, stride)
     local transcriptPath = folderDirPath .. "/etc/an4_test.transcription"
     local nbSamples = 130 -- Amount of samples found in the AN4 test set.
     local targets = {}
+    local transcripts = {} -- For verification of words, we return the lines of the test data.
 
     for line in io.lines(transcriptPath) do
         local label = {}
@@ -60,9 +61,10 @@ function AudioData.retrieveAN4TestDataSet(folderDirPath, windowSize, stride)
             table.insert(label, alphabetMapping[character])
         end
         table.insert(targets, label)
+        table.insert(transcripts, string)
     end
-    local inputs, targets = an4Dataset(folderDirPath, audioLocationPath, windowSize, stride, targets, nbSamples)
-    return inputs, targets
+    local dataSet = an4Dataset(folderDirPath, audioLocationPath, windowSize, stride, targets, nbSamples)
+    return dataSet, transcripts
 end
 
 --Used by the Seq2Seq model. Retrieves both the test and training transcripts for AN4.
