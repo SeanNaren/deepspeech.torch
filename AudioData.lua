@@ -53,15 +53,15 @@ function AudioData.retrieveAN4TestDataSet(folderDirPath, windowSize, stride)
 
     for line in io.lines(transcriptPath) do
         local label = {}
-        local string = line:gsub('%b()', '')
+        local line = line:gsub('%b()', '')
         --Remove the space at the end of the line.
-        string = string:sub(1, -2)
-        for i = 1, #string do
-            local character = string:sub(i, i)
+        line = line:sub(1, -2)
+        for i = 1, #line do
+            local character = line:sub(i, i)
             table.insert(label, alphabetMapping[character])
         end
         table.insert(targets, label)
-        table.insert(transcripts, string)
+        table.insert(transcripts, string.lower(line))
     end
     local dataSet = an4Dataset(folderDirPath, audioLocationPath, windowSize, stride, targets, nbSamples)
     return dataSet, transcripts
