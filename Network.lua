@@ -24,7 +24,7 @@ function Network:init(networkParams)
     else
         Network:createSpeechNetwork()
     end
-    assert(networkParams.saveModel and networkParams.fileName, "To save you must specify the fileName you want to save to")
+    assert((networkParams.saveModel or networkParams.loadModel) and networkParams.fileName, "To save/load you must specify the fileName you want to save to")
 end
 
 --Creates a new speech network loaded into Network.
