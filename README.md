@@ -1,17 +1,17 @@
 # CTCSpeechRecognition
 
-Work in progress. Implementation of the <a href="https://github.com/baidu-research/warp-ctc/">Baidu Warp-CTC</a> using torch7. Feeds spectrogram data into a neural network using the Torch7 library, training itself with the CTC activation function.
+Work in progress. Implementation of the [Baidu Warp-CTC](https://github.com/baidu-research/warp-ctc) using torch7. Feeds spectrogram data into a neural network using the Torch7 library, training itself with the CTC activation function.
 
 Current implementation runs on CUDA 7.0.
 
-To install torch7 follow the guide <a href="http://torch.ch/docs/getting-started.html">here</a>.
+To install torch7 follow the guide [here](http://torch.ch/docs/getting-started.html).
 
-To install the Baidu warp-ctc library follow the guide at the end of the readme <a href="https://github.com/baidu-research/warp-ctc/README.md">here</a>.
+To install the Baidu warp-ctc library follow the guide at the end of the readme [here](https://github.com/baidu-research/warp-ctc/README.md).
 
 
 To install CUDA (CUDA 7.0 is required):
 
-Download the .run file of your platform <a href="https://developer.nvidia.com/cuda-toolkit-70">here</a>.
+Download the .run file of your platform [here](https://developer.nvidia.com/cuda-toolkit-70).
 
 Example for Ubuntu 14.04:
 ```
@@ -34,22 +34,23 @@ export LD_LIBRARY_PATH=/usr/local/cuda-7.0/lib64:$LD_LIBRARY_PATH
 Restart the terminal for changes to take effect.
 
 Other dependencies can be installed via luarocks:
-<a href="https://github.com/soumith/lua---audio">Audio Library for Torch</a>:
+
+[Audio Library for Torch](https://github.com/soumith/lua---audio): Audio Library for Torch</a>:
 ```
 luarocks install https://raw.githubusercontent.com/soumith/lua---audio/master/audio-0.1-0.rockspec
 ```
 
-<a href="https://github.com/torch/optim">Optim: numeric optimization package for Torch</a>:
+[Optim](https://github.com/torch/optim): numeric optimization package for Torch</a>:
 ```
 luarocks install optim
 ```
 
-<a href="https://github.com/Element-Research/rnn">rnn: Recurrent Neural Network library for Torch7's nn</a>:
+[rnn](https://github.com/Element-Research/rnn): Recurrent Neural Network library for Torch7's nn</a>:
 ```
 luarocks install rnn
 ```
 
-<a href="https://github.com/torch/xlua">xlua: A set of useful extensions to Lua</a>:
+[xlua](https://github.com/torch/xlua): A set of useful extensions to Lua</a>:
 ```
 luarocks install xlua
 ```
@@ -66,11 +67,15 @@ luarocks install cutorch
 luarocks install cunn
 luarocks install cunnx
 ```
+
+For cudnn you need to create an account, follow install instructions [here](https://developer.nvidia.com/cudnn).
+
+
 Main method located at AN4CTCTrain.lua.
 
-Training data is currently the <a href="http://www.speech.cs.cmu.edu/databases/an4/">AN4 Audio database</a>. 
+Training data is currently the [AN4 Audio database](http://www.speech.cs.cmu.edu/databases/an4/). 
 
-Within the AN4CTCTrain we specify the file path to the an4 dataset which can be downloaded <a href="http://www.speech.cs.cmu.edu/databases/an4/an4_raw.bigendian.tar.gz">here</a>.
+Within the AN4CTCTrain we specify the file path to the an4 dataset which can be downloaded [here](http://www.speech.cs.cmu.edu/databases/an4/an4_raw.bigendian.tar.gz).
 
 Extract the folder and give the filepath in the AN4CTCTrain.lua script.
 
