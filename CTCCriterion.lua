@@ -14,9 +14,9 @@ end
 
 --Calculates and returns the cost of the input respect to the target.
 --Example:
---Two input activation sequences: {1,2,3,4,5},{6,7,8,9,10} and {11,12,13,14,15},{16,17,18,19,20}
+--Two input activation sequences: {1,2,3,4,5} and {11,12,13,14,15}
 --Input to the function would be:
---networkOutput: {torch.Tensor({{1,2,3,4,5},{6,7,8,9,10}}),torch.Tensor({{11,12,13,14,15},{16,17,18,19,20}})}
+--networkOutput: {torch.Tensor({1,2,3,4,5}),torch.Tensor({11,12,13,14,15})}
 --target is the expected labels i.e {{1,2},{3,3}} (for 2 sequences as above).
 function CTCCriterion:updateOutput(networkOutput, target)
     local act = CTCCriterion.convertToCTCSequence(networkOutput):cuda()
@@ -29,9 +29,9 @@ end
 
 --Calculates and returns the gradients in respect to the inputs and targets.
 --Example:
---Two input activation sequences: {1,2,3,4,5},{6,7,8,9,10} and {11,12,13,14,15},{16,17,18,19,20}
+--Two input activation sequences: {1,2,3,4,5} and {11,12,13,14,15}
 --Input to the function would be:
---networkOutput: {torch.Tensor({{1,2,3,4,5},{6,7,8,9,10}}),torch.Tensor({{11,12,13,14,15},{16,17,18,19,20}})}
+--networkOutput: {torch.Tensor({1,2,3,4,5}),torch.Tensor({11,12,13,14,15})}
 --target is the expected labels i.e {{1,2},{3,3}} (for 2 sequences as above).
 function CTCCriterion:updateGradInput(networkOutput, target)
     local act = CTCCriterion.convertToCTCSequence(networkOutput):cuda()
