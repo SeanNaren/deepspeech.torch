@@ -61,9 +61,6 @@ Network:trainNetwork(trainingDataSet, epochs, sgdParams)
 --The test set in spectrogram tensor form.
 local testDataSet = AudioData.retrieveAN4TestDataSet(an4FolderDir, windowSize, stride)
 
---Creates the loss plot.
-Network:createLossGraph()
-
 --For testing purposes, we predict certain items from the dataset.
 --TODO should use a language model or Seq2Seq to handle spell checking.
 --TODO this should be an accuracy checker where we loop through all samples to retrieve an accuracy value.
@@ -73,6 +70,9 @@ for i = 0, numberOfTestSamples do
     local predictions = Network:predict(inputs)
     printPredictions(predictions, targets[1])
 end
+
+--Creates the loss plot.
+Network:createLossGraph()
 
 print("finished")
 
