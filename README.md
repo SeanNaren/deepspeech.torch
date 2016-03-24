@@ -81,6 +81,10 @@ luarocks install dpnn
 
 For cudnn you need to create an account, follow install instructions [here](https://developer.nvidia.com/cudnn).
 
+Once you have completed the above installation, Install lua bindings for [cudnn](https://github.com/soumith/cudnn.torch):
+```
+luarocks install cudnn
+```
 
 Main method located at AN4CTCTrain.lua.
 
