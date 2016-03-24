@@ -32,7 +32,7 @@ export LD_LIBRARY_PATH=/usr/local/cuda-7.0/lib64:$LD_LIBRARY_PATH
 ```
 Restart the terminal for changes to take effect.
 
-For CUDA implementation (make sure to install these via luarocks first b efore installing the warp-ctc library):
+For CUDA implementation (make sure to install these via luarocks first before installing the warp-ctc library):
 ```
 luarocks install cutorch
 luarocks install cunn
