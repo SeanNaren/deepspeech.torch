@@ -32,6 +32,13 @@ export LD_LIBRARY_PATH=/usr/local/cuda-7.0/lib64:$LD_LIBRARY_PATH
 ```
 Restart the terminal for changes to take effect.
 
+For CUDA implementation (make sure to install these via luarocks first b efore installing the warp-ctc library):
+```
+luarocks install cutorch
+luarocks install cunn
+luarocks install cunnx
+```
+
 To install the Baidu warp-ctc library follow the guide at the end of the readme [here](https://github.com/baidu-research/warp-ctc/blob/master/README.md).
 
 Other dependencies can be installed via luarocks:
@@ -61,12 +68,6 @@ It is also suggested to update the following libraries:
 luarocks install torch
 luarocks install nn
 luarocks install dpnn
-```
-For CUDA implementation:
-```
-luarocks install cutorch
-luarocks install cunn
-luarocks install cunnx
 ```
 
 For cudnn you need to create an account, follow install instructions [here](https://developer.nvidia.com/cudnn).
