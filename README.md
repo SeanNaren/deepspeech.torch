@@ -4,12 +4,11 @@ Work in progress. Implementation of the [Baidu Warp-CTC](https://github.com/baid
 
 Current implementation runs on CUDA 7.0.
 
+## Installation
+
 To install torch7 follow the guide [here](http://torch.ch/docs/getting-started.html).
 
-To install the Baidu warp-ctc library follow the guide at the end of the readme [here](https://github.com/baidu-research/warp-ctc/README.md).
-
-
-To install CUDA (CUDA 7.0 is required):
+You must have CUDA 7.0 (build supported by warp-ctc). To install CUDA:
 
 Download the .run file of your platform [here](https://developer.nvidia.com/cuda-toolkit-70).
 
@@ -32,6 +31,8 @@ export PATH=/usr/local/cuda-7.0/bin:$PATH
 export LD_LIBRARY_PATH=/usr/local/cuda-7.0/lib64:$LD_LIBRARY_PATH
 ```
 Restart the terminal for changes to take effect.
+
+To install the Baidu warp-ctc library follow the guide at the end of the readme [here](https://github.com/baidu-research/warp-ctc/README.md).
 
 Other dependencies can be installed via luarocks:
 
