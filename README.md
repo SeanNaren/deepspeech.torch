@@ -32,7 +32,7 @@ export LD_LIBRARY_PATH=/usr/local/cuda-7.0/lib64:$LD_LIBRARY_PATH
 ```
 Restart the terminal for changes to take effect.
 
-To install the Baidu warp-ctc library follow the guide at the end of the readme [here](https://github.com/baidu-research/warp-ctc/README.md).
+To install the Baidu warp-ctc library follow the guide at the end of the readme [here](https://github.com/baidu-research/warp-ctc/blob/master/README.md).
 
 Other dependencies can be installed via luarocks:
 
