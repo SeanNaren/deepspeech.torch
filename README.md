@@ -46,6 +46,13 @@ luarocks install http://raw.githubusercontent.com/baidu-research/warp-ctc/master
 Other dependencies can be installed via luarocks:
 
 [Audio Library for Torch](https://github.com/soumith/lua---audio): Audio Library for Torch</a>:
+
+Linux (Ubuntu):
+```
+sudo apt-get install libfftw3-dev
+sudo apt-get install sox libsox-dev libsox-fmt-all
+```
+
 ```
 luarocks install https://raw.githubusercontent.com/soumith/lua---audio/master/audio-0.1-0.rockspec
 ```
