@@ -39,8 +39,10 @@ luarocks install cunn
 luarocks install cunnx
 ```
 
-To install the Baidu warp-ctc library follow the guide at the end of the readme [here](https://github.com/baidu-research/warp-ctc/blob/master/README.md).
-
+To install the Baidu warp-ctc library:
+```
+luarocks install http://raw.githubusercontent.com/baidu-research/warp-ctc/master/torch_binding/rocks/warp-ctc-scm-1.rockspec
+```
 Other dependencies can be installed via luarocks:
 
 [Audio Library for Torch](https://github.com/soumith/lua---audio): Audio Library for Torch</a>:
