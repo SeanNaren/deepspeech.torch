@@ -65,13 +65,9 @@ function wordErrorRate(target, prediction)
     return d[#target + 1][#prediction + 1] / #target * 100
 end
 
--- Load the AN4 test data, params have to be the same as training.
-
 --Window size and stride for the spectrogram transformation.
 local windowSize = 256
 local stride = 128
-
---The training set in spectrogram tensor form.
 
 local an4FolderDir = "/root/CTCSpeechRecognition/Audio/an4"
 
