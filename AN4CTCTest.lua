@@ -8,7 +8,7 @@ require 'nn'
 require 'xlua'
 
 --[[Takes the resulting predictions and the transcript sentence. Returns tables of words said in both.]]
-local function getWords(predictions, targetSentence)
+local function getWords(predictions, targetSentence, shouldSpellCheck)
     local predictionString = ""
     local prevLetter = ""
     -- Iterate through the results of the prediction and append the letter that was predicted in the sample.
@@ -28,7 +28,10 @@ local function getWords(predictions, targetSentence)
     end
     local predictedWords = {}
     for word in string.gmatch(predictionString, "%a+") do
-        table.insert(predictedWords, SpellingChecker:correct(word))
+        if (shouldSpellCheck == true) then
+            word = SpellingChecker:correct(word)
+        end
+        table.insert(predictedWords, word)
     end
     local targetWords = {}
     for word in string.gmatch(targetSentence, "%a+") do
@@ -88,23 +91,45 @@ local networkParams = {
 Network:init(networkParams)
 print("Network loaded")
 
--- We collapse all the words into one large table to pass into the WER calculation.
-local totalPredictedWords = {}
-local totalTargetWords = {}
+function calculateWordErrorRate(shouldSpellCheck)
+    -- We collapse all the words into one large table to pass into the WER calculation.
+    local totalPredictedWords = {}
+    local totalTargetWords = {}
 
--- Loop through the test dataset, getting predictions and target words.
-for i = 1, testDataSet:size() do
-    local inputs, targets = testDataSet:nextData()
-    local predictions = Network:predict(inputs)
-    local predictedWords, targetWords = getWords(predictions, wordTranscripts[i])
-    for index, word in ipairs(predictedWords) do
-        table.insert(totalPredictedWords, word)
+    -- Loop through the test dataset, getting predictions and target words.
+    for i = 1, testDataSet:size() do
+        local inputs, targets = testDataSet:nextData()
+        local predictions = Network:predict(inputs)
+        local predictedWords, targetWords = getWords(predictions, wordTranscripts[i], shouldSpellCheck)
+        for index, word in ipairs(predictedWords) do
+            table.insert(totalPredictedWords, word)
+        end
+        for index, word in ipairs(targetWords) do
+            table.insert(totalTargetWords, word)
+        end
+        xlua.progress(i, testDataSet:size())
     end
-    for index, word in ipairs(targetWords) do
-        table.insert(totalTargetWords, word)
-    end
-    xlua.progress(i, testDataSet:size())
+
+    local rate = wordErrorRate(totalTargetWords, totalPredictedWords)
+    return rate
 end
 
-local rate = wordErrorRate(totalTargetWords, totalPredictedWords)
-print(string.format("WER : %.2f percent", rate))
+function fileExists(name)
+    local f = io.open(name, "r")
+    if f ~= nil then io.close(f) return true else return false end
+end
+
+local spellCheckedWER = calculateWordErrorRate(false)
+print(string.format("Without Spellcheck WER : %.2f percent", spellCheckedWER))
+
+local spellCheckedWER = calculateWordErrorRate(true)
+print(string.format("With context based Spellcheck WER : %.2f percent", spellCheckedWER))
+
+-- Make sure that the user has got big.txt else do not carry out the general spellcheck WER.
+if (fileExists("big.txt")) then
+    -- The final evaluation uses a spell checker conditioned on a large text file of multiple ebooks.
+    SpellingChecker:init("big.txt")
+    local spellCheckedWER = calculateWordErrorRate(true)
+    print(string.format("With general Spellcheck WER : %.2f percent", spellCheckedWER))
+end
+
