@@ -1,4 +1,5 @@
---[[Calulates the WER using the AN4 Audio database. Uses model created by AN4CTCTrain and a simple spell checker.]]
+--[[Calulates the WER using the AN4 Audio database test set.
+-- Uses model created by AN4CTCTrain and a simple spell checker.]]
 
 local SpellingChecker = require 'SpellingChecker'
 local Network = require 'Network'
