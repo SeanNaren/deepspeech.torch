@@ -4,12 +4,11 @@ Work in progress. Implementation of the [Baidu Warp-CTC](https://github.com/baid
 
 Current implementation runs on CUDA 7.0.
 
+## Installation
+
 To install torch7 follow the guide [here](http://torch.ch/docs/getting-started.html).
 
-To install the Baidu warp-ctc library follow the guide at the end of the readme [here](https://github.com/baidu-research/warp-ctc/README.md).
-
-
-To install CUDA (CUDA 7.0 is required):
+You must have CUDA 7.0 (build supported by warp-ctc). To install CUDA:
 
 Download the .run file of your platform [here](https://developer.nvidia.com/cuda-toolkit-70).
 
@@ -33,9 +32,27 @@ export LD_LIBRARY_PATH=/usr/local/cuda-7.0/lib64:$LD_LIBRARY_PATH
 ```
 Restart the terminal for changes to take effect.
 
+For CUDA implementation (make sure to install these via luarocks first before installing the warp-ctc library):
+```
+luarocks install cutorch
+luarocks install cunn
+luarocks install cunnx
+```
+
+To install the Baidu warp-ctc library:
+```
+luarocks install http://raw.githubusercontent.com/baidu-research/warp-ctc/master/torch_binding/rocks/warp-ctc-scm-1.rockspec
+```
 Other dependencies can be installed via luarocks:
 
 [Audio Library for Torch](https://github.com/soumith/lua---audio): Audio Library for Torch</a>:
+
+Linux (Ubuntu):
+```
+sudo apt-get install libfftw3-dev
+sudo apt-get install sox libsox-dev libsox-fmt-all
+```
+
 ```
 luarocks install https://raw.githubusercontent.com/soumith/lua---audio/master/audio-0.1-0.rockspec
 ```
@@ -61,15 +78,13 @@ luarocks install torch
 luarocks install nn
 luarocks install dpnn
 ```
-For CUDA implementation:
-```
-luarocks install cutorch
-luarocks install cunn
-luarocks install cunnx
-```
 
 For cudnn you need to create an account, follow install instructions [here](https://developer.nvidia.com/cudnn).
 
+Once you have completed the above installation, Install lua bindings for [cudnn](https://github.com/soumith/cudnn.torch):
+```
+luarocks install cudnn
+```
 
 Main method located at AN4CTCTrain.lua.
 
