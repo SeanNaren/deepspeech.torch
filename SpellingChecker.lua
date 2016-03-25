@@ -15,6 +15,7 @@ local alphabet = {
 }
 
 function SpellingChecker:init(wordsFilePath)
+    words = {}
     for line in io.lines(wordsFilePath) do
         line = string.lower(line)
         for word in string.gmatch(line, '%w+') do
