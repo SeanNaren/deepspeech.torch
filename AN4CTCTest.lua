@@ -68,30 +68,7 @@ function wordErrorRate(target, prediction)
     return d[#target + 1][#prediction + 1] / #target * 100
 end
 
---Window size and stride for the spectrogram transformation.
-local windowSize = 256
-local stride = 128
-
-local an4FolderDir = "/root/CTCSpeechRecognition/Audio/an4"
-
---The test set in spectrogram tensor form.
-local testDataSet, wordTranscripts = AudioData.retrieveAN4TestDataSet(an4FolderDir, windowSize, stride)
-
--- File path to the big.txt (see readme for download link). Due to the randomness of the an4 dataset
--- I've combined the transcripts to calculate word probabilities from it. Should be replaced by a proper language model.
-SpellingChecker:init("transcriptscombined.txt")
-
--- Load the network from the saved model.
-local networkParams = {
-    loadModel = true,
-    saveModel = false,
-    fileName = "CTCNetwork.model"
-}
-
-Network:init(networkParams)
-print("Network loaded")
-
-function calculateWordErrorRate(shouldSpellCheck)
+function calculateWordErrorRate(shouldSpellCheck, testDataSet, wordTranscripts)
     -- We collapse all the words into one large table to pass into the WER calculation.
     local totalPredictedWords = {}
     local totalTargetWords = {}
@@ -119,17 +96,40 @@ function fileExists(name)
     if f ~= nil then io.close(f) return true else return false end
 end
 
-local spellCheckedWER = calculateWordErrorRate(false)
+--Window size and stride for the spectrogram transformation.
+local windowSize = 256
+local stride = 128
+
+local an4FolderDir = "/root/CTCSpeechRecognition/Audio/an4"
+
+--The test set in spectrogram tensor form.
+local testDataSet, wordTranscripts = AudioData.retrieveAN4TestDataSet(an4FolderDir, windowSize, stride)
+
+-- File path to the big.txt (see readme for download link). Due to the randomness of the an4 dataset
+-- I've combined the transcripts to calculate word probabilities from it. Should be replaced by a proper language model.
+SpellingChecker:init("transcriptscombined.txt")
+
+-- Load the network from the saved model.
+local networkParams = {
+    loadModel = true,
+    saveModel = false,
+    fileName = "CTCNetwork.model"
+}
+
+Network:init(networkParams)
+print("Network loaded")
+
+local spellCheckedWER = calculateWordErrorRate(false, testDataSet, wordTranscripts)
 print(string.format("Without Spellcheck WER : %.2f percent", spellCheckedWER))
 
-local spellCheckedWER = calculateWordErrorRate(true)
+local spellCheckedWER = calculateWordErrorRate(true, testDataSet, wordTranscripts)
 print(string.format("With context based Spellcheck WER : %.2f percent", spellCheckedWER))
 
 -- Make sure that the user has got big.txt else do not carry out the general spellcheck WER.
 if (fileExists("big.txt")) then
     -- The final evaluation uses a spell checker conditioned on a large text file of multiple ebooks.
     SpellingChecker:init("big.txt")
-    local spellCheckedWER = calculateWordErrorRate(true)
+    local spellCheckedWER = calculateWordErrorRate(true, testDataSet, wordTranscripts)
     print(string.format("With general Spellcheck WER : %.2f percent", spellCheckedWER))
 end
 
