@@ -107,7 +107,7 @@ local testDataSet, wordTranscripts = AudioData.retrieveAN4TestDataSet(an4FolderD
 
 -- File path to the big.txt (see readme for download link). Due to the randomness of the an4 dataset
 -- I've combined the transcripts to calculate word probabilities from it. Should be replaced by a proper language model.
-SpellingChecker:init("transcriptscombined.txt")
+SpellingChecker:init("trainingAN4transcripts.txt")
 
 -- Load the network from the saved model.
 local networkParams = {
