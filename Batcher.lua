@@ -23,12 +23,12 @@ function Batcher.createMinibatchDataset(tensorsAndTargets, maximumSizeDifference
 
     local function createBatchTensor()
         local biggestTensor = batch[#batch].tensor:size()
-        local batchTensor = torch.Tensor(#batch, biggestTensor[1], biggestTensor[2])
+        local batchTensor = torch.Tensor(#batch, 1, biggestTensor[1], biggestTensor[2]):transpose(3,4) -- We add 1 dimension (1 feature map).
         local batchTargets = {}
         for index, tensorAndTarget in ipairs(batch) do
             local output = torch.zeros(biggestTensor[1], biggestTensor[2])
             local area = output:narrow(1, 1, tensorAndTarget.tensor:size(1)):copy(tensorAndTarget.tensor)
-            batchTensor[index] = output
+            batchTensor[index] = output:view(1, biggestTensor[1], biggestTensor[2]):transpose(2,3) -- We add 1 dimension (1 feature map).
             table.insert(batchTargets, tensorAndTarget.label)
         end
         return batchTensor, batchTargets
@@ -64,7 +64,7 @@ end
 function createDataSet(miniBatches, miniBatchesTarget)
     local dataset = {}
     local pointer = 1
-    function dataset:size() return 20 end
+    function dataset:size() return #miniBatches end
 
     function dataset:nextData()
         pointer = pointer + 1

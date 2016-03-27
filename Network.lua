@@ -32,33 +32,35 @@ function Network:createSpeechNetwork()
     torch.manualSeed(123)
 
     local cnn = nn.Sequential()
-    cnn:add(cudnn.TemporalConvolution(129, 129, 5, 1))
-    cnn:add(cudnn.ReLU())
-    cnn:add(cudnn.TemporalConvolution(129, 129, 5, 1))
-    cnn:add(cudnn.ReLU())
-    cnn:add(nn.Dropout(0.25))
-    cnn:add(nn.TemporalMaxPooling(2, 2))
 
-    cnn:add(cudnn.TemporalConvolution(129, 256, 5, 1))
-    cnn:add(cudnn.ReLU())
-    cnn:add(cudnn.TemporalConvolution(256, 256, 5, 1))
-    cnn:add(cudnn.ReLU())
-    cnn:add(nn.Dropout(0.25))
-    cnn:add(nn.TemporalMaxPooling(2, 2))
+    cnn:add(cudnn.SpatialConvolution(1, 32, 41, 11, 2, 2))
+    cnn:add(cudnn.SpatialBatchNormalization(32))
+    cnn:add(cudnn.ReLU(true))
+    cnn:add(nn.Dropout(0.4))
+    cnn:add(cudnn.SpatialConvolution(32, 32, 21, 11, 2, 1))
+    cnn:add(cudnn.SpatialBatchNormalization(32))
+    cnn:add(cudnn.ReLU(true))
+    cnn:add(nn.Dropout(0.4))
+    cnn:add(cudnn.SpatialMaxPooling(2, 2, 2, 2))
 
-    cnn:add(cudnn.TemporalConvolution(256, 512, 5, 1))
-    cnn:add(cudnn.ReLU())
-    cnn:add(cudnn.TemporalConvolution(512, 512, 5, 1))
-    cnn:add(cudnn.ReLU())
-    cnn:add(nn.Dropout(0.25))
-    cnn:add(nn.TemporalMaxPooling(2, 2))
+    -- batchsize x featuremap x freq x time
+    cnn:add(nn.SplitTable(1))
+    -- features x freq x time
+    cnn:add(nn.Sequencer(nn.View(1, 32 * 25, -1)))
+    -- batch x features x time
+    cnn:add(nn.JoinTable(1))
+    -- batch x time x features
+    cnn:add(nn.Transpose({ 2, 3 }))
 
 
     local model = nn.Sequential()
     model:add(cnn)
     model:add(nn.Transpose({ 1, 2 }))
     model:add(nn.SplitTable(1))
+    model:add(nn.Sequencer(nn.Linear(32 * 25, 512)))
     model:add(nn.Sequencer(nn.BatchNormalization(512)))
+    model:add(nn.Sequencer(nn.ReLU(true)))
+    model:add(nn.Sequencer(nn.Dropout(0.5)))
     model:add(createBiDirectionalNetwork())
     model:add(nn.Sequencer(nn.BatchNormalization(200)))
     model:add(nn.Sequencer(nn.Linear(200, 28)))
@@ -112,7 +114,6 @@ function Network:trainNetwork(dataset, epochs, sgd_params)
     local startTime = os.time()
     local dataSetSize = dataset:size()
     for i = 1, epochs do
-
         local averageLoss = 0
         print(string.format("Training Epoch: %d", i))
         for j = 1, dataSetSize do
@@ -121,12 +122,11 @@ function Network:trainNetwork(dataset, epochs, sgd_params)
             currentLoss = 0
             local _, fs = optim.sgd(feval, x, sgd_params)
             currentLoss = currentLoss + fs[1]
-            logger:add { currentLoss } -- Add the current loss value to the logger.
             xlua.progress(j, dataSetSize)
             averageLoss = averageLoss + currentLoss
-            cutorch.synchronize()
         end
         averageLoss = averageLoss / dataSetSize -- Calculate the average loss at this epoch.
+        logger:add { averageLoss } -- Add the average loss value to the logger.
         print(string.format("Training Epoch: %d Average Loss: %f", i, averageLoss))
     end
     local endTime = os.time()
@@ -151,6 +151,7 @@ end
 function Network:loadNetwork(saveName)
     local model = torch.load(saveName)
     Network.model = model
+    model:evaluate()
 end
 
 return Network

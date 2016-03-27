@@ -5,7 +5,7 @@ local Network = require 'Network'
 local Batcher = require 'Batcher'
 
 --Training parameters
-local epochs = 47
+local epochs = 100
 
 local networkParams = {
     loadModel = false,
@@ -14,7 +14,7 @@ local networkParams = {
 }
 --Parameters for the stochastic gradient descent (using the optim library).
 local sgdParams = {
-    learningRate = 0.001,
+    learningRate = 1e-4,
     learningRateDecay = 1e-9,
     weightDecay = 0,
     momentum = 0.9,
