@@ -29,33 +29,42 @@ end
 
 --Creates a new speech network loaded into Network.
 function Network:createSpeechNetwork()
+    torch.manualSeed(123)
+
     local cnn = nn.Sequential()
-    cnn:add(cudnn .BatchNormalization(129))
-    cnn:add(nn.TemporalConvolution(129, 129, 5, 1))
+    cnn:add(cudnn.TemporalConvolution(129, 129, 5, 1))
     cnn:add(cudnn.ReLU())
-    cnn:add(nn.TemporalConvolution(129, 129, 5, 1))
+    cnn:add(cudnn.TemporalConvolution(129, 129, 5, 1))
     cnn:add(cudnn.ReLU())
-    cnn:add(nn.TemporalMaxPooling(2, 2))
     cnn:add(nn.Dropout(0.25))
-
-    cnn:add(cudnn.BatchNormalization(129))
-    cnn:add(nn.TemporalConvolution(129, 256, 5, 1))
-    cnn:add(cudnn.ReLU())
-    cnn:add(nn.TemporalConvolution(256, 256, 5, 1))
-    cnn:add(cudnn.ReLU())
     cnn:add(nn.TemporalMaxPooling(2, 2))
-    cnn:add(nn.Dropout(0.25))
 
-    cnn:add(cudnn.BatchNormalization(256))
-    cnn:add(nn.Linear(256, 500))
+    cnn:add(cudnn.TemporalConvolution(129, 256, 5, 1))
     cnn:add(cudnn.ReLU())
-    cnn:add(nn.Dropout(0.5))
+    cnn:add(cudnn.TemporalConvolution(256, 256, 5, 1))
+    cnn:add(cudnn.ReLU())
+    cnn:add(nn.Dropout(0.25))
+    cnn:add(nn.TemporalMaxPooling(2, 2))
+
+    cnn:add(cudnn.TemporalConvolution(256, 512, 5, 1))
+    cnn:add(cudnn.ReLU())
+    cnn:add(cudnn.TemporalConvolution(512, 512, 5, 1))
+    cnn:add(cudnn.ReLU())
+    cnn:add(nn.Dropout(0.25))
+    cnn:add(nn.TemporalMaxPooling(2, 2))
+
 
     local model = nn.Sequential()
-    model:add(cnn) --  seqlen x inputsize
+    model:add(cnn)
+    model:add(nn.Transpose({ 1, 2 }))
     model:add(nn.SplitTable(1))
+    model:add(nn.Sequencer(nn.BatchNormalization(512)))
     model:add(createBiDirectionalNetwork())
-    model:add(nn.Sequencer(nn.Linear(1000, 28)))
+    model:add(nn.Sequencer(nn.BatchNormalization(200)))
+    model:add(nn.Sequencer(nn.Linear(200, 28)))
+    model:add(nn.Sequencer(nn.View(1, -1, 28)))
+    model:add(nn.JoinTable(1))
+    model:add(nn.Transpose({ 1, 2 }))
     model:cuda()
     Network.model = model
 end
@@ -63,11 +72,11 @@ end
 -- Creates the stack of bi-directional RNNs.
 function createBiDirectionalNetwork()
     local biseqModel = nn.Sequential()
-    biseqModel:add(nn.BiSequencer(nn.FastLSTM(500, 500)))
-    biseqModel:add(nn.BiSequencer(nn.FastLSTM(1000, 500)))
-    biseqModel:add(nn.BiSequencer(nn.FastLSTM(1000, 500)))
-    biseqModel:add(nn.BiSequencer(nn.FastLSTM(1000, 500)))
-    biseqModel:add(nn.BiSequencer(nn.FastLSTM(1000, 500)))
+    biseqModel:add(nn.BiSequencer(nn.FastLSTM(512, 100)))
+    biseqModel:add(nn.BiSequencer(nn.FastLSTM(200, 100)))
+    biseqModel:add(nn.BiSequencer(nn.FastLSTM(200, 100)))
+    biseqModel:add(nn.BiSequencer(nn.FastLSTM(200, 100)))
+    biseqModel:add(nn.BiSequencer(nn.FastLSTM(200, 100)))
     return biseqModel;
 end
 
@@ -82,8 +91,14 @@ end
 function Network:trainNetwork(dataset, epochs, sgd_params)
     local ctcCriterion = CTCCriterion()
     local x, gradParameters = Network.model:getParameters()
+
+    -- GPU inputs (preallocate)
+    local inputs = torch.CudaTensor()
+
     local function feval(x_new)
-        local inputs, targets = dataset:nextData()
+        local inputsCPU, targets = dataset:nextData()
+        -- transfer over to GPU
+        inputs:resize(inputsCPU:size()):copy(inputsCPU)
         gradParameters:zero()
         local predictions = Network.model:forward(inputs)
         local loss = ctcCriterion:forward(predictions, targets)
@@ -97,15 +112,19 @@ function Network:trainNetwork(dataset, epochs, sgd_params)
     local startTime = os.time()
     local dataSetSize = dataset:size()
     for i = 1, epochs do
+
         local averageLoss = 0
         print(string.format("Training Epoch: %d", i))
         for j = 1, dataSetSize do
+            collectgarbage()
+            cutorch.synchronize()
             currentLoss = 0
             local _, fs = optim.sgd(feval, x, sgd_params)
             currentLoss = currentLoss + fs[1]
             logger:add { currentLoss } -- Add the current loss value to the logger.
             xlua.progress(j, dataSetSize)
             averageLoss = averageLoss + currentLoss
+            cutorch.synchronize()
         end
         averageLoss = averageLoss / dataSetSize -- Calculate the average loss at this epoch.
         print(string.format("Training Epoch: %d Average Loss: %f", i, averageLoss))
