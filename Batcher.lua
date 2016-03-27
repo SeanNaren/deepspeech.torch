@@ -1,5 +1,5 @@
 require 'nn'
-
+local Batcher = {}
 -- This class should create exactly what is needed by the CTC class.
 -- We need the input tensor of each mini-batch to be a padded 3d tensor of batchsize x time x freq.
 -- We need the labels to be {{1,3},{3,1}} etc for each sample in the batch.
@@ -7,7 +7,7 @@ require 'nn'
 -- The batched CTC activations and the size of tensors are handled by the CTCCriterion.
 
 -- tensorsAndTargets is a table such that {{tensor = torch.Tensor(), label = {1,3}},etc}
-function createMinibatchDataset(tensorsAndTargets, maximumSizeDifference)
+function Batcher.createMinibatchDataset(tensorsAndTargets, maximumSizeDifference)
 
     local function sortFunction(tensorX, tensorY)
         if (tensorX.tensor:size(1) < tensorY.tensor:size(1)) then return true else return false end
@@ -64,7 +64,7 @@ end
 function createDataSet(miniBatches, miniBatchesTarget)
     local dataset = {}
     local pointer = 1
-    function dataset:size() return #miniBatches end
+    function dataset:size() return 20 end
 
     function dataset:nextData()
         pointer = pointer + 1
@@ -75,11 +75,4 @@ function createDataSet(miniBatches, miniBatchesTarget)
     return dataset
 end
 
-local tensorsAndTargets = {
-    { tensor = torch.Tensor({ { 1, 2, 3 }, { 1, 2, 3 }, { 1, 2, 3 } }), label = { 5, 5 } },
-    { tensor = torch.Tensor({ { 1, 2, 3 } }), label = { 1, 1 } },
-    { tensor = torch.Tensor({ { 1, 2, 3 }, { 1, 2, 3 } }), label = { 2, 2 } },
-    { tensor = torch.Tensor({ { 1, 2, 3 }, { 1, 2, 3 } }), label = { 3, 3 } }
-}
-local dataset = createMinibatchDataset(tensorsAndTargets, 0)
-
+return Batcher
