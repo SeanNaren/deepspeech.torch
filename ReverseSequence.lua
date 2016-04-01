@@ -1,3 +1,8 @@
+--[[
+-- Reverses a sequence on a given dimension.
+-- Example: Given a tensor of torch.Tensor({{1,2,3,4,5}, {6,7,8,9,10})
+-- nn.ReverseSequence(1):forward(tensor) would give: torch.Tensor({{6,7,8,9,10},{1,2,3,4,5}})
+ ]]
 local ReverseSequence, parent = torch.class("nn.ReverseSequence", "nn.Module")
 
 function ReverseSequence:__init(dim)
