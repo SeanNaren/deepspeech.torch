@@ -38,6 +38,9 @@ local function getWords(predictions, targetSentence, shouldSpellCheck)
     for word in string.gmatch(targetSentence, "%a+") do
         table.insert(targetWords, word)
     end
+    print("expected: " .. targetSentence)
+    print("prediction: " ..  predictionString)
+
     return predictedWords, targetWords
 end
 
@@ -79,9 +82,7 @@ function calculateWordErrorRate(shouldSpellCheck, testDataSet, wordTranscripts)
         local inputs, targets = inputAndTarget.tensor, inputAndTarget.target
         -- We create an input of size batch x channels x freq x time (batch size in this case is 1).
         inputs = inputs:view(1, 1, inputs:size(1), inputs:size(2)):transpose(3, 4):cuda()
-
         local predictions = Network:predict(inputs)
-
         local predictedWords, targetWords = getWords(predictions, wordTranscripts[i], shouldSpellCheck)
 
         for index, word in ipairs(predictedWords) do
@@ -104,7 +105,7 @@ end
 
 --Window size and stride for the spectrogram transformation.
 local windowSize = 256
-local stride = 128
+local stride = 75
 
 local an4FolderDir = "/root/CTCSpeechRecognition/Audio/an4"
 
