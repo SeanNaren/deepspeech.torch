@@ -7,7 +7,7 @@ require 'nn'
 require 'cutorch'
 require 'warp_ctc'
 
-local CTCCriterion, parent = torch.class('CTCCriterion', 'nn.Criterion')
+local CTCCriterion, parent = torch.class('nn.CTCCriterion', 'nn.Criterion')
 
 function CTCCriterion:__init()
     parent.__init(self)
@@ -15,6 +15,10 @@ end
 
 function CTCCriterion:updateOutput(output, labels)
     local tensorSizes = output:size()
+    for index, value in ipairs(labels) do
+        if (#value >= output:size(2)) then print("input dim", output:size(), "VALUE : ", #value) end
+    end
+
     local acts = CTCCriterion.createCTCBatch(output, tensorSizes)
     local sizes = {}
     for x = 1, tensorSizes[1] do
@@ -69,7 +73,7 @@ function CTCCriterion.createCTCBatch(output, sizes)
 end
 
 function CTCCriterion.revertBatching(gradients, sizes)
-    convertedGradients:resize(sizes[1] ,sizes[2], sizes[3]):zero()
+    convertedGradients:resize(sizes[1], sizes[2], sizes[3]):zero()
     local counter = 1
     for i = 1, sizes[2] do
         for j = 1, sizes[1] do
