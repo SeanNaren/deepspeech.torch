@@ -10,7 +10,7 @@ function ReverseSequence:__init(dim)
     self.output = torch.Tensor()
     self.gradInput = torch.Tensor()
     assert(dim, "Must specify dimension to reverse sequence over")
-    assert(dim <= 3, "Dimension has to be no greater than 3 (Only supports up to 3d).")
+    assert(dim <= 3, "Dimension has to be no greater than 3 (Only supports up to a 3D Tensor).")
     self.dim = dim
 end
 
