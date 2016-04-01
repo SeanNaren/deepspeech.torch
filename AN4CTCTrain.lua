@@ -24,7 +24,7 @@ local sgdParams = {
 
 --Window size and stride for the spectrogram transformation.
 local windowSize = 256
-local stride = 128
+local stride = 75
 
 --The larger this value, the larger the batches, however the more padding is added to make variable sentences the same.
 local maximumSizeDifference = 0 -- Setting this to zero makes it batch together the same length sentences.
