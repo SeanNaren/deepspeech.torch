@@ -11,6 +11,7 @@ require 'Linear3D'
 require 'TemporalBatchNormalization'
 require 'gnuplot'
 require 'xlua'
+require 'BRNN'
 
 local Network = {}
 local logger = optim.Logger('train.log')
@@ -34,19 +35,6 @@ end
 --Creates a new speech network loaded into Network.
 function Network:createSpeechNetwork()
     torch.manualSeed(123)
-
-    local function BRNN(inputDim, outputDim)
-        local fwd = nn.TorchLSTM(inputDim, outputDim)
-        local bwd = nn.Sequential()
-        bwd:add(nn.ReverseSequence(2))
-        bwd:add(nn.TorchLSTM(inputDim, outputDim))
-        bwd:add(nn.ReverseSequence(2))
-
-        local BiDirectional = nn.Concat(3)
-        BiDirectional:add(fwd)
-        BiDirectional:add(bwd)
-        return BiDirectional
-    end
 
     local model = nn.Sequential()
 
@@ -73,11 +61,13 @@ function Network:createSpeechNetwork()
 
     -- b x t x f
     model:add(cnn)
-    model:add(BRNN(32 * 25, 200))
-    model:add(nn.TemporalBatchNormalization(400))
-    model:add(BRNN(400, 200))
-    model:add(nn.TemporalBatchNormalization(400))
-    model:add(nn.Linear3D(400, 28))
+    model:add(nn.BRNN(nn.TorchLSTM(32 * 25, 200)))
+    model:add(nn.TemporalBatchNormalization(200))
+    model:add(nn.BRNN(nn.TorchLSTM(200, 200)))
+    model:add(nn.TemporalBatchNormalization(200))
+    model:add(nn.BRNN(nn.TorchLSTM(200, 200)))
+    model:add(nn.TemporalBatchNormalization(200))
+    model:add(nn.Linear3D(200, 28))
     model:cuda()
     model:training()
     Network.model = model
@@ -93,7 +83,7 @@ end
 --Uses warp-ctc cost evaluation.
 function Network:trainNetwork(dataset, epochs, sgd_params)
     local history = {}
-    local ctcCriterion = nn.CTCCriterion()
+    local ctcCriterion = nn.CTCCriterion():cuda()
     local x, gradParameters = Network.model:getParameters()
 
     -- GPU inputs (preallocate)
