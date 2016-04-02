@@ -38,9 +38,6 @@ local function getWords(predictions, targetSentence, shouldSpellCheck)
     for word in string.gmatch(targetSentence, "%a+") do
         table.insert(targetWords, word)
     end
-    print("expected: " .. targetSentence)
-    print("prediction: " ..  predictionString)
-
     return predictedWords, targetWords
 end
 

@@ -1,11 +1,11 @@
---[[Trains the CTC model using the AN4 audio database. Training time as of now takes around 12 hours on a GTX 970.]]
+--[[Trains the CTC model using the AN4 audio database. Training time as of now takes around 20 minutes on a GTX 970.]]
 
 local AudioData = require 'AudioData'
 local Network = require 'Network'
 local Batcher = require 'Batcher'
 
 --Training parameters
-local epochs = 100
+local epochs = 70
 
 local networkParams = {
     loadModel = false,
