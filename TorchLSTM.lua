@@ -1,5 +1,5 @@
 --[[
--- Created by jcjohnson. Cloned class due to clash with RNN library.
+-- Created by jcjohnson. Cloned script due to clash with ElementResearch RNN library.
 -- https://github.com/jcjohnson/torch-rnn
  ]]
 
