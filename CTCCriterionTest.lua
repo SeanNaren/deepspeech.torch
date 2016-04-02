@@ -5,7 +5,7 @@ require 'optim'
 require 'rnn'
 require 'CTCCriterion'
 
-local CTCCriterion = CTCCriterion()
+local CTCCriterion = nn.CTCCriterion():cuda()
 
 function smallTest()
     local acts = torch.Tensor({{{0,0,0,0,0}}}):cuda()
@@ -60,7 +60,7 @@ end
 -- Takes a 3D tensor of batch x time x freq and converts this into the 2d batch tensor form.
 function createCTCBatchTest()
     local input = torch.Tensor({{{1,2,3,4,5}},{{6,7,8,9,10}}})
-    local output = CTCCriterion.createCTCBatch(input, input:size())
+    local output = CTCCriterion:createCTCBatch(input, input:size())
     local expected = torch.Tensor({{1,2,3,4,5},{6,7,8,9,10}}):cuda()
     assertion(output, expected, "createCTCBatchTest")
 end
@@ -70,7 +70,7 @@ function revertBatchingTest()
     local input = torch.Tensor({{{1,2,3,4,5}},{{6,7,8,9,10}}})
     local gradient = torch.Tensor({{1,2,3,4,5},{6,7,8,9,10}})
 
-    local output = CTCCriterion.revertBatching(gradient, input:size())
+    local output = CTCCriterion:revertBatching(gradient, input:size())
 
     local expected = torch.Tensor({{{1,2,3,4,5}},{{6,7,8,9,10}}}):cuda()
     assertion(output[1], expected[1], "revertBatchingTest 1st output")
