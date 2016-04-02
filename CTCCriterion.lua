@@ -1,22 +1,27 @@
--- Criterion based on the warp-ctc library
--- by Baidu: https://github.com/baidu-research/warp-ctc
--- Formatting of the input can be seen here:
--- https://github.com/baidu-research/warp-ctc/blob/master/torch_binding/TUTORIAL.md
-require 'warp_ctc'
-
+------------------------------------------------------------------------
+--[[ CTCCriterion ]]--
+-- CTC Alignment for sequence data where input and labels do not align.
+-- Useful for speech recognition on a phoneme/character level basis.
+-- Inputs assumed are in the form of batch x time x inputdim.
+-- Targets assumed in the form of {{1,2},{3,4}} where {1,2} is for the first
+-- element.
+------------------------------------------------------------------------
 local CTCCriterion, parent = torch.class('nn.CTCCriterion', 'nn.Criterion')
+
+CTCCriterion.dim = 3
 
 function CTCCriterion:__init()
     parent.__init(self)
-    -- GPU inputs (preallocate)
+    require 'warp_ctc'
     self.acts = torch.Tensor()
     self.convertedGradients = torch.Tensor()
 end
 
 function CTCCriterion:updateOutput(output, labels)
+    assert(output:nDimension() == CTCCriterion.dim, "Output must be a tensor of (batch x time x inputdim), recieved " .. output:nDimension() .. " dimensions")
     local tensorSizes = output:size()
     local acts = self:createCTCBatch(output, tensorSizes)
-    local sizes = {}
+    local sizes = {} -- For each batch we state the number of time steps.
     for x = 1, tensorSizes[1] do
         table.insert(sizes, tensorSizes[2])
     end
@@ -30,7 +35,6 @@ function CTCCriterion:updateOutput(output, labels)
 
     return self.output
 end
-
 
 function CTCCriterion:updateGradInput(output, labels)
     local tensorSizes = output:size()
@@ -62,6 +66,10 @@ function sumCosts(list)
     return acc
 end
 
+--[[
+-- Converts the outputs into batch warp-ctc format seen at the end of the README here:
+-- https://github.com/baidu-research/warp-ctc/blob/master/torch_binding/TUTORIAL.md
+ ]]
 function CTCCriterion:createCTCBatch(output, sizes)
     self.acts:resize(sizes[1] * sizes[2], sizes[3]):zero()
     local counter = 1
