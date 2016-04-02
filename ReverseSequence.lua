@@ -1,8 +1,9 @@
---[[
+------------------------------------------------------------------------
+--[[ ReverseSequence ]] --
 -- Reverses a sequence on a given dimension.
 -- Example: Given a tensor of torch.Tensor({{1,2,3,4,5}, {6,7,8,9,10})
 -- nn.ReverseSequence(1):forward(tensor) would give: torch.Tensor({{6,7,8,9,10},{1,2,3,4,5}})
- ]]
+------------------------------------------------------------------------
 local ReverseSequence, parent = torch.class("nn.ReverseSequence", "nn.Module")
 
 function ReverseSequence:__init(dim)
@@ -14,55 +15,54 @@ function ReverseSequence:__init(dim)
     self.dim = dim
 end
 
-function ReverseSequence:reverseOutput(input, output)
-    output:resize(input:size()):zero()
+function ReverseSequence:reverseOutput(input)
+    self.output:resize(input:size()):zero()
     -- reverse output
     local k = 1
     for i = input:size(1), 1, -1 do
-        output[k] = input[i]
+        self.output[k] = input[i]
         k = k + 1
     end
 end
 
-
 function ReverseSequence:updateOutput(input)
     if (self.dim == 1) then
-        ReverseSequence:reverseOutput(input, self.output)
+        self:reverseOutput(input)
     end
     if (self.dim == 2) then
         input = input:transpose(1, 2)
-        ReverseSequence:reverseOutput(input, self.output)
+        self:reverseOutput(input)
         self.output = self.output:transpose(1, 2)
     end
     if (self.dim == 3) then
         input = input:transpose(1, 3)
-        ReverseSequence:reverseOutput(input, self.output)
+        self:reverseOutput(input)
         self.output = self.output:transpose(1, 3)
     end
     return self.output
 end
 
-function ReverseSequence:reverseGradOutput(gradOutput, gradInput)
-    gradInput:resize(gradOutput:size()):zero()
+function ReverseSequence:reverseGradOutput(gradOutput)
+    self.gradInput:resize(gradOutput:size()):zero()
     local k = 1
     for i = gradOutput:size(1), 1, -1 do
-        gradInput[k] = gradOutput[i]
+        self.gradInput[k] = gradOutput[i]
         k = k + 1
     end
 end
 
 function ReverseSequence:updateGradInput(inputTable, gradOutput)
     if (self.dim == 1) then
-        ReverseSequence:reverseGradOutput(gradOutput, self.gradInput)
+        self:reverseGradOutput(gradOutput)
     end
     if (self.dim == 2) then
         gradOutput = gradOutput:transpose(1, 2)
-        ReverseSequence:reverseGradOutput(gradOutput, self.gradInput)
+        self:reverseGradOutput(gradOutput)
         self.gradInput = self.gradInput:transpose(1, 2)
     end
     if (self.dim == 3) then
         gradOutput = gradOutput:transpose(1, 3)
-        ReverseSequence:reverseGradOutput(gradOutput, self.gradInput)
+        self:reverseGradOutput(gradOutput)
         self.gradInput = self.gradInput:transpose(1, 3)
     end
     return self.gradInput
