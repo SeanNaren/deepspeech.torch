@@ -24,8 +24,8 @@ function CTCCriterion:updateOutput(output, labels)
         local grads = torch.CudaTensor()
         self.output = sumCosts(gpu_ctc(acts, grads, labels, sizes))
     else
-        local grads = torch.DoubleTensor()
-        self.output = sumCosts(cpu_ctc(acts, grads, labels, sizes))
+        local grads = torch.Tensor()
+        self.output = sumCosts(cpu_ctc(acts:float(), grads:float(), labels, sizes))
     end
 
     return self.output
@@ -43,9 +43,9 @@ function CTCCriterion:updateGradInput(output, labels)
     if (output:type() == 'torch.CudaTensor') then
         gpu_ctc(acts, grads, labels, sizes)
     else
-        cpu_ctc(acts, grads, labels, sizes)
+        cpu_ctc(acts:float(), grads:float(), labels, sizes)
     end
-    self.gradInput = self:revertBatching(grads, tensorSizes)
+    self.gradInput = self:revertBatching(grads, tensorSizes):typeAs(output)
     return self.gradInput
 end
 
