@@ -61,13 +61,11 @@ function Network:createSpeechNetwork()
 
     -- b x t x f
     model:add(cnn)
-    model:add(nn.BRNN(nn.TorchLSTM(32 * 25, 200)))
-    model:add(nn.TemporalBatchNormalization(200))
-    model:add(nn.BRNN(nn.TorchLSTM(200, 200)))
-    model:add(nn.TemporalBatchNormalization(200))
-    model:add(nn.BRNN(nn.TorchLSTM(200, 200)))
-    model:add(nn.TemporalBatchNormalization(200))
-    model:add(nn.Linear3D(200, 28))
+    model:add(nn.BRNN(nn.TorchLSTM(32 * 25, 400)))
+    model:add(nn.TemporalBatchNormalization(400))
+    model:add(nn.BRNN(nn.TorchLSTM(400, 400)))
+    model:add(nn.TemporalBatchNormalization(400))
+    model:add(nn.Linear3D(400, 28))
     model:cuda()
     model:training()
     Network.model = model
