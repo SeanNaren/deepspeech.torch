@@ -1,10 +1,11 @@
---[[Trains the CTC model using the AN4 audio database. Training time as of now takes around 12 hours on a GTX 970.]]
+--[[Trains the CTC model using the AN4 audio database. Training time as of now takes less than 40 minutes on a GTX 970.]]
 
 local AudioData = require 'AudioData'
 local Network = require 'Network'
+local Batcher = require 'Batcher'
 
 --Training parameters
-local epochs = 47
+local epochs = 70
 
 local networkParams = {
     loadModel = false,
@@ -13,7 +14,7 @@ local networkParams = {
 }
 --Parameters for the stochastic gradient descent (using the optim library).
 local sgdParams = {
-    learningRate = 0.001,
+    learningRate = 1e-4,
     learningRateDecay = 1e-9,
     weightDecay = 0,
     momentum = 0.9,
@@ -23,11 +24,15 @@ local sgdParams = {
 
 --Window size and stride for the spectrogram transformation.
 local windowSize = 256
-local stride = 128
+local stride = 75
+
+--The larger this value, the larger the batches, however the more padding is added to make variable sentences the same.
+local maximumSizeDifference = 0 -- Setting this to zero makes it batch together the same length sentences.
 
 --The training set in spectrogram tensor form.
 local an4FolderDir = "/root/CTCSpeechRecognition/Audio/an4"
-local trainingDataSet = AudioData.retrieveAN4TrainingDataSet(an4FolderDir, windowSize, stride)
+local inputsAndTargets = AudioData.retrieveAN4TrainingDataSet(an4FolderDir, windowSize, stride)
+local trainingDataSet = Batcher.createMinibatchDataset(inputsAndTargets, maximumSizeDifference)
 
 --Create and train the network based on the parameters and training data.
 Network:init(networkParams)

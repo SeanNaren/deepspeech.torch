@@ -12,8 +12,9 @@ local function getWords(predictions, targetSentence, shouldSpellCheck)
     local predictionString = ""
     local prevLetter = ""
     -- Iterate through the results of the prediction and append the letter that was predicted in the sample.
-    for index, prediction in ipairs(predictions) do
-        local maxValue, maxIndex = torch.max(prediction, 1)
+    predictions = predictions:squeeze() -- Remove any single dimensions.
+    for x=1,predictions:size(1) do
+        local maxValue, maxIndex = torch.max(predictions[x], 1)
         -- Minus 1 to the index because a CTC blank has the index of 0.
         maxIndex = maxIndex[1] - 1
         -- If the index is 0, that means that the character was a CTC blank.
@@ -73,18 +74,21 @@ function calculateWordErrorRate(shouldSpellCheck, testDataSet, wordTranscripts)
     local totalPredictedWords = {}
     local totalTargetWords = {}
 
-    -- Loop through the test dataset, getting predictions and target words.
-    for i = 1, testDataSet:size() do
-        local inputs, targets = testDataSet:nextData()
+    for i = 1, #testDataSet do
+        local inputAndTarget = testDataSet[i]
+        local inputs, targets = inputAndTarget.tensor, inputAndTarget.target
+        -- We create an input of size batch x channels x freq x time (batch size in this case is 1).
+        inputs = inputs:view(1, 1, inputs:size(1), inputs:size(2)):transpose(3, 4):cuda()
         local predictions = Network:predict(inputs)
         local predictedWords, targetWords = getWords(predictions, wordTranscripts[i], shouldSpellCheck)
+
         for index, word in ipairs(predictedWords) do
             table.insert(totalPredictedWords, word)
         end
         for index, word in ipairs(targetWords) do
             table.insert(totalTargetWords, word)
         end
-        xlua.progress(i, testDataSet:size())
+        xlua.progress(i, #testDataSet)
     end
 
     local rate = wordErrorRate(totalTargetWords, totalPredictedWords)
@@ -98,7 +102,7 @@ end
 
 --Window size and stride for the spectrogram transformation.
 local windowSize = 256
-local stride = 128
+local stride = 75
 
 local an4FolderDir = "/root/CTCSpeechRecognition/Audio/an4"
 

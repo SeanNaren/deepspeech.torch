@@ -107,31 +107,18 @@ function an4Dataset(folderDirPath, audioLocationPath, windowSize, stride, target
         -- We transpose the frequency/time to now put time on the x axis, frequency on the y axis.
         local spectrogram = audio.spectrogram(audioData, windowSize, 'hamming', stride):transpose(1, 2)
         table.insert(inputs, spectrogram)
-        xlua.progress(counter,nbOfSamples)
+        xlua.progress(counter, nbOfSamples)
     end
-    local dataset = createDataSet(inputs, targets)
-    return dataset
+    local inputsAndTargets = combineInputsAndTargets(inputs, targets)
+    return inputsAndTargets
 end
 
-function createDataSet(inputs, targets)
-    local dataset = {}
+function combineInputsAndTargets(inputs, targets)
+    local inputsAndTargets = {}
     for i = 1, #inputs do
-        --Wrap the targets into a table (batches would go into the table, but no batching supported).
-        --Convert the tensor into a cuda tensor for gpu calculations.
-        table.insert(dataset, {inputs[i]:cuda(), {targets[i]}})
+        table.insert(inputsAndTargets, { tensor = inputs[i], label = targets[i] })
     end
-    local pointer = 1
-    function dataset:size() return #dataset end
-
-    function dataset:nextData()
-        local sample = dataset[pointer]
-        pointer = pointer + 1
-        if (pointer > dataset:size()) then pointer = 1 end
-        return sample[1], sample[2]
-    end
-
-    return dataset
+    return inputsAndTargets
 end
-
 
 return AudioData
