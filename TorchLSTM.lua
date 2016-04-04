@@ -7,7 +7,7 @@ require 'torch'
 require 'nn'
 
 
-local layer, parent = torch.class('nn.TorchLSTM', 'nn.Module')
+local layer, parent = torch.class('nn.LSTM', 'nn.Module')
 
 --[[
 If we add up the sizes of all the tensors for output, gradInput, weights,
@@ -121,6 +121,7 @@ Output:
 
 
 function layer:updateOutput(input)
+    self.recompute_backward = true
     local c0, h0, x = self:_unpack_input(input)
     local N, T, D, H = self:_get_sizes(input)
 
@@ -180,7 +181,9 @@ end
 
 
 function layer:backward(input, gradOutput, scale)
+    self.recompute_backward = false
     scale = scale or 1.0
+    assert(scale == 1.0, 'must have scale=1')
     local c0, h0, x = self:_unpack_input(input)
     if not c0 then c0 = self.c0 end
     if not h0 then h0 = self.h0 end
@@ -284,10 +287,15 @@ end
 
 
 function layer:updateGradInput(input, gradOutput)
-    return self:backward(input, gradOutput, 0)
+    if self.recompute_backward then
+        self:backward(input, gradOutput, 1.0)
+    end
+    return self.gradInput
 end
 
 
 function layer:accGradParameters(input, gradOutput, scale)
-    self:backward(input, gradOutput, scale)
+    if self.recompute_backward then
+        self:backward(input, gradOutput, scale)
+    end
 end
