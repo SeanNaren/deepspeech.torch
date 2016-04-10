@@ -68,6 +68,11 @@ luarocks install optim
 luarocks install rnn
 ```
 
+[lua---nx](https://github.com/clementfarabet/lua---nnx): An extension to Torch7's nn package</a>:
+```
+luarocks install nnx
+```
+
 [xlua](https://github.com/torch/xlua): A set of useful extensions to Lua</a>:
 ```
 luarocks install xlua
