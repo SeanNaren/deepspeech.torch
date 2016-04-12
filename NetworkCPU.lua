@@ -79,7 +79,7 @@ end
 --Uses warp-ctc cost evaluation.
 function Network:trainNetwork(dataset, epochs, sgd_params)
     local history = {}
-    local ctcCriterion = nn.CTCCriterion():cuda()
+    local ctcCriterion = nn.CTCCriterion()
     local x, gradParameters = self.model:getParameters()
 
     -- GPU inputs (preallocate)
