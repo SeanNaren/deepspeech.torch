@@ -2,7 +2,6 @@
 -- for speech recognition.
 require 'cunn'
 require 'cudnn'
-require 'CTCCriterion'
 require 'optim'
 require 'rnn'
 require 'TorchLSTM'
