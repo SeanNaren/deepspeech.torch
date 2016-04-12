@@ -1,7 +1,6 @@
 --Retrieves audio datasets. Currently retrieves the AN4 dataset by giving the folder directory.
 require 'lfs'
 require 'audio'
-cutorch = require 'cutorch'
 require 'xlua'
 local AudioData = {}
 local alphabet = {
