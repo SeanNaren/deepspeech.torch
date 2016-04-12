@@ -1,7 +1,7 @@
 --[[Trains the CTC model using the AN4 audio database. Training time as of now takes less than 40 minutes on a GTX 970.]]
 
 local AudioData = require 'AudioData'
-local Network = require 'Network'
+local Network = require 'Network' -- To use the CPU instead change the require to NetworkCPU.
 local Batcher = require 'Batcher'
 
 --Training parameters
