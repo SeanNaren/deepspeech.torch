@@ -4,6 +4,7 @@
 require 'nn'
 require 'optim'
 require 'rnn'
+require 'nnx'
 require 'TorchLSTM'
 require 'ReverseSequence'
 require 'Linear3D'
