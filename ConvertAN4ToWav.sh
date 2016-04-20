@@ -8,7 +8,7 @@ do
 			do
 				for sample in "$sampleFolder"/*
 					do
-					sox -t raw -r 16000 -b 16 -e signed-integer -B -c 1  "$sample" "${sample%%.*}.wav"
+					sox -t raw -r 16000 -b 16 -e signed-integer -B -c 1  "$sample" "${sample%.*}.wav"
 					done
 			done
 	done
