@@ -10,6 +10,7 @@ There are currently two branches, master and voxforge:
 This branch is useful for understanding how the CTC Speech System works and is very easy to run after installation. Highly recommended to checkout this branch.
 * Voxforge: This branch is like the above except it uses the [Voxforge Speech Corpus](www.voxforge.org) containing roughly 100k samples. This branch is far from complete and will represent a WORKING production model.
 Once complete I will also release the fully trained model as pre-processing the dataset takes time.
+
 ## Installation
 
 Note: This installation assumes you are willing to install CUDA 7.5 AND [cudnn](https://developer.nvidia.com/cudnn) R5 (for GPU support which is default). How to install these are
