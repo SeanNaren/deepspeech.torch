@@ -10,6 +10,7 @@ require 'ReverseSequence'
 require 'Linear3D'
 require 'TemporalBatchNormalization'
 require 'gnuplot'
+require 'CombineDimensions'
 require 'xlua'
 require 'BRNN'
 
@@ -34,33 +35,21 @@ end
 
 --Creates a new speech network loaded into Network.
 function Network:createSpeechNetwork()
-    torch.manualSeed(123)
-
     local model = nn.Sequential()
 
-    local cnn = nn.Sequential()
-    cnn:add(nn.SpatialConvolution(1, 32, 41, 11, 2, 2))
-    cnn:add(nn.SpatialBatchNormalization(32))
-    cnn:add(nn.ReLU(true))
-    cnn:add(nn.Dropout(0.4))
-    cnn:add(nn.SpatialConvolution(32, 32, 21, 11, 2, 1))
-    cnn:add(nn.SpatialBatchNormalization(32))
-    cnn:add(nn.ReLU(true))
-    cnn:add(nn.Dropout(0.4))
-    cnn:add(nn.SpatialMaxPooling(2, 2, 2, 2))
+    model:add(nn.SpatialConvolution(1, 32, 41, 11, 2, 2))
+    model:add(nn.SpatialBatchNormalization(32))
+    model:add(nn.ReLU(true))
+    model:add(nn.Dropout(0.4))
+    model:add(nn.SpatialConvolution(32, 32, 21, 11, 2, 1))
+    model:add(nn.SpatialBatchNormalization(32))
+    model:add(nn.ReLU(true))
+    model:add(nn.Dropout(0.4))
+    model:add(nn.SpatialMaxPooling(2, 2, 2, 2))
 
-    -- batchsize x featuremap x freq x time
-    cnn:add(nn.SplitTable(1))
-    -- features x freq x time
+    model:add(nn.CombineDimensions(2, 3)) -- Combine the middle two dimensions from 4D to 3D (features x batch x seqLength)
+    model:add(nn.Transpose({1,2},{2,3})) -- Transpose till batch x seqLength x features
 
-    cnn:add(nn.Sequencer(nn.View(1, 32 * 25, -1)))
-    -- batch x features x time
-    cnn:add(nn.JoinTable(1))
-    -- batch x time x features
-    cnn:add(nn.Transpose({ 2, 3 }))
-
-    -- b x t x f
-    model:add(cnn)
     model:add(nn.BRNN(nn.TorchLSTM(32 * 25, 400)))
     model:add(nn.TemporalBatchNormalization(400))
     model:add(nn.BRNN(nn.TorchLSTM(400, 400)))
