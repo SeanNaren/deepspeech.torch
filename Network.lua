@@ -5,13 +5,11 @@ require 'cudnn'
 require 'optim'
 require 'rnn'
 require 'nnx'
-require 'TorchLSTM'
-require 'ReverseSequence'
 require 'Linear3D'
 require 'TemporalBatchNormalization'
+require 'CombineDimensions'
 require 'gnuplot'
 require 'xlua'
-require 'BRNN'
 
 local Network = {}
 local logger = optim.Logger('train.log')
@@ -34,36 +32,21 @@ end
 
 --Creates a new speech network loaded into Network.
 function Network:createSpeechNetwork()
-    torch.manualSeed(123)
-
     local model = nn.Sequential()
 
-    local cnn = nn.Sequential()
-    cnn:add(cudnn.SpatialConvolution(1, 32, 41, 11, 2, 2))
-    cnn:add(cudnn.SpatialBatchNormalization(32))
-    cnn:add(cudnn.ReLU(true))
-    cnn:add(nn.Dropout(0.4))
-    cnn:add(cudnn.SpatialConvolution(32, 32, 21, 11, 2, 1))
-    cnn:add(cudnn.SpatialBatchNormalization(32))
-    cnn:add(cudnn.ReLU(true))
-    cnn:add(nn.Dropout(0.4))
-    cnn:add(cudnn.SpatialMaxPooling(2, 2, 2, 2))
+    model:add(cudnn.SpatialConvolution(1, 32, 41, 11, 2, 2))
+    model:add(cudnn.SpatialBatchNormalization(32))
+    model:add(cudnn.ReLU(true))
+    model:add(cudnn.SpatialConvolution(32, 32, 21, 11, 2, 1))
+    model:add(cudnn.SpatialBatchNormalization(32))
+    model:add(cudnn.ReLU(true))
+    model:add(cudnn.SpatialMaxPooling(2, 2, 2, 2))
 
-    -- batchsize x featuremap x freq x time
-    cnn:add(nn.SplitTable(1))
-    -- features x freq x time
+    model:add(nn.CombineDimensions(2, 3)) -- Combine the middle two dimensions from 4D to 3D (features x batch x seqLength)
+    model:add(nn.Transpose({1,2},{2,3})) -- Transpose till batch x seqLength x features
 
-    cnn:add(nn.Sequencer(nn.View(1, 32 * 25, -1)))
-    -- batch x features x time
-    cnn:add(nn.JoinTable(1))
-    -- batch x time x features
-    cnn:add(nn.Transpose({ 2, 3 }))
-
-    -- b x t x f
-    model:add(cnn)
-    model:add(nn.BRNN(nn.TorchLSTM(32 * 25, 400)))
-    model:add(nn.TemporalBatchNormalization(400))
-    model:add(nn.BRNN(nn.TorchLSTM(400, 400)))
+    model:add(nn.TemporalBatchNormalization(32 * 25))
+    model:add(cudnn.BLSTM(32 * 25, 200, 3, true))
     model:add(nn.TemporalBatchNormalization(400))
     model:add(nn.Linear3D(400, 28))
     model:cuda()
