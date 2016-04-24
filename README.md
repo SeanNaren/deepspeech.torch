@@ -1,14 +1,23 @@
 # CTCSpeechRecognition
 
-Work in progress. Implementation of the [Baidu Warp-CTC](https://github.com/baidu-research/warp-ctc) using torch7. Feeds spectrogram data into a neural network using the Torch7 library, training itself with the CTC activation function.
+Work in progress. Implementation of the [Baidu Warp-CTC](https://github.com/baidu-research/warp-ctc) using torch7.
+Feeds spectrogram data into a neural network based on the [DeepSpeech2](http://arxiv.org/pdf/1512.02595v1.pdf) architecture using the Torch7 library, training itself with the CTC activation function.
 
-Current implementation runs on CUDA 7.5, but can be using anything above 7.0.
+## Branches
 
+There are currently two branches, master and voxforge:
+* Master: This branch trains a neural network based on the [AN4 Audio database](http://www.speech.cs.cmu.edu/databases/an4/) of roughly 900 samples. Also included is a evaluation script which calculates the WER using the AN4 test dataset.
+This branch is useful for understanding how the CTC Speech System works and is very easy to run after installation. Highly recommended to checkout this branch.
+* Voxforge: This branch is like the above except it uses the [Voxforge Speech Corpus](www.voxforge.org) containing roughly 100k samples. This branch is far from complete and will represent a WORKING production model.
+Once complete I will also release the fully trained model as pre-processing the dataset takes time.
 ## Installation
+
+Note: This installation assumes you are willing to install CUDA 7.5 AND [cudnn](https://developer.nvidia.com/cudnn) R5 (for GPU support which is default). How to install these are
+described below.
 
 To install torch7 follow the guide [here](http://torch.ch/docs/getting-started.html).
 
-You must have CUDA 7.0 or above (build supported by warp-ctc). To install CUDA 7.5:
+You must have CUDA 7.5 or above (build supported by warp-ctc). To install CUDA 7.5:
 
 Download the .run file of your platform [here](https://developer.nvidia.com/cuda-downloads).
 
@@ -85,11 +94,11 @@ luarocks install nn
 luarocks install dpnn
 ```
 
-For cudnn you need to create an account, follow install instructions [here](https://developer.nvidia.com/cudnn).
+For cudnn V5 you need to create an account, follow install instructions [here](https://developer.nvidia.com/cudnn). Make sure to install V5.
 
-Once you have completed the above installation, Install lua bindings for [cudnn](https://github.com/soumith/cudnn.torch):
+Once you have completed the above installation, Install lua bindings for [cudnn R5](https://github.com/soumith/cudnn.torch/tree/R5):
 ```
-luarocks install cudnn
+luarocks install https://raw.githubusercontent.com/soumith/cudnn.torch/R5/cudnn-scm-1.rockspec
 ```
 
 Main method located at AN4CTCTrain.lua.
