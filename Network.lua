@@ -8,6 +8,7 @@ require 'nnx'
 require 'Linear3D'
 require 'TemporalBatchNormalization'
 require 'CombineDimensions'
+require 'BGRU'
 require 'gnuplot'
 require 'xlua'
 
@@ -20,6 +21,7 @@ function Network:init(networkParams)
     self.loadModel = networkParams.loadModel or false -- If set to true we will load the model into Network.
     self.saveModel = networkParams.saveModel or false -- Set to true if you want to save the model after training.
     self.fileName = networkParams.fileName -- The file name to save/load the network from.
+    self.GRU = networkParams.GRU or false -- Whether to use GRU or LSTM (LSTM by default).
     self.model = nil
     if (self.loadModel) then
         assert(networkParams.fileName, "Filename hasn't been given to load model.")
@@ -46,7 +48,11 @@ function Network:createSpeechNetwork()
     model:add(nn.Transpose({1,2},{2,3})) -- Transpose till batch x seqLength x features
 
     model:add(nn.TemporalBatchNormalization(32 * 25))
-    model:add(cudnn.BLSTM(32 * 25, 200, 3, true))
+    if (self.GRU) then
+        model:add(cudnn.BLSTM(32 * 25, 200, 3, true))
+    else
+        model:add(cudnn.BGRU(32 * 25, 200, 3, true))
+    end
     model:add(nn.TemporalBatchNormalization(400))
     model:add(nn.Linear3D(400, 28))
     model:cuda()
