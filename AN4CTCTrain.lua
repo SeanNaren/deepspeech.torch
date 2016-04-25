@@ -10,7 +10,8 @@ local epochs = 70
 local networkParams = {
     loadModel = false,
     saveModel = true,
-    fileName = "CTCNetwork.model"
+    fileName = "CTCNetwork.model",
+    GRU = false -- When set to true we convert all LSTMs to GRUs.
 }
 --Parameters for the stochastic gradient descent (using the optim library).
 local sgdParams = {
