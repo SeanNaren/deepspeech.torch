@@ -24,7 +24,7 @@ local function deepSpeech(GRU)
     model:add(nn.Transpose({1, 2})) -- batch x seqLength x features
     model:add(nn.MergeConcat(400, 3)) -- Sums the outputDims of the two outputs layers from BRNN into one.
     model:add(nn.TemporalBatchNormalization(400))
-    model:add(nn.Linear3D(200, 28))
+    model:add(nn.Linear3D(400, 28))
     return model
 end
 
