@@ -7,6 +7,8 @@ local AudioData = require 'AudioData'
 require 'nn'
 require 'xlua'
 
+gpu = true -- Set to true if you trained a GPU based model.
+
 --[[Takes the resulting predictions and the transcript sentence. Returns tables of words said in both.]]
 local function getWords(predictions, targetSentence, shouldSpellCheck)
     local predictionString = ""
@@ -78,7 +80,10 @@ function calculateWordErrorRate(shouldSpellCheck, testDataSet, wordTranscripts)
         local inputAndTarget = testDataSet[i]
         local inputs, targets = inputAndTarget.tensor, inputAndTarget.target
         -- We create an input of size batch x channels x freq x time (batch size in this case is 1).
-        inputs = inputs:view(1, 1, inputs:size(1), inputs:size(2)):transpose(3, 4):cuda()
+        inputs = inputs:view(1, 1, inputs:size(1), inputs:size(2)):transpose(3, 4)
+        if (gpu) then
+            inputs = inputs:cuda()
+        end
         local predictions = Network:predict(inputs)
         local predictedWords, targetWords = getWords(predictions, wordTranscripts[i], shouldSpellCheck)
 
@@ -118,7 +123,7 @@ local networkParams = {
     loadModel = true,
     saveModel = false,
     fileName = "CTCNetwork.model",
-    GRU = false -- When set to true we convert all LSTMs to GRUs.
+    gpu = true -- Set this to false to revert back to CPU.
 }
 
 Network:init(networkParams)
@@ -130,7 +135,7 @@ print(string.format("Without Spellcheck WER : %.2f percent", spellCheckedWER))
 local spellCheckedWER = calculateWordErrorRate(true, testDataSet, wordTranscripts)
 print(string.format("With context based Spellcheck WER : %.2f percent", spellCheckedWER))
 
--- Make sure that the user has got big.txt else do not carry out the general spellcheck WER.
+-- Make sure that the user has got big.txt else do not carry out the general spellcheck WER. -- TODO replace with Seq2Seq
 if (fileExists("big.txt")) then
     -- The final evaluation uses a spell checker conditioned on a large text file of multiple ebooks.
     SpellingChecker:init("big.txt")

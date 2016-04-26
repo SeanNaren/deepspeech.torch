@@ -1,10 +1,10 @@
 --[[Trains the CTC model using the AN4 audio database. Training time as of now takes less than 40 minutes on a GTX 970.]]
 
 local AudioData = require 'AudioData'
-local Network = require 'Network' -- To use the CPU instead change the require to NetworkCPU.
+local Network = require 'Network'
 local Batcher = require 'Batcher'
 
-local deepSpeechModel = require 'DeepSpeechModel' -- The script that contains the model we will be training.
+local deepSpeechModel = require 'DeepSpeechModel' -- The script that contains the model we will be training. Use DeepSpeechModelCPU to use CPU.
 
 --Training parameters
 local epochs = 70
@@ -14,7 +14,8 @@ local networkParams = {
     loadModel = false,
     saveModel = true,
     fileName = "CTCNetwork.model",
-    model = deepSpeechModel(GRU)
+    model = deepSpeechModel(GRU),
+    gpu = true -- Set this to false to revert back to CPU.
 }
 --Parameters for the stochastic gradient descent (using the optim library).
 local sgdParams = {
