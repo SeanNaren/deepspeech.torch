@@ -89,6 +89,12 @@ Once you have completed the above installation, Install lua bindings for [cudnn 
 luarocks install https://raw.githubusercontent.com/soumith/cudnn.torch/R5/cudnn-scm-1.rockspec
 ```
 
+Finally clone the repository to access the scripts:
+
+```
+git clone https://github.com/SeanNaren/CTCSpeechRecognition.git
+```
+
 Main method located at AN4CTCTrain.lua.
 
 Training data is currently the [AN4 Audio database](http://www.speech.cs.cmu.edu/databases/an4/).
