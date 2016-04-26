@@ -1,8 +1,5 @@
 require 'cudnn'
-require 'Linear3D'
-require 'TemporalBatchNormalization'
-require 'CombineDimensions'
-require 'BGRU'
+require 'ctchelpers'
 
 local function deepSpeech(GRU)
     local model = nn.Sequential()
@@ -20,15 +17,14 @@ local function deepSpeech(GRU)
 
     model:add(nn.TemporalBatchNormalization(32 * 25))
     if (GRU) then
-        model:add(cudnn.BGRU(32 * 25, 200, 4))
+        model:add(cudnn.BGRU(32 * 25, 200, 2))
     else
-        model:add(cudnn.BLSTM(32 * 25, 200, 4))
+        model:add(cudnn.BLSTM(32 * 25, 200, 2))
     end
     model:add(nn.Transpose({1,2})) -- batch x seqLength x features
-    model:add(nn.TemporalBatchNormalization(400))
-    model:add(nn.Linear3D(400, 28))
-    model:cuda()
-    model:training()
+    model:add(nn.MergeConcat(200,3)) -- Sums the outputDims of the two outputs layers from BRNN into one.
+    model:add(nn.TemporalBatchNormalization(200))
+    model:add(nn.Linear3D(200, 28))
     return model
 end
 
