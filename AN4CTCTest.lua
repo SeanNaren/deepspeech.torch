@@ -122,7 +122,7 @@ SpellingChecker:init("trainingAN4transcripts.txt")
 local networkParams = {
     loadModel = true,
     saveModel = false,
-    fileName = "CTCNetwork.model",
+    fileName = "CTCNetwork.t7",
     gpu = true -- Set this to false to revert back to CPU.
 }
 

@@ -13,7 +13,7 @@ local GRU = false -- When set to true we convert all LSTMs to GRUs.
 local networkParams = {
     loadModel = false,
     saveModel = true,
-    fileName = "CTCNetwork.model",
+    fileName = "CTCNetwork.t7",
     model = deepSpeechModel(GRU),
     gpu = true -- Set this to false to revert back to CPU.
 }
