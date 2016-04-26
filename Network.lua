@@ -16,16 +16,16 @@ function Network:init(networkParams)
     self.fileName = networkParams.fileName -- The file name to save/load the network from.
     self.gpu = networkParams.gpu or false -- Set to true to use GPU.
     self.model = nil
+    if (self.gpu) then -- Load gpu modules.
+    require 'cunn'
+    require 'cudnn'
+    end
     if (self.loadModel) then
         assert(networkParams.fileName, "Filename hasn't been given to load model.")
         self:loadNetwork(networkParams.fileName)
     else
         assert(networkParams.model, "Must have given a model to train.")
         self:prepSpeechModel(networkParams.model)
-    end
-    if (self.gpu) then -- Load gpu modules.
-        require 'cunn'
-        require 'cudnn'
     end
     assert((networkParams.saveModel or networkParams.loadModel) and networkParams.fileName, "To save/load you must specify the fileName you want to save to")
 end
