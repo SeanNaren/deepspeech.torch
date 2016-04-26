@@ -49,12 +49,12 @@ function Network:createSpeechNetwork()
 
     model:add(nn.TemporalBatchNormalization(32 * 25))
     if (self.GRU) then
-        model:add(cudnn.BLSTM(32 * 25, 200, 4, true))
+        model:add(cudnn.BGRU(32 * 25, 400, 4, true))
     else
-        model:add(cudnn.BGRU(32 * 25, 200, 4, true))
+        model:add(cudnn.BLSTM(32 * 25, 400, 4, true))
     end
-    model:add(nn.TemporalBatchNormalization(400))
-    model:add(nn.Linear3D(400, 28))
+    model:add(nn.TemporalBatchNormalization(800))
+    model:add(nn.Linear3D(800, 28))
     model:cuda()
     model:training()
     self.model = model
