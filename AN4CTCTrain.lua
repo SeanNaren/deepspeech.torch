@@ -4,14 +4,17 @@ local AudioData = require 'AudioData'
 local Network = require 'Network' -- To use the CPU instead change the require to NetworkCPU.
 local Batcher = require 'Batcher'
 
+local deepSpeechModel = require 'DeepSpeechModel' -- The script that contains the model we will be training.
+
 --Training parameters
 local epochs = 70
 
+local GRU = false -- When set to true we convert all LSTMs to GRUs.
 local networkParams = {
     loadModel = false,
     saveModel = true,
     fileName = "CTCNetwork.model",
-    GRU = false -- When set to true we convert all LSTMs to GRUs.
+    model = deepSpeechModel(GRU)
 }
 --Parameters for the stochastic gradient descent (using the optim library).
 local sgdParams = {
