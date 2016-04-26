@@ -117,7 +117,8 @@ SpellingChecker:init("trainingAN4transcripts.txt")
 local networkParams = {
     loadModel = true,
     saveModel = false,
-    fileName = "CTCNetwork.model"
+    fileName = "CTCNetwork.model",
+    GRU = false -- When set to true we convert all LSTMs to GRUs.
 }
 
 Network:init(networkParams)
