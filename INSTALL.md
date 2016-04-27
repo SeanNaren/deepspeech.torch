@@ -97,7 +97,7 @@ For cuDNN V5 you need to create an account, follow install instructions [here](h
 
 Once you have completed the above installation, Install lua bindings for [cudnn R5](https://github.com/soumith/cudnn.torch/tree/R5):
 ```
-luarocks install https://raw.githubusercontent.com/soumith/cudnn.torch/R5/cudnn-scm-1.rockspec
+luarocks install https://raw.githubusercontent.com/SeanNaren/CTCSpeechRecognition/master/rocks/cudnn-scm-1.rockspec
 ```
 
 Finally clone the repository to access the scripts:
