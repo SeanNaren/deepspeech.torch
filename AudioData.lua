@@ -34,6 +34,14 @@ local function convertLineToLabels(labels, transcripts, line)
     table.insert(transcripts, line)
 end
 
+local function combineInputsAndTargets(inputs, targets, transcripts)
+    local inputsAndTargets = {}
+    for i = 1, #inputs do
+        table.insert(inputsAndTargets, { tensor = inputs[i], label = targets[i], truthText = transcripts[i] })
+    end
+    return inputsAndTargets
+end
+
 local function an4Dataset(folderDirPath, audioLocationPath, targets, transcripts, windowSize, stride, nbOfSamples)
     local inputs = {}
     local counter = 0
@@ -46,14 +54,6 @@ local function an4Dataset(folderDirPath, audioLocationPath, targets, transcripts
         xlua.progress(counter, nbOfSamples)
     end
     local inputsAndTargets = combineInputsAndTargets(inputs, targets, transcripts)
-    return inputsAndTargets
-end
-
-local function combineInputsAndTargets(inputs, targets, transcripts)
-    local inputsAndTargets = {}
-    for i = 1, #inputs do
-        table.insert(inputsAndTargets, { tensor = inputs[i], label = targets[i], truthText = transcripts[i] })
-    end
     return inputsAndTargets
 end
 
