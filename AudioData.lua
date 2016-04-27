@@ -52,7 +52,7 @@ end
 local function combineInputsAndTargets(inputs, targets, transcripts)
     local inputsAndTargets = {}
     for i = 1, #inputs do
-        table.insert(inputsAndTargets, { tensor = inputs[i], label = targets[i], text = transcripts[i] })
+        table.insert(inputsAndTargets, { tensor = inputs[i], label = targets[i], truthText = transcripts[i] })
     end
     return inputsAndTargets
 end
