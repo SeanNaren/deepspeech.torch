@@ -1,11 +1,7 @@
-require 'cunn'
-require 'cudnn'
 require 'optim'
 require 'nnx'
-require 'Linear3D'
-require 'TemporalBatchNormalization'
-require 'CombineDimensions'
-require 'BGRU'
+require 'BRNN'
+require 'ctchelpers'
 require 'gnuplot'
 require 'xlua'
 
@@ -15,10 +11,15 @@ logger:setNames { 'loss' }
 logger:style { '-' }
 
 function Network:init(networkParams)
-    self.loadModel = networkParams.loadModel or false -- If set to true we will load the model into Network.
+    self.loadModel = networkParams.loadModel or false -- Set to true to load the model into Network.
     self.saveModel = networkParams.saveModel or false -- Set to true if you want to save the model after training.
     self.fileName = networkParams.fileName -- The file name to save/load the network from.
+    self.gpu = networkParams.gpu or false -- Set to true to use GPU.
     self.model = nil
+    if (self.gpu) then -- Load gpu modules.
+    require 'cunn'
+    require 'cudnn'
+    end
     if (self.loadModel) then
         assert(networkParams.fileName, "Filename hasn't been given to load model.")
         self:loadNetwork(networkParams.fileName)
@@ -30,7 +31,7 @@ function Network:init(networkParams)
 end
 
 function Network:prepSpeechModel(model)
-    model:cuda()
+    if (self.gpu) then model:cuda() end
     model:training()
     self.model = model
 end
@@ -45,11 +46,16 @@ end
 --Uses warp-ctc cost evaluation.
 function Network:trainNetwork(dataset, epochs, sgd_params)
     local history = {}
-    local ctcCriterion = nn.CTCCriterion():cuda()
+    local ctcCriterion = nn.CTCCriterion()
+
     local x, gradParameters = self.model:getParameters()
 
-    -- GPU inputs (preallocate)
-    local inputs = torch.CudaTensor()
+    -- inputs (preallocate)
+    local inputs = torch.Tensor()
+    if self.gpu then
+        ctcCriterion = nn.CTCCriterion():cuda()
+        inputs = inputs:cuda()
+    end
 
     local function feval(x_new)
         local inputsCPU, targets = dataset:nextData()

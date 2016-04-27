@@ -1,7 +1,9 @@
-## Installation
+# Installation
 
 Note: This installation assumes you are willing to install CUDA 7.5 AND [cudnn](https://developer.nvidia.com/cudnn) R5 (for GPU support which is default). How to install these are
 described below.
+
+## Torch and CUDA
 
 To install torch7 follow the guide [here](http://torch.ch/docs/getting-started.html).
 
@@ -29,6 +31,8 @@ export PATH=/usr/local/cuda-7.5/bin:$PATH
 export LD_LIBRARY_PATH=/usr/local/cuda-7.5/lib64:$LD_LIBRARY_PATH
 ```
 Restart the terminal for changes to take effect.
+
+## Luarocks installs
 
 For CUDA implementation (make sure to install these via luarocks first before installing the warp-ctc library):
 ```
@@ -75,6 +79,11 @@ luarocks install nnx
 luarocks install xlua
 ```
 
+[CTCHelpers](https://github.com/SeanNaren/CTCHelpers): Collection of modules that are used in Torch CTC network implementations</a>:
+```
+luarocks install https://raw.githubusercontent.com/SeanNaren/CTCHelpers/master/ctchelpers-scm-1.rockspec
+```
+
 It is also suggested to update the following libraries:
 ```
 luarocks install torch
@@ -82,7 +91,9 @@ luarocks install nn
 luarocks install dpnn
 ```
 
-For cudnn V5 you need to create an account, follow install instructions [here](https://developer.nvidia.com/cudnn). Make sure to install V5.
+## cuDNN
+
+For cuDNN V5 you need to create an account, follow install instructions [here](https://developer.nvidia.com/cudnn). Make sure to install V5.
 
 Once you have completed the above installation, Install lua bindings for [cudnn R5](https://github.com/soumith/cudnn.torch/tree/R5):
 ```

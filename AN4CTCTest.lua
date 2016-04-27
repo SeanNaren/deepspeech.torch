@@ -7,6 +7,8 @@ local AudioData = require 'AudioData'
 require 'nn'
 require 'xlua'
 
+gpu = true -- Set to true if you trained a GPU based model.
+
 --[[Takes the resulting predictions and the transcript sentence. Returns tables of words said in both.]]
 local function getWords(predictions, targetSentence, shouldSpellCheck)
     local predictionString = ""
@@ -69,7 +71,7 @@ function wordErrorRate(target, prediction)
     return d[#target + 1][#prediction + 1] / #target * 100
 end
 
-function calculateWordErrorRate(shouldSpellCheck, testDataSet, wordTranscripts)
+function calculateWordErrorRate(shouldSpellCheck, testDataSet)
     -- We collapse all the words into one large table to pass into the WER calculation.
     local totalPredictedWords = {}
     local totalTargetWords = {}
@@ -78,9 +80,12 @@ function calculateWordErrorRate(shouldSpellCheck, testDataSet, wordTranscripts)
         local inputAndTarget = testDataSet[i]
         local inputs, targets = inputAndTarget.tensor, inputAndTarget.target
         -- We create an input of size batch x channels x freq x time (batch size in this case is 1).
-        inputs = inputs:view(1, 1, inputs:size(1), inputs:size(2)):transpose(3, 4):cuda()
+        inputs = inputs:view(1, 1, inputs:size(1), inputs:size(2)):transpose(3, 4)
+        if (gpu) then
+            inputs = inputs:cuda()
+        end
         local predictions = Network:predict(inputs)
-        local predictedWords, targetWords = getWords(predictions, wordTranscripts[i], shouldSpellCheck)
+        local predictedWords, targetWords = getWords(predictions, inputAndTarget.truthText, shouldSpellCheck)
 
         for index, word in ipairs(predictedWords) do
             table.insert(totalPredictedWords, word)
@@ -107,7 +112,7 @@ local stride = 75
 local an4FolderDir = "/root/CTCSpeechRecognition/Audio/an4"
 
 --The test set in spectrogram tensor form.
-local testDataSet, wordTranscripts = AudioData.retrieveAN4TestDataSet(an4FolderDir, windowSize, stride)
+local testDataSet = AudioData.retrieveAN4TestDataSet(an4FolderDir, windowSize, stride)
 
 -- File path to the big.txt (see readme for download link). Due to the randomness of the an4 dataset
 -- I've combined the transcripts to calculate word probabilities from it. Should be replaced by a proper language model.
@@ -117,24 +122,24 @@ SpellingChecker:init("trainingAN4transcripts.txt")
 local networkParams = {
     loadModel = true,
     saveModel = false,
-    fileName = "CTCNetwork.model",
-    GRU = false -- When set to true we convert all LSTMs to GRUs.
+    fileName = "CTCNetwork.t7",
+    gpu = true -- Set this to false to revert back to CPU.
 }
 
 Network:init(networkParams)
 print("Network loaded")
 
-local spellCheckedWER = calculateWordErrorRate(false, testDataSet, wordTranscripts)
+local spellCheckedWER = calculateWordErrorRate(false, testDataSet)
 print(string.format("Without Spellcheck WER : %.2f percent", spellCheckedWER))
 
-local spellCheckedWER = calculateWordErrorRate(true, testDataSet, wordTranscripts)
+local spellCheckedWER = calculateWordErrorRate(true, testDataSet)
 print(string.format("With context based Spellcheck WER : %.2f percent", spellCheckedWER))
 
--- Make sure that the user has got big.txt else do not carry out the general spellcheck WER.
+-- Make sure that the user has got big.txt else do not carry out the general spellcheck WER. -- TODO replace with Seq2Seq
 if (fileExists("big.txt")) then
     -- The final evaluation uses a spell checker conditioned on a large text file of multiple ebooks.
     SpellingChecker:init("big.txt")
-    local spellCheckedWER = calculateWordErrorRate(true, testDataSet, wordTranscripts)
+    local spellCheckedWER = calculateWordErrorRate(true, testDataSet)
     print(string.format("With general Spellcheck WER : %.2f percent", spellCheckedWER))
 end
 
