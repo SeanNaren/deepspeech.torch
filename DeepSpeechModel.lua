@@ -17,19 +17,19 @@ local function deepSpeech(GRU)
     model:add(nn.Sequencer(nn.View(1, 32 * 25, -1))) -- features x freq x time
     model:add(nn.JoinTable(1)) -- batch x features x time
     model:add(nn.Transpose({ 2, 3 })) -- batch x time x features
-    model:add(nn.TemporalBatchNormalization(32 * 25))
+    --model:add(nn.TemporalBatchNormalization(32 * 25))
     model:add(nn.Transpose({ 1, 2 })) -- time x batch x features
 
     if (GRU) then
-        model:add(cudnn.BGRU(32 * 25, 400, 4))
+        model:add(cudnn.BGRU(32 * 25, 100, 7))
     else
-        model:add(cudnn.BLSTM(32 * 25, 400, 4))
+        model:add(cudnn.BLSTM(32 * 25, 100, 7))
     end
 
     model:add(nn.Transpose({ 1, 2 })) -- batch x seqLength x features
-    model:add(nn.MergeConcat(400, 3)) -- Sums the outputDims of the two outputs layers from BRNN into one.
-    model:add(nn.TemporalBatchNormalization(400))
-    model:add(nn.Linear3D(400, 28))
+    model:add(nn.MergeConcat(100, 3)) -- Sums the outputDims of the two outputs layers from BRNN into one.
+    --model:add(nn.TemporalBatchNormalization(100))
+    model:add(nn.Linear3D(100, 28))
     return model
 end
 
