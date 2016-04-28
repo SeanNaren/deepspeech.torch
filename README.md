@@ -1,7 +1,7 @@
 # CTCSpeechRecognition
 
 Work in progress. Implementation of the [Baidu Warp-CTC](https://github.com/baidu-research/warp-ctc) using torch7.
-Creates a network based on the [DeepSpeech2](http://arxiv.org/pdf/1512.02595v1.pdf) architecture using the Torch7 library, training itself with the CTC activation function.
+Creates a network based on the [DeepSpeech2](http://arxiv.org/pdf/1512.02595v1.pdf) architecture using the Torch7 library, trained with the CTC activation function.
 
 ## Branches
 
@@ -10,6 +10,10 @@ There are currently two branches, master and voxforge:
 This branch is useful for understanding how the CTC Speech System works and is very easy to run after installation. Highly recommended to checkout this branch.
 * Voxforge: This branch is like the above except it uses the [Voxforge Speech Corpus](www.voxforge.org) containing roughly 100k samples. This branch is far from complete and will represent a WORKING production model.
 Once complete I will also release the fully trained model as pre-processing the dataset takes time.
+
+## TODO
+* Obtain a WER on the AN4 dataset around 13 using the basic spell checker. A suitable accuracy to move forward with scaling the project.
+* Create a Seq2Seq Attention based spell checker trained on the [Google Billion Words](http://static.googleusercontent.com/media/research.google.com/en//pubs/archive/41880.pdf) dataset.
 
 To train the network using the AN4 dataset we use the AN4CTCTrain script and the parameters configured in the script.
 
