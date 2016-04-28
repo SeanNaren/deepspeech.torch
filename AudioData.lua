@@ -71,10 +71,10 @@ function AudioData.retrieveAN4TrainingDataSet(folderDirPath, windowSize, stride)
     return dataSet, transcripts
 end
 
-function AudioData.retrieveAN4TestDataSet(folderDirPath, windowSize, stride)
+function AudioData.retrieveAN4TestDataSet(folderDirPath, windowSize, stride, numberOfSamples)
     local audioLocationPath = folderDirPath .. "/etc/an4_test.fileids"
     local transcriptPath = folderDirPath .. "/etc/an4_test.transcription"
-    local nbSamples = 130 -- Amount of samples found in the AN4 test set.
+    local nbSamples = numberOfSamples or 130 -- Amount of samples (defaults to all).
     local targets = {}
     local transcripts = {} -- For verification of words, we return the lines of the test data.
 
