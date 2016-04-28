@@ -12,8 +12,9 @@ This branch is useful for understanding how the CTC Speech System works and is v
 Once complete I will also release the fully trained model as pre-processing the dataset takes time.
 
 ## TODO
-* Obtain a WER on the AN4 dataset around 13 using the basic spell checker. A suitable accuracy to move forward with scaling the project.
-* Create a Seq2Seq Attention based spell checker trained on the [Google Billion Words](http://static.googleusercontent.com/media/research.google.com/en//pubs/archive/41880.pdf) dataset.
+* Figure out a method to batch together sentences of similar length with appropriate padding and be able to utitilise the varying length sentences computation supported by warp-CTC
+* Obtain a WER on the AN4 dataset around 13 using the basic spell checker. A suitable accuracy to move forward with scaling the project
+* Create a Seq2Seq Attention based spell checker trained on the [Google Billion Words](http://static.googleusercontent.com/media/research.google.com/en//pubs/archive/41880.pdf) dataset
 
 To train the network using the AN4 dataset we use the AN4CTCTrain script and the parameters configured in the script.
 
