@@ -4,11 +4,12 @@ require 'BRNN'
 require 'ctchelpers'
 require 'gnuplot'
 require 'xlua'
+local WERCalculator = require 'WERCalculator'
 
 local Network = {}
 local logger = optim.Logger('train.log')
-logger:setNames { 'loss' }
-logger:style { '-' }
+logger:setNames { 'loss', 'WER' }
+logger:style{'-', '-'}
 
 function Network:init(networkParams)
     self.loadModel = networkParams.loadModel or false -- Set to true to load the model into Network.
@@ -42,10 +43,21 @@ function Network:predict(inputTensors)
     return prediction
 end
 
+local function WERValidationSet(self, validationSet)
+    if(validationSet) then
+        self.model:evaluate()
+        local wer =  WERCalculator.calculateWordErrorRate(false, validationSet, nil, self.model, self.gpu)
+        self.model:zeroGradParameters()
+        self.model:training()
+        return wer
+    end
+end
+
 --Trains the network using SGD and the defined feval.
 --Uses warp-ctc cost evaluation.
-function Network:trainNetwork(dataset, epochs, sgd_params)
-    local history = {}
+function Network:trainNetwork(dataset, validationDataset, epochs, sgd_params)
+    local lossHistory = {}
+    local validationHistory = {}
     local ctcCriterion = nn.CTCCriterion()
 
     local x, gradParameters = self.model:getParameters()
@@ -76,6 +88,10 @@ function Network:trainNetwork(dataset, epochs, sgd_params)
     for i = 1, epochs do
         local averageLoss = 0
         print(string.format("Training Epoch: %d", i))
+
+        local wer = WERValidationSet(self, validationDataset)
+        if wer then table.insert(validationHistory, wer) end
+
         for j = 1, dataSetSize do
             currentLoss = 0
             local _, fs = optim.sgd(feval, x, sgd_params)
@@ -83,10 +99,12 @@ function Network:trainNetwork(dataset, epochs, sgd_params)
             xlua.progress(j, dataSetSize)
             averageLoss = averageLoss + currentLoss
         end
+
         averageLoss = averageLoss / dataSetSize -- Calculate the average loss at this epoch.
-        logger:add { averageLoss } -- Add the average loss value to the logger.
-        table.insert(history, averageLoss) -- Add the average loss value to the logger.
+        table.insert(lossHistory, averageLoss) -- Add the average loss value to the logger.
         print(string.format("Training Epoch: %d Average Loss: %f", i, averageLoss))
+
+        logger:add{averageLoss, wer}
     end
     local endTime = os.time()
     local secondsTaken = endTime - startTime
@@ -97,7 +115,7 @@ function Network:trainNetwork(dataset, epochs, sgd_params)
         print("Saving model")
         self:saveNetwork(self.fileName)
     end
-    return history, minutesTaken
+    return lossHistory, validationHistory, minutesTaken
 end
 
 
