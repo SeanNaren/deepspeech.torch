@@ -8,6 +8,8 @@ local deepSpeechModel = require 'DeepSpeechModel' -- The script that contains th
 
 --Training parameters
 local epochs = 70
+local numberOfValidationSamples = 20
+
 
 local GRU = false -- When set to true we convert all LSTMs to GRUs.
 local networkParams = {
@@ -39,10 +41,12 @@ local an4FolderDir = "/root/CTCSpeechRecognition/Audio/an4"
 local inputsAndTargets = AudioData.retrieveAN4TrainingDataSet(an4FolderDir, windowSize, stride)
 local trainingDataSet = Batcher.createMinibatchDataset(inputsAndTargets, maximumSizeDifference)
 
+
+local validationInputsAndTargets = AudioData.retrieveAN4TestDataSet(an4FolderDir, windowSize, stride, numberOfValidationSamples)
+
 --Create and train the network based on the parameters and training data.
 Network:init(networkParams)
-
-Network:trainNetwork(trainingDataSet, epochs, sgdParams)
+Network:trainNetwork(trainingDataSet, nil, epochs, sgdParams)
 
 --Creates the loss plot.
 Network:createLossGraph()
