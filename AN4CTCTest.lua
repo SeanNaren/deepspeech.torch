@@ -41,7 +41,7 @@ local networkParams = {
 Network:init(networkParams)
 print("Network loaded")
 
-local spellCheckedWER = WERCalculator.calculateWordErrorRate(false, testDataSet, SpellingChecker, Network. model, gpu, progress)
+local spellCheckedWER = WERCalculator.calculateWordErrorRate(false, testDataSet, SpellingChecker, Network.model, gpu, progress)
 print(string.format("Without Spellcheck WER : %.2f percent", spellCheckedWER))
 
 local spellCheckedWER = WERCalculator.calculateWordErrorRate(true, testDataSet, SpellingChecker, Network.model, gpu, progress)

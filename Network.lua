@@ -1,5 +1,5 @@
 require 'optim'
-require 'nnx'
+require 'CTCCriterion'
 require 'BRNN'
 require 'ctchelpers'
 require 'gnuplot'
@@ -58,14 +58,14 @@ end
 function Network:trainNetwork(dataset, validationDataset, epochs, sgd_params)
     local lossHistory = {}
     local validationHistory = {}
-    local ctcCriterion = nn.CTCCriterion()
+    local ctcCriterion = nn.CTCCriterionTest()
 
     local x, gradParameters = self.model:getParameters()
 
     -- inputs (preallocate)
     local inputs = torch.Tensor()
     if self.gpu then
-        ctcCriterion = nn.CTCCriterion():cuda()
+        ctcCriterion = nn.CTCCriterionTest():cuda()
         inputs = inputs:cuda()
     end
 
