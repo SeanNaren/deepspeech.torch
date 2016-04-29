@@ -16,8 +16,7 @@ local function deepSpeech(GRU)
     model:add(nn.SplitTable(1)) -- batchsize x featuremap x freq x time
     model:add(nn.Sequencer(nn.View(1, 32 * 25, -1))) -- features x freq x time
     model:add(nn.JoinTable(1)) -- batch x features x time
-    model:add(nn.Transpose({ 2, 3 })) -- batch x time x features
-    model:add(nn.Transpose({ 1, 2 })) -- time x batch x features
+    model:add(nn.Transpose({ 2, 3 }, { 1, 2 })) -- batch x time x features
 
     if (GRU) then
         model:add(cudnn.BGRU(32 * 25, 400, 4))
