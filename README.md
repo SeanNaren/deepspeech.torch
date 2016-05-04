@@ -8,6 +8,7 @@ Creates a network based on the [DeepSpeech2](http://arxiv.org/pdf/1512.02595v1.p
 There are currently two branches, master and voxforge:
 * Master: This branch trains a neural network based on the [AN4 Audio database](http://www.speech.cs.cmu.edu/databases/an4/) of roughly 900 samples. Also included is a evaluation script which calculates the WER using the AN4 test dataset.
 This branch is useful for understanding how the CTC Speech System works and is very easy to run after installation. Highly recommended to checkout this branch.
+* AN4Phoneme: This branch is like the above except it uses phonemes rather than character based predictions. This is fully credited and extended by [CCorfield](https://github.com/CCorfield) and his awesome work in porting this over to use phonemes.
 * Voxforge: This branch is like the above except it uses the [Voxforge Speech Corpus](www.voxforge.org) containing roughly 100k samples. This branch is far from complete and will represent a WORKING production model.
 Once complete I will also release the fully trained model as pre-processing the dataset takes time.
 
