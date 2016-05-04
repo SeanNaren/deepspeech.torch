@@ -1,23 +1,19 @@
---[[Trains the CTC model using the AN4 audio database. Training time as of now takes less than 40 minutes on a GTX 970.]]
-
-local AudioData = require 'AudioData'
+local AN4CTCCorpus = require 'AN4CTCCorpus'
+local AN4CTCBatcher = require 'Batcher'
 local Network = require 'Network'
-local Batcher = require 'Batcher'
-
-local deepSpeechModel = require 'DeepSpeechModel' -- The script that contains the model we will be training. Use DeepSpeechModelCPU to use CPU.
+local DeepSpeechModel = require 'DeepSpeechModel'
+local AN4PhonemeDictionary = require 'AN4PhonemeDictionary'
 
 --Training parameters
 local epochs = 70
-local numberOfValidationSamples = 20
 
-
-local GRU = false -- When set to true we convert all LSTMs to GRUs.
+local GRU = false
 local networkParams = {
     loadModel = false,
     saveModel = true,
     fileName = "CTCNetwork.t7",
-    model = deepSpeechModel(GRU),
-    gpu = true -- Set this to false to revert back to CPU.
+    model = DeepSpeechModel(GRU),
+    gpu = true
 }
 --Parameters for the stochastic gradient descent (using the optim library).
 local sgdParams = {
@@ -29,24 +25,29 @@ local sgdParams = {
     nesterov = true
 }
 
+local folderDirPath = "/root/CTCSpeechRecognition/Audio/an4"
+local dictionaryDirPath = "/root/CTCSpeechRecognition/an4.dict"
+
+AN4PhonemeDictionary.init(dictionaryDirPath)
+
 --Window size and stride for the spectrogram transformation.
 local windowSize = 256
 local stride = 75
 
 --The larger this value, the larger the batches, however the more padding is added to make variable sentences the same.
-local maximumSizeDifference = 0 -- Setting this to zero makes it batch together the same length sentences.
+local maxSizeDiff = 0 -- Setting this to zero makes it batch together the same length sentences.
 
 --The training set in spectrogram tensor form.
-local an4FolderDir = "/root/CTCSpeechRecognition/Audio/an4"
-local inputsAndTargets = AudioData.retrieveAN4TrainingDataSet(an4FolderDir, windowSize, stride)
-local trainingDataSet = Batcher.createMinibatchDataset(inputsAndTargets, maximumSizeDifference)
+local inputsAndTargets = AN4CTCCorpus.getTrainingData(folderDirPath, windowSize, stride, AN4PhonemeDictionary)
+local trainingBatch = AN4CTCBatcher.createMinibatchDataset(inputsAndTargets, maxSizeDiff)
 
-
-local validationInputsAndTargets = AudioData.retrieveAN4TestDataSet(an4FolderDir, windowSize, stride, numberOfValidationSamples)
+-- The validation dataset used to monitor training
+local testDataSet = AN4CTCCorpus.getTestingData(folderDirPath, windowSize, stride, AN4PhonemeDictionary)
 
 --Create and train the network based on the parameters and training data.
 Network:init(networkParams)
-Network:trainNetwork(trainingDataSet, nil, epochs, sgdParams)
+
+Network:trainNetwork(trainingBatch, epochs, sgdParams, testDataSet)
 
 --Creates the loss plot.
 Network:createLossGraph()

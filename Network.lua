@@ -4,12 +4,12 @@ require 'BRNN'
 require 'ctchelpers'
 require 'gnuplot'
 require 'xlua'
-local WERCalculator = require 'WERCalculator'
+local PERCalculator = require 'PERCalculator'
 
 local Network = {}
 local logger = optim.Logger('train.log')
-logger:setNames { 'loss', 'WER' }
-logger:style{'-', '-'}
+logger:setNames { 'loss', 'PER' }
+logger:style { '-', '-' }
 
 function Network:init(networkParams)
     self.loadModel = networkParams.loadModel or false -- Set to true to load the model into Network.
@@ -17,6 +17,7 @@ function Network:init(networkParams)
     self.fileName = networkParams.fileName -- The file name to save/load the network from.
     self.gpu = networkParams.gpu or false -- Set to true to use GPU.
     self.model = nil
+    self.validation = networkParams.validation or nil
     if (self.gpu) then -- Load gpu modules.
     require 'cunn'
     require 'cudnn'
@@ -43,19 +44,20 @@ function Network:predict(inputTensors)
     return prediction
 end
 
-local function WERValidationSet(self, validationSet)
-    if(validationSet) then
+local function calculateValidationPER(self, validationDataset)
+    if (validationDataset) then
         self.model:evaluate()
-        local wer =  WERCalculator.calculateWordErrorRate(false, validationSet, nil, self.model, self.gpu)
+        local per = PERCalculator.calculateValidationPER(validationDataset, self.gpu, self.model)
         self.model:zeroGradParameters()
         self.model:training()
-        return wer
+        return per
     end
+    return 0
 end
 
 --Trains the network using SGD and the defined feval.
 --Uses warp-ctc cost evaluation.
-function Network:trainNetwork(dataset, validationDataset, epochs, sgd_params)
+function Network:trainNetwork(dataset, epochs, sgd_params, validationDataset)
     local lossHistory = {}
     local validationHistory = {}
     local ctcCriterion = nn.CTCCriterion()
@@ -85,12 +87,17 @@ function Network:trainNetwork(dataset, validationDataset, epochs, sgd_params)
     local currentLoss
     local startTime = os.time()
     local dataSetSize = dataset:size()
+    local per = 1
     for i = 1, epochs do
         local averageLoss = 0
+
         print(string.format("Training Epoch: %d", i))
 
-        local wer = WERValidationSet(self, validationDataset)
-        if wer then table.insert(validationHistory, wer) end
+        -- Periodically update validation error rates
+        if (i % 2 == 0) then
+            per = calculateValidationPER(self, validationDataset)
+            if per then table.insert(validationHistory, 100 * per) end
+        end
 
         for j = 1, dataSetSize do
             currentLoss = 0
@@ -102,9 +109,9 @@ function Network:trainNetwork(dataset, validationDataset, epochs, sgd_params)
 
         averageLoss = averageLoss / dataSetSize -- Calculate the average loss at this epoch.
         table.insert(lossHistory, averageLoss) -- Add the average loss value to the logger.
-        print(string.format("Training Epoch: %d Average Loss: %f", i, averageLoss))
+        print(string.format("Training Epoch: %d Average Loss: %f PER: %.0f%%", i, averageLoss, 100 * per))
 
-        logger:add{averageLoss, wer}
+        logger:add { averageLoss, 1000 * per } -- Phone Error Rate
     end
     local endTime = os.time()
     local secondsTaken = endTime - startTime

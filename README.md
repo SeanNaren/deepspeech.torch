@@ -1,4 +1,7 @@
-# CTCSpeechRecognition
+# CTCSpeechRecognition AN4 Phoneme Branch
+
+This branch implements CTC recognition using phonemes (trained on the AN4 dataset) rather than character based recognition. Was written by @CCorfield on top of the current implementation
+and I thank him so much for his work and effort in bringing phoneme recognition into the repo.
 
 Work in progress. Implementation of the [Baidu Warp-CTC](https://github.com/baidu-research/warp-ctc) using torch7.
 Creates a network based on the [DeepSpeech2](http://arxiv.org/pdf/1512.02595v1.pdf) architecture using the Torch7 library, trained with the CTC activation function.
@@ -8,6 +11,7 @@ Creates a network based on the [DeepSpeech2](http://arxiv.org/pdf/1512.02595v1.p
 There are currently two branches, master and voxforge:
 * Master: This branch trains a neural network based on the [AN4 Audio database](http://www.speech.cs.cmu.edu/databases/an4/) of roughly 900 samples. Also included is a evaluation script which calculates the WER using the AN4 test dataset.
 This branch is useful for understanding how the CTC Speech System works and is very easy to run after installation. Highly recommended to checkout this branch.
+* AN4Phoneme: This branch is like the above except it uses phonemes rather than character based predictions. This is fully credited and extended by @CCorfield and his awesome work in porting this over to use phonemes.
 * Voxforge: This branch is like the above except it uses the [Voxforge Speech Corpus](www.voxforge.org) containing roughly 100k samples. This branch is far from complete and will represent a WORKING production model.
 Once complete I will also release the fully trained model as pre-processing the dataset takes time.
 
