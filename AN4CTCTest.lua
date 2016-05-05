@@ -21,7 +21,7 @@ end
 local windowSize = 256
 local stride = 75
 
-local an4FolderDir = "/root/CTCSpeechRecognition/Audio/an4"
+local an4FolderDir = "/data1/yuanyang/torch_projects/data/an4"
 
 --The test set in spectrogram tensor form.
 local testDataSet = AudioData.retrieveAN4TestDataSet(an4FolderDir, windowSize, stride)

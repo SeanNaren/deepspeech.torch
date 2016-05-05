@@ -36,17 +36,23 @@ local stride = 75
 --The larger this value, the larger the batches, however the more padding is added to make variable sentences the same.
 local maximumSizeDifference = 0 -- Setting this to zero makes it batch together the same length sentences.
 
+
 --The training set in spectrogram tensor form.
-local an4FolderDir = "/root/CTCSpeechRecognition/Audio/an4"
-local inputsAndTargets = AudioData.retrieveAN4TrainingDataSet(an4FolderDir, windowSize, stride)
-local trainingDataSet = Batcher.createMinibatchDataset(inputsAndTargets, maximumSizeDifference)
+local an4FolderDir = "/data1/yuanyang/torch_projects/data/an4"
+--local inputsAndTargets = AudioData.retrieveAN4TrainingDataSet(an4FolderDir, windowSize, stride)
+--local trainingDataSet = Batcher.createMinibatchDataset(inputsAndTargets, maximumSizeDifference)
+--local validationInputsAndTargets = AudioData.retrieveAN4TestDataSet(an4FolderDir, windowSize, stride, numberOfValidationSamples)
 
-
-local validationInputsAndTargets = AudioData.retrieveAN4TestDataSet(an4FolderDir, windowSize, stride, numberOfValidationSamples)
 
 --Create and train the network based on the parameters and training data.
 Network:init(networkParams)
-Network:trainNetwork(trainingDataSet, nil, epochs, sgdParams)
+
+
+-- Network:trainNetwork(trainingDataSet, nil, epochs, sgdParams)
+-- lets test jit loading 
+Network:trainNetwork(nil, nil, epochs, sgdParams)
+
+
 
 --Creates the loss plot.
 Network:createLossGraph()

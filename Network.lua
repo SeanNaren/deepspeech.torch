@@ -4,16 +4,18 @@ require 'BRNN'
 require 'ctchelpers'
 require 'gnuplot'
 require 'xlua'
-local WERCalculator = require 'WERCalculator'
+require 'loader'
+local threads = require 'threads'
 
+local WERCalculator = require 'WERCalculator'
 local Network = {}
 local logger = optim.Logger('train.log')
 logger:setNames { 'loss', 'WER' }
 logger:style{'-', '-'}
 
+
+
 function Network:init(networkParams)
-    self.loadModel = networkParams.loadModel or false -- Set to true to load the model into Network.
-    self.saveModel = networkParams.saveModel or false -- Set to true if you want to save the model after training.
     self.fileName = networkParams.fileName -- The file name to save/load the network from.
     self.gpu = networkParams.gpu or false -- Set to true to use GPU.
     self.model = nil
@@ -31,17 +33,23 @@ function Network:init(networkParams)
     assert((networkParams.saveModel or networkParams.loadModel) and networkParams.fileName, "To save/load you must specify the fileName you want to save to")
 end
 
+
+
 function Network:prepSpeechModel(model)
     if (self.gpu) then model:cuda() end
     model:training()
     self.model = model
 end
 
+
+
 -- Returns a prediction of the input net and input tensors.
 function Network:predict(inputTensors)
     local prediction = self.model:forward(inputTensors)
     return prediction
 end
+
+
 
 local function WERValidationSet(self, validationSet)
     if(validationSet) then
@@ -53,12 +61,30 @@ local function WERValidationSet(self, validationSet)
     end
 end
 
---Trains the network using SGD and the defined feval.
---Uses warp-ctc cost evaluation.
+
+
+--Trains the network using SGD and the defined feval. Uses warp-ctc cost evaluation.
 function Network:trainNetwork(dataset, validationDataset, epochs, sgd_params)
     local lossHistory = {}
     local validationHistory = {}
     local ctcCriterion = nn.CTCCriterion()
+    
+    local indexer = indexer('/data1/yuanyang/torch_projects/data/an4_lmdb', 50)
+    local loader = loader('/data1/yuanyang/torch_projects/data/an4_lmdb')
+    local inds = indexer:nxt_inds()
+
+    local pool = threads.Threads(1,function() require 'loader' end)
+    local spect_buf, label_buf -- thread load data to this buf
+    -- load the first batch
+    pool:addjob(function() 
+                    return loader:nxt_batch(inds)
+                end, 
+                function(spect,label) 
+                    spect_buf=spect
+                    label_buf=label
+                end
+                )
+    
 
     local x, gradParameters = self.model:getParameters()
 
@@ -70,7 +96,22 @@ function Network:trainNetwork(dataset, validationDataset, epochs, sgd_params)
     end
 
     local function feval(x_new)
-        local inputsCPU, targets = dataset:nextData()
+        
+        -- ====================== data load ======================
+        pool:synchronize() -- wait previous loading
+        local inputsCPU,targets = spect_buf,label_buf -- move buf to training data
+        inds = indexer:nxt_inds() -- nxt inds
+        -- then start to load nxt batch to buf
+        pool:addjob(function() 
+                    return loader:nxt_batch(inds) 
+                    end, 
+                    function(spect,label) 
+                        spect_buf=spect
+                        label_buf=label
+                    end
+                    )
+
+        -- =============== fwd and bwd ==========================
         -- transfer over to GPU
         inputs:resize(inputsCPU:size()):copy(inputsCPU)
         gradParameters:zero()
@@ -84,11 +125,11 @@ function Network:trainNetwork(dataset, validationDataset, epochs, sgd_params)
 
     local currentLoss
     local startTime = os.time()
-    local dataSetSize = dataset:size()
+    local dataSetSize = 20 -- TODO dataset:size()
     for i = 1, epochs do
         local averageLoss = 0
         print(string.format("Training Epoch: %d", i))
-
+        
         local wer = WERValidationSet(self, validationDataset)
         if wer then table.insert(validationHistory, wer) end
 
