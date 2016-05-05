@@ -1,7 +1,7 @@
 require 'ctchelpers'
 require 'rnn'
 
-local function deepSpeech(nGPU)
+local function deepSpeech(nGPU, backend)
 
     GRU = false
 
@@ -14,7 +14,7 @@ local function deepSpeech(nGPU)
     model:add(nn.ReLU(true))
     model:add(nn.SpatialMaxPooling(2, 2, 2, 2))
 
-    if nGPU > 0 then
+    if backend == 'cudnn' then
         model:add(nn.SplitTable(1)) -- batchsize x featuremap x freq x time
         model:add(nn.Sequencer(nn.View(1, 32 * 25, -1))) -- features x freq x time
         model:add(nn.JoinTable(1)) -- batch x features x time

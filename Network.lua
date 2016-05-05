@@ -23,22 +23,23 @@ function Network:init(networkParams)
         self:loadNetwork(networkParams.fileName)
     else
         assert(networkParams.modelName, "Must have given a model to train.")
-        self:prepSpeechModel(networkParams.modelName)
+        self:prepSpeechModel(networkParams.modelName, networkParams.backend)
     end
-    assert((networkParams.backend == 'nn') == (self.nGPU <= 0))
-    if networkParams.backend == 'cudnn' then
-        require 'cudnn'
-        cudnn.convert(self.model, cudnn)
+    if self.nGPU > 0 then
+        self.model:cuda()
+        if networkParams.backend == 'cudnn' then
+            require 'cudnn'
+            cudnn.convert(self.model, cudnn)
+        end
     end
     print (self.model)
+    self.model:training()
     assert((networkParams.saveModel or networkParams.loadModel) and networkParams.fileName, "To save/load you must specify the fileName you want to save to")
 end
 
-function Network:prepSpeechModel(modelName)
+function Network:prepSpeechModel(modelName, backend)
     local model = require (modelName)
-    model = model(self.nGPU)
-    model:training()
-    self.model = model
+    self.model = model(self.nGPU, backend)
 end
 
 -- Returns a prediction of the input net and input tensors.
@@ -74,6 +75,7 @@ function Network:trainNetwork(dataset, validationDataset, epochs, sgd_params)
     end
 
     local function feval(x_new)
+        cutorch.synchronize()
         local inputsCPU, targets = dataset:nextData()
         -- transfer over to GPU
         inputs:resize(inputsCPU:size()):copy(inputsCPU)
@@ -83,6 +85,7 @@ function Network:trainNetwork(dataset, validationDataset, epochs, sgd_params)
         self.model:zeroGradParameters()
         local gradOutput = ctcCriterion:backward(predictions, targets)
         self.model:backward(inputs, gradOutput)
+        cutorch.synchronize()
         return loss, gradParameters
     end
 

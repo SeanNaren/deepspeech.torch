@@ -7,14 +7,15 @@ local Batcher = require 'Batcher'
 --Training parameters
 local epochs = 70
 local numberOfValidationSamples = 20
+torch.setdefaulttensortype('torch.FloatTensor')
 
 local networkParams = {
     loadModel = false,
     saveModel = true,
     fileName = "CTCNetwork.t7",
     modelName = 'DeepSpeechModel',
-    backend = 'nn',
-    nGPU = -1 -- Set -1 to use CPU
+    backend = 'cudnn',
+    nGPU = 2 -- Set -1 to use CPU
 }
 --Parameters for the stochastic gradient descent (using the optim library).
 local sgdParams = {
