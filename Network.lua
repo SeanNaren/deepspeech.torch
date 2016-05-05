@@ -9,7 +9,7 @@ local WERCalculator = require 'WERCalculator'
 local Network = {}
 local logger = optim.Logger('train.log')
 logger:setNames { 'loss', 'WER' }
-logger:style{'-', '-'}
+logger:style { '-', '-' }
 
 function Network:init(networkParams)
     self.loadModel = networkParams.loadModel or false -- Set to true to load the model into Network.
@@ -43,10 +43,10 @@ function Network:predict(inputTensors)
     return prediction
 end
 
-local function WERValidationSet(self, validationSet)
-    if(validationSet) then
+local function WERValidationSet(self, validationDataset)
+    if (validationDataset) then
         self.model:evaluate()
-        local wer =  WERCalculator.calculateWordErrorRate(false, validationSet, nil, self.model, self.gpu)
+        local wer = WERCalculator.calculateValidationWER(validationDataset, self.gpu, self.model)
         self.model:zeroGradParameters()
         self.model:training()
         return wer
@@ -85,12 +85,16 @@ function Network:trainNetwork(dataset, validationDataset, epochs, sgd_params)
     local currentLoss
     local startTime = os.time()
     local dataSetSize = dataset:size()
+    local wer = 1
     for i = 1, epochs do
         local averageLoss = 0
         print(string.format("Training Epoch: %d", i))
 
-        local wer = WERValidationSet(self, validationDataset)
-        if wer then table.insert(validationHistory, wer) end
+        -- Periodically update validation error rates
+        if (i % 2 == 0) then
+            wer = WERValidationSet(self, validationDataset)
+            if wer then table.insert(validationHistory, 100 * wer) end
+        end
 
         for j = 1, dataSetSize do
             currentLoss = 0
@@ -102,9 +106,9 @@ function Network:trainNetwork(dataset, validationDataset, epochs, sgd_params)
 
         averageLoss = averageLoss / dataSetSize -- Calculate the average loss at this epoch.
         table.insert(lossHistory, averageLoss) -- Add the average loss value to the logger.
-        print(string.format("Training Epoch: %d Average Loss: %f", i, averageLoss))
+        print(string.format("Training Epoch: %d Average Loss: %f WER: %.0f%%", i, averageLoss, 100 * wer))
 
-        logger:add{averageLoss, wer}
+        logger:add { averageLoss, 1000 * wer }
     end
     local endTime = os.time()
     local secondsTaken = endTime - startTime
