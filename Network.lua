@@ -4,6 +4,8 @@ require 'BRNN'
 require 'ctchelpers'
 require 'gnuplot'
 require 'xlua'
+require 'utils_multi_gpu'
+
 local WERCalculator = require 'WERCalculator'
 
 local Network = {}
@@ -15,24 +17,26 @@ function Network:init(networkParams)
     self.loadModel = networkParams.loadModel or false -- Set to true to load the model into Network.
     self.saveModel = networkParams.saveModel or false -- Set to true if you want to save the model after training.
     self.fileName = networkParams.fileName -- The file name to save/load the network from.
-    self.gpu = networkParams.gpu or false -- Set to true to use GPU.
-    self.model = nil
-    if (self.gpu) then -- Load gpu modules.
-    require 'cunn'
-    require 'cudnn'
-    end
+    self.nGPU = networkParams.nGPU
     if (self.loadModel) then
         assert(networkParams.fileName, "Filename hasn't been given to load model.")
         self:loadNetwork(networkParams.fileName)
     else
-        assert(networkParams.model, "Must have given a model to train.")
-        self:prepSpeechModel(networkParams.model)
+        assert(networkParams.modelName, "Must have given a model to train.")
+        self:prepSpeechModel(networkParams.modelName)
     end
+    assert((networkParams.backend == 'nn') == (self.nGPU <= 0))
+    if networkParams.backend == 'cudnn' then
+        require 'cudnn'
+        cudnn.convert(self.model, cudnn)
+    end
+    print (self.model)
     assert((networkParams.saveModel or networkParams.loadModel) and networkParams.fileName, "To save/load you must specify the fileName you want to save to")
 end
 
-function Network:prepSpeechModel(model)
-    if (self.gpu) then model:cuda() end
+function Network:prepSpeechModel(modelName)
+    local model = require (modelName)
+    model = model(self.nGPU)
     model:training()
     self.model = model
 end
@@ -46,7 +50,7 @@ end
 local function WERValidationSet(self, validationSet)
     if(validationSet) then
         self.model:evaluate()
-        local wer =  WERCalculator.calculateWordErrorRate(false, validationSet, nil, self.model, self.gpu)
+        local wer =  WERCalculator.calculateWordErrorRate(false, validationSet, nil, self.model, self.nGPU > 0)
         self.model:zeroGradParameters()
         self.model:training()
         return wer
@@ -64,7 +68,7 @@ function Network:trainNetwork(dataset, validationDataset, epochs, sgd_params)
 
     -- inputs (preallocate)
     local inputs = torch.Tensor()
-    if self.gpu then
+    if self.nGPU > 0 then
         ctcCriterion = nn.CTCCriterion():cuda()
         inputs = inputs:cuda()
     end
@@ -125,13 +129,12 @@ end
 
 
 function Network:saveNetwork(saveName)
-    torch.save(saveName, self.model)
+    saveDataParallel(saveName, self.model)
 end
 
 --Loads the model into Network.
 function Network:loadNetwork(saveName)
-    local model = torch.load(saveName)
-    self.model = model
+    self.model = loadDataParallel(saveName, self.nGPU)
     model:evaluate()
 end
 

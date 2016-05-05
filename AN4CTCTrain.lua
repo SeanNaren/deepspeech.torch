@@ -4,20 +4,17 @@ local AudioData = require 'AudioData'
 local Network = require 'Network'
 local Batcher = require 'Batcher'
 
-local deepSpeechModel = require 'DeepSpeechModel' -- The script that contains the model we will be training. Use DeepSpeechModelCPU to use CPU.
-
 --Training parameters
 local epochs = 70
 local numberOfValidationSamples = 20
 
-
-local GRU = false -- When set to true we convert all LSTMs to GRUs.
 local networkParams = {
     loadModel = false,
     saveModel = true,
     fileName = "CTCNetwork.t7",
-    model = deepSpeechModel(GRU),
-    gpu = true -- Set this to false to revert back to CPU.
+    modelName = 'DeepSpeechModel',
+    backend = 'nn',
+    nGPU = -1 -- Set -1 to use CPU
 }
 --Parameters for the stochastic gradient descent (using the optim library).
 local sgdParams = {
@@ -37,12 +34,12 @@ local stride = 75
 local maximumSizeDifference = 0 -- Setting this to zero makes it batch together the same length sentences.
 
 --The training set in spectrogram tensor form.
-local an4FolderDir = "/root/CTCSpeechRecognition/Audio/an4"
+local an4FolderDir = "/data/LLL/data/speech/an4"
 local inputsAndTargets = AudioData.retrieveAN4TrainingDataSet(an4FolderDir, windowSize, stride)
 local trainingDataSet = Batcher.createMinibatchDataset(inputsAndTargets, maximumSizeDifference)
 
 
-local validationInputsAndTargets = AudioData.retrieveAN4TestDataSet(an4FolderDir, windowSize, stride, numberOfValidationSamples)
+-- local validationInputsAndTargets = AudioData.retrieveAN4TestDataSet(an4FolderDir, windowSize, stride, numberOfValidationSamples)
 
 --Create and train the network based on the parameters and training data.
 Network:init(networkParams)
