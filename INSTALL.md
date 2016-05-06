@@ -110,6 +110,13 @@ Main method located at AN4CTCTrain.lua.
 
 Training data is currently the [AN4 Audio database](http://www.speech.cs.cmu.edu/databases/an4/).
 
+The dataset can be downloaded and extracted using the below commands on Linux:
+
+```
+wget http://www.speech.cs.cmu.edu/databases/an4/an4_raw.bigendian.tar.gz
+tar -xzvf an4_raw.bigendian.tar.gz
+```
+
 Within the AN4CTCTrain we specify the file path to the an4 dataset which can be downloaded [here](http://www.speech.cs.cmu.edu/databases/an4/an4_raw.bigendian.tar.gz).
 
 Extract the folder and give the filepath in the AN4CTCTrain.lua script.

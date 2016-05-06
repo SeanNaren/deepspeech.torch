@@ -5,19 +5,21 @@ require 'ctchelpers'
 require 'gnuplot'
 require 'xlua'
 require 'utils_multi_gpu'
+require 'loader'
+local threads = require 'threads'
 
 local WERCalculator = require 'WERCalculator'
-
 local Network = {}
 local logger = optim.Logger('train.log')
 logger:setNames { 'loss', 'WER' }
 logger:style{'-', '-'}
 
+
 function Network:init(networkParams)
-    self.loadModel = networkParams.loadModel or false -- Set to true to load the model into Network.
-    self.saveModel = networkParams.saveModel or false -- Set to true if you want to save the model after training.
     self.fileName = networkParams.fileName -- The file name to save/load the network from.
     self.nGPU = networkParams.nGPU
+    self.lmdb_path = networkParams.lmdb_path
+    -- setting model saving/loading
     if (self.loadModel) then
         assert(networkParams.fileName, "Filename hasn't been given to load model.")
         self:loadNetwork(networkParams.fileName)
@@ -36,6 +38,9 @@ function Network:init(networkParams)
     print (self.model)
     self.model:training()
     assert((networkParams.saveModel or networkParams.loadModel) and networkParams.fileName, "To save/load you must specify the fileName you want to save to")
+    -- setting online loading
+    self.indexer = indexer(networkParams.lmdb_path, networkParams.batch_size)
+    self.pool = threads.Threads(1,function() require 'loader' end)
 end
 
 function Network:prepSpeechModel(modelName, backend)
@@ -59,13 +64,14 @@ local function WERValidationSet(self, validationSet)
     end
 end
 
---Trains the network using SGD and the defined feval.
---Uses warp-ctc cost evaluation.
-function Network:trainNetwork(dataset, validationDataset, epochs, sgd_params)
+function Network:trainNetwork(epochs, sgd_params)
+    --[[
+        train network with self-defined feval (sgd inside); use ctc for evaluation
+    --]]
+
     local lossHistory = {}
     local validationHistory = {}
     local ctcCriterion = nn.CTCCriterion()
-
     local x, gradParameters = self.model:getParameters()
 
     -- inputs (preallocate)
@@ -75,12 +81,42 @@ function Network:trainNetwork(dataset, validationDataset, epochs, sgd_params)
         inputs = inputs:cuda()
     end
 
+    -- def loading buf and loader
+    local loader = loader(self.lmdb_path)
+    local spect_buf, label_buf
+
+    -- load first batch
+    local inds = self.indexer:nxt_inds()
+    self.pool:addjob(function()
+                    return loader:nxt_batch(inds)
+                end,
+                function(spect,label)
+                    spect_buf=spect
+                    label_buf=label
+                end
+                )
+
+    -- ===========================================================
+    -- define the feval
+    -- ===========================================================
     local function feval(x_new)
-        cutorch.synchronize()
-        local inputsCPU, targets = dataset:nextData()
-        -- transfer over to GPU
-        inputs:resize(inputsCPU:size()):copy(inputsCPU)
+        --------------------- data load ------------------------
+        self.pool:synchronize()                         -- wait previous loading
+        local inputsCPU,targets = spect_buf,label_buf   -- move buf to training data
+        inds = self.indexer:nxt_inds()                  -- load nxt batch
+        self.pool:addjob(function()
+                            return loader:nxt_batch(inds)
+                        end,
+                        function(spect,label)
+                            spect_buf=spect
+                            label_buf=label
+                        end
+                        )
+
+        --------------------- fwd and bwd ---------------------
+        inputs:resize(inputsCPU:size()):copy(inputsCPU) -- transfer over to GPU
         gradParameters:zero()
+        cutorch.synchronize()
         local predictions = self.model:forward(inputs)
         local loss = ctcCriterion:forward(predictions, targets)
         self.model:zeroGradParameters()
@@ -90,9 +126,12 @@ function Network:trainNetwork(dataset, validationDataset, epochs, sgd_params)
         return loss, gradParameters
     end
 
+    -- ==========================================================
+    -- training
+    -- ==========================================================
     local currentLoss
     local startTime = os.time()
-    local dataSetSize = dataset:size()
+    local dataSetSize = 20 -- TODO dataset:size()
     for i = 1, epochs do
         local averageLoss = 0
         print(string.format("Training Epoch: %d", i))
@@ -114,6 +153,7 @@ function Network:trainNetwork(dataset, validationDataset, epochs, sgd_params)
 
         logger:add{averageLoss, wer}
     end
+
     local endTime = os.time()
     local secondsTaken = endTime - startTime
     local minutesTaken = secondsTaken / 60
@@ -123,14 +163,13 @@ function Network:trainNetwork(dataset, validationDataset, epochs, sgd_params)
         print("Saving model")
         self:saveNetwork(self.fileName)
     end
+
     return lossHistory, validationHistory, minutesTaken
 end
-
 
 function Network:createLossGraph()
     logger:plot()
 end
-
 
 function Network:saveNetwork(saveName)
     saveDataParallel(saveName, self.model)
