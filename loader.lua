@@ -80,9 +80,12 @@ function loader:__init(_dir)
     self.db_trans = lmdb.env{Path=_dir..'/train_trans',Name='train_trans'}
 end
 
-function loader:nxt_batch(inds)
+function loader:nxt_batch(inds, ...)
     --[[
         return a batch by loading from lmdb just-in-time
+
+        NOTE:
+            can accept one more bool value indicates whether to load trans    
 
         TODO we allocate 2 * batch_size space
     --]]
@@ -92,19 +95,26 @@ function loader:nxt_batch(inds)
     local max_w = 0
     local h = 0
 
+    local trans_list = {}
+    local txn_trans
+    local flag = #arg == 1 and arg[1] == true -- see if you want trans
+    
     self.db_spect:open();local txn_spect = self.db_spect:txn(true) -- readonly
     self.db_label:open();local txn_label = self.db_label:txn(true)
+    if flag then self.db_trans:open();txn_trans = self.db_trans:txn(true) end
+    
 
     -- reads out a batch and store in lists
     for _, ind in next, inds, nil do
         local tensor = txn_spect:get(ind):double()
         local label = torch.deserialize(txn_label:get(ind))
-
+        
         h = tensor:size(1)
         if max_w < tensor:size(2) then max_w = tensor:size(2) end -- find the max len in this batch
 
         table.insert(tensor_list, tensor)
         table.insert(label_list, label)
+        if flag then table.insert(trans_list, torch.deserialize(txn_trans:get(ind))) end
     end
 
     -- store tensors into a fixed len tensor_array [TODO should find a better way to do this]
@@ -115,7 +125,9 @@ function loader:nxt_batch(inds)
 
     txn_spect:abort();self.db_spect:close()
     txn_label:abort();self.db_label:close()
-
+    if flag then txn_trans:abort();self.db_trans:close() end
+    
+    if flag then return tensor_array, label_list, trans_list end
     return tensor_array, label_list
 
 end

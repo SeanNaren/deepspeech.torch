@@ -41,17 +41,25 @@ local networkParams = {
 Network:init(networkParams)
 print("Network loaded")
 
-local spellCheckedWER = WERCalculator.calculateWordErrorRate(false, testDataSet, SpellingChecker, Network. model, gpu, progress)
+-- test iteration. Since batch size is 1 so iter should be the same as test set size
+test_iter = 130
+-- TODO test/dict lmdb path
+_dir = ''
+dict_path = ''
+
+assert(#_dir>1 and #dict_path>1, 'set dir and dict_path first')
+
+local spellCheckedWER = WERCalculator.calculateWordErrorRate(false, test_iter, SpellingChecker, Network. model, gpu, _dir, dict_path)
 print(string.format("Without Spellcheck WER : %.2f percent", spellCheckedWER))
 
-local spellCheckedWER = WERCalculator.calculateWordErrorRate(true, testDataSet, SpellingChecker, Network.model, gpu, progress)
+local spellCheckedWER = WERCalculator.calculateWordErrorRate(true, test_iter, SpellingChecker, Network.model, gpu, _dir, dict_path)
 print(string.format("With context based Spellcheck WER : %.2f percent", spellCheckedWER))
 
 -- Make sure that the user has got big.txt else do not carry out the general spellcheck WER. -- TODO replace with Seq2Seq
 if (fileExists("big.txt")) then
     -- The final evaluation uses a spell checker conditioned on a large text file of multiple ebooks.
     SpellingChecker:init("big.txt")
-    local spellCheckedWER = WERCalculator.calculateWordErrorRate(true, testDataSet, SpellingChecker, Network.model, gpu, progress)
+    local spellCheckedWER = WERCalculator.calculateWordErrorRate(true, test_iter, SpellingChecker, Network.model, gpu, _dir, dict_path)
     print(string.format("With general Spellcheck WER : %.2f percent", spellCheckedWER))
 end
 
