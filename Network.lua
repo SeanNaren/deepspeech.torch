@@ -29,6 +29,7 @@ function Network:init(networkParams)
         self.model:cuda()
         if networkParams.backend == 'cudnn' then
             require 'cudnn'
+            cudnn.fastest = true
             cudnn.convert(self.model, cudnn)
         end
     end
