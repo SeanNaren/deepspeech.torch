@@ -25,6 +25,12 @@ function util.findLetter(index)
 end
 
 
+local function split(s, p)
+    local rt= {}
+    string.gsub(s, '[^'..p..']+', function(w) table.insert(rt, w) end )
+    return rt
+end
+
 
 local function trans2token(labels, transcripts, line)
     --[[
@@ -104,6 +110,43 @@ end
 
 
 
+function util.mk_lmdb(file_path, out_dir, windowSize, stride)
+    --[[
+        read an index file and make lmdb
+
+        input:
+            file_path: path to the index file
+            out_dir: dir to store lmdb
+            windowSize, stride: hyperparas for making spects
+
+        NOTE:
+            struct of index file: <wave_file_path>@<transcript>@,
+            where wave_file_path should be absolute path
+    --]]
+    
+    local transcripts = {} -- {'abc bac', 'abc', ..} each is trans
+    local labels = {} -- {{1,2,3}, {1,2,3}, ..} each is a label for an utterance
+    local spects = {} -- {t1, t2, ..}
+
+    
+    for line in io.lines(file_path) do
+        local wave_path, trans = split(line,'@')[1], split(line,'@')[2]
+
+        -- make label
+        trans2token(labels, transcripts, trans)
+        
+        -- make spect
+        local wave = audio.load(wave_path)
+        local spect = audio.spectrogram(wave, windowSize, 'hamming', stride) -- freq-by-frames tensor
+        table.insert(spects, spect:byte())
+    end
+     
+    --store in lmdb
+    table2lmdb(out_dir..'/train_spect', 'train_spec', spects)
+    table2lmdb(out_dir..'/train_label', 'train_label', labels)
+    table2lmdb(out_dir..'/train_trans', 'train_trans', transcripts)
+
+end
 
 
 function util.retrieveAN4TestDataSet(_dir, windowSize, stride, numberOfSamples)

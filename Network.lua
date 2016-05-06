@@ -16,21 +16,32 @@ logger:style{'-', '-'}
 
 
 function Network:init(networkParams)
+
     self.fileName = networkParams.fileName -- The file name to save/load the network from.
     self.gpu = networkParams.gpu or false -- Set to true to use GPU.
     self.model = nil
-    if (self.gpu) then -- Load gpu modules.
+    self.lmdb_path = networkParams.lmdb_path
+    
+    -- setting gpu
+    if (self.gpu) then
     require 'cunn'
     require 'cudnn'
     end
+    
+    -- setting model saving/loading
     if (self.loadModel) then
         assert(networkParams.fileName, "Filename hasn't been given to load model.")
         self:loadNetwork(networkParams.fileName)
     else
         assert(networkParams.model, "Must have given a model to train.")
         self:prepSpeechModel(networkParams.model)
-    end
-    assert((networkParams.saveModel or networkParams.loadModel) and networkParams.fileName, "To save/load you must specify the fileName you want to save to")
+    end    
+    assert((networkParams.saveModel or networkParams.loadModel) and networkParams.fileName, 
+                                            "To save/load you must specify the fileName you want to save to")
+
+    -- setting online loading
+    self.indexer = indexer(networkParams.lmdb_path, networkParams.batch_size)
+    self.pool = threads.Threads(1,function() require 'loader' end)
 end
 
 
@@ -63,20 +74,30 @@ end
 
 
 
---Trains the network using SGD and the defined feval. Uses warp-ctc cost evaluation.
+
+
+
 function Network:trainNetwork(dataset, validationDataset, epochs, sgd_params)
+    --[[
+        train network with self-defined feval (sgd inside); use ctc for evaluation
+    --]]
+    
     local lossHistory = {}
     local validationHistory = {}
     local ctcCriterion = nn.CTCCriterion()
-    
-    local indexer = indexer('/data1/yuanyang/torch_projects/data/an4_lmdb', 50)
-    local loader = loader('/data1/yuanyang/torch_projects/data/an4_lmdb')
-    local inds = indexer:nxt_inds()
+    local inputs = torch.Tensor() -- input
+    if self.gpu then
+        ctcCriterion = nn.CTCCriterion():cuda()
+        inputs = inputs:cuda()
+    end
+    local x, gradParameters = self.model:getParameters()
+    -- def loading buf and loader
+    local loader = loader(self.lmdb_path)
+    local spect_buf, label_buf
 
-    local pool = threads.Threads(1,function() require 'loader' end)
-    local spect_buf, label_buf -- thread load data to this buf
-    -- load the first batch
-    pool:addjob(function() 
+    -- load first batch
+    local inds = self.indexer:nxt_inds()
+    self.pool:addjob(function() 
                     return loader:nxt_batch(inds)
                 end, 
                 function(spect,label) 
@@ -85,35 +106,25 @@ function Network:trainNetwork(dataset, validationDataset, epochs, sgd_params)
                 end
                 )
     
+    -- ===========================================================
+    -- define the feval
+    -- ===========================================================
+    local function feval(x_new)     
+        --------------------- data load ------------------------
+        self.pool:synchronize()                         -- wait previous loading
+        local inputsCPU,targets = spect_buf,label_buf   -- move buf to training data
+        inds = self.indexer:nxt_inds()                  -- load nxt batch
+        self.pool:addjob(function() 
+                            return loader:nxt_batch(inds)
+                        end, 
+                        function(spect,label) 
+                            spect_buf=spect
+                            label_buf=label
+                        end
+                        )
 
-    local x, gradParameters = self.model:getParameters()
-
-    -- inputs (preallocate)
-    local inputs = torch.Tensor()
-    if self.gpu then
-        ctcCriterion = nn.CTCCriterion():cuda()
-        inputs = inputs:cuda()
-    end
-
-    local function feval(x_new)
-        
-        -- ====================== data load ======================
-        pool:synchronize() -- wait previous loading
-        local inputsCPU,targets = spect_buf,label_buf -- move buf to training data
-        inds = indexer:nxt_inds() -- nxt inds
-        -- then start to load nxt batch to buf
-        pool:addjob(function() 
-                    return loader:nxt_batch(inds) 
-                    end, 
-                    function(spect,label) 
-                        spect_buf=spect
-                        label_buf=label
-                    end
-                    )
-
-        -- =============== fwd and bwd ==========================
-        -- transfer over to GPU
-        inputs:resize(inputsCPU:size()):copy(inputsCPU)
+        --------------------- fwd and bwd ---------------------
+        inputs:resize(inputsCPU:size()):copy(inputsCPU) -- transfer over to GPU
         gradParameters:zero()
         local predictions = self.model:forward(inputs)
         local loss = ctcCriterion:forward(predictions, targets)
@@ -122,7 +133,10 @@ function Network:trainNetwork(dataset, validationDataset, epochs, sgd_params)
         self.model:backward(inputs, gradOutput)
         return loss, gradParameters
     end
-
+    
+    -- ==========================================================
+    -- training
+    -- ==========================================================
     local currentLoss
     local startTime = os.time()
     local dataSetSize = 20 -- TODO dataset:size()
@@ -147,6 +161,8 @@ function Network:trainNetwork(dataset, validationDataset, epochs, sgd_params)
 
         logger:add{averageLoss, wer}
     end
+
+
     local endTime = os.time()
     local secondsTaken = endTime - startTime
     local minutesTaken = secondsTaken / 60
@@ -156,8 +172,10 @@ function Network:trainNetwork(dataset, validationDataset, epochs, sgd_params)
         print("Saving model")
         self:saveNetwork(self.fileName)
     end
+
     return lossHistory, validationHistory, minutesTaken
 end
+
 
 
 function Network:createLossGraph()
@@ -165,9 +183,11 @@ function Network:createLossGraph()
 end
 
 
+
 function Network:saveNetwork(saveName)
     torch.save(saveName, self.model)
 end
+
 
 --Loads the model into Network.
 function Network:loadNetwork(saveName)

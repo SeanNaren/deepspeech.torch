@@ -17,7 +17,9 @@ local networkParams = {
     saveModel = true,
     fileName = "CTCNetwork.t7",
     model = deepSpeechModel(GRU),
-    gpu = true -- Set this to false to revert back to CPU.
+    gpu = true, -- Set this to false to revert back to CPU.
+    lmdb_path = '/data1/yuanyang/torch_projects/data/an4_lmdb/',-- online loading path
+    batch_size = 50
 }
 --Parameters for the stochastic gradient descent (using the optim library).
 local sgdParams = {
