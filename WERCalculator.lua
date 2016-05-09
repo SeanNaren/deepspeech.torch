@@ -83,7 +83,7 @@ function WERCalculator.calculateWordErrorRate(shouldSpellCheck, test_iter, Spell
             _dir: dir where test lmdb is stored
             dict_path: path to dict
     --]]
-    
+
     -- We collapse all the words into one large table to pass into the WER calculation.
     local totalPredictedWords = {}
     local totalTargetWords = {}
@@ -93,7 +93,7 @@ function WERCalculator.calculateWordErrorRate(shouldSpellCheck, test_iter, Spell
     local mapper = mapper(dict_path)
     local spect_buf, label_buf, trans_buf
     local pool = threads.Threads(1,function()require 'loader'end)
-    
+
     -- load first batch
     local inds = indexer:nxt_inds()
     pool:addjob(function()
@@ -113,23 +113,23 @@ function WERCalculator.calculateWordErrorRate(shouldSpellCheck, test_iter, Spell
         local inputs, _, true_text = spect_buf, label_buf, trans_buf
         inds = indexer:nxt_inds()
         pool:addjob(function()
-                    return loader:nxt_batch(inds, true)
-                end,
-                function(spect, label, trans)
-                    spect_buf=spect
-                    label_buf=label
-                    trans_buf=trans
-                end
-                )
+                        return loader:nxt_batch(inds, true)
+                    end,
+                    function(spect, label, trans)
+                        spect_buf=spect
+                        label_buf=label
+                        trans_buf=trans
+                    end
+                    )
 
         -- We create an input of size batch x channels x freq x time (batch size in this case is 1).
-        inputs = inputs:view(1, 1, inputs:size(1), inputs:size(2))
+        -- inputs = inputs:view(1, 1, inputs:size(1), inputs:size(2))
 
         if (gpu) then
             inputs = inputs:cuda()
         end
         local predictions = model:forward(inputs)
-        local predictedWords, targetWords = getWords(predictions, true_text, shouldSpellCheck, SpellingChecker, mapper)
+        local predictedWords, targetWords = getWords(predictions, true_text[1], shouldSpellCheck, SpellingChecker, mapper)
 
         for index, word in ipairs(predictedWords) do
             table.insert(totalPredictedWords, word)

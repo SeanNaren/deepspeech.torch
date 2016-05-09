@@ -12,9 +12,9 @@ local indexer = torch.class('indexer')
 
 function indexer:__init(_dir, batch_size)
 
-    self.db_spect = lmdb.env{Path=_dir..'/train_spect',Name='train_spect'}
-    self.db_label = lmdb.env{Path=_dir..'/train_label',Name='train_label'}
-    self.db_trans = lmdb.env{Path=_dir..'/train_trans',Name='train_trans'}
+    self.db_spect = lmdb.env{Path=_dir..'/spect',Name='spect'}
+    self.db_label = lmdb.env{Path=_dir..'/label',Name='label'}
+    self.db_trans = lmdb.env{Path=_dir..'/trans',Name='trans'}
 
     self.batch_size = batch_size
     self.cnt = 1
@@ -75,9 +75,9 @@ function loader:__init(_dir)
         _dir: dir contains 3 lmdbs
     --]]
 
-    self.db_spect = lmdb.env{Path=_dir..'/train_spect',Name='train_spect'}
-    self.db_label = lmdb.env{Path=_dir..'/train_label',Name='train_label'}
-    self.db_trans = lmdb.env{Path=_dir..'/train_trans',Name='train_trans'}
+    self.db_spect = lmdb.env{Path=_dir..'/spect',Name='spect'}
+    self.db_label = lmdb.env{Path=_dir..'/label',Name='label'}
+    self.db_trans = lmdb.env{Path=_dir..'/trans',Name='trans'}
 end
 
 function loader:nxt_batch(inds, flag)
@@ -96,17 +96,17 @@ function loader:nxt_batch(inds, flag)
 
     local trans_list = {}
     local txn_trans
-    
+
     self.db_spect:open();local txn_spect = self.db_spect:txn(true) -- readonly
     self.db_label:open();local txn_label = self.db_label:txn(true)
     if flag then self.db_trans:open();txn_trans = self.db_trans:txn(true) end
-    
+
 
     -- reads out a batch and store in lists
     for _, ind in next, inds, nil do
         local tensor = txn_spect:get(ind):double()
         local label = torch.deserialize(txn_label:get(ind))
-        
+
         h = tensor:size(1)
         if max_w < tensor:size(2) then max_w = tensor:size(2) end -- find the max len in this batch
 
@@ -124,7 +124,7 @@ function loader:nxt_batch(inds, flag)
     txn_spect:abort();self.db_spect:close()
     txn_label:abort();self.db_label:close()
     if flag then txn_trans:abort();self.db_trans:close() end
-    
+
     if flag then return tensor_array, label_list, trans_list end
     return tensor_array, label_list
 

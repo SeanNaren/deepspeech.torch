@@ -3,13 +3,11 @@
 
 local SpellingChecker = require 'SpellingChecker'
 local Network = require 'Network'
-local AudioData = require 'AudioData'
 local WERCalculator = require 'WERCalculator'
 require 'nn'
 require 'rnn'
 require 'xlua'
 
-gpu = true -- Set to true if you trained a GPU based model.
 progress = true -- Set to true if you want to see progress of calculation of WER.
 
 function fileExists(name)
@@ -17,14 +15,7 @@ function fileExists(name)
     if f ~= nil then io.close(f) return true else return false end
 end
 
---Window size and stride for the spectrogram transformation.
-local windowSize = 256
-local stride = 75
-
-local an4FolderDir = "/data/LLL/data/speech/an4"
-
 --The test set in spectrogram tensor form.
--- local testDataSet = AudioData.retrieveAN4TestDataSet(an4FolderDir, windowSize, stride)
 
 -- File path to the big.txt (see readme for download link). Due to the randomness of the an4 dataset
 -- I've combined the transcripts to calculate word probabilities from it. Should be replaced by a proper language model.
@@ -36,10 +27,13 @@ local networkParams = {
     saveModel = false,
     fileName = "CTCNetwork.t7",
     modelName = 'DeepSpeechModel',
-    gpu = true, -- Set this to false to revert back to CPU.
-    lmdb_path = '/data1/yuanyang/torch_projects/data/an4_lmdb_test/',
+    backend = 'cudnn',
+    nGPU = 1, -- Number of GPUs, set -1 to use CPU
+    lmdb_path = 'prepare_an4/test/',
     batch_size = 1
 }
+
+gpu = networkParams.nGPU > 0
 
 Network:init(networkParams)
 print("Network loaded")
@@ -47,7 +41,7 @@ print("Network loaded")
 -- test iteration. Since batch size is 1 so iter should be the same as test set size
 test_iter = 130
 -- TODO test/dict lmdb path
-_dir = '/data1/yuanyang/torch_projects/data/an4_lmdb_test/'
+_dir = networkParams.lmdb_path
 dict_path = 'dictionary'
 
 assert(#_dir>1 and #dict_path>1, 'set dir and dict_path first')

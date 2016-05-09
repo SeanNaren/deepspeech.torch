@@ -6,7 +6,7 @@ local mapper = torch.class('mapper')
 function mapper:__init(dict_path)
     self.alphabet2token = {}
     self.token2alphabet = {}
-    
+
     -- make maps
     local cnt = 0
     for line in io.lines(dict_path) do
