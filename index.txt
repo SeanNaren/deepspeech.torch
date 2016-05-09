@@ -1,0 +1,948 @@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/fash/an251-fash-b.wav@<s> YES </s> (an251-fash-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/fash/an253-fash-b.wav@<s> GO </s> (an253-fash-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/fash/an254-fash-b.wav@<s> YES </s> (an254-fash-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/fash/an255-fash-b.wav@<s> U M N Y H SIX </s> (an255-fash-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/fash/cen1-fash-b.wav@<s> H I N I C H </s> (cen1-fash-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/fash/cen2-fash-b.wav@<s> A M Y </s> (cen2-fash-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/fash/cen4-fash-b.wav@<s> M O R E W O O D </s> (cen4-fash-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/fash/cen5-fash-b.wav@<s> P I T T S B U R G H </s> (cen5-fash-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/fash/cen7-fash-b.wav@<s> TWO SIX EIGHT FOUR FOUR ONE EIGHT </s> (cen7-fash-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/fbbh/an86-fbbh-b.wav@<s> C Z D Z W EIGHT </s> (an86-fbbh-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/fbbh/an87-fbbh-b.wav@<s> ENTER SIX TWO FOUR </s> (an87-fbbh-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/fbbh/an88-fbbh-b.wav@<s> ERASE O T H F I FIVE ZERO </s> (an88-fbbh-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/fbbh/an89-fbbh-b.wav@<s> RUBOUT T G J W B SEVENTY NINE FIFTY NINE </s> (an89-fbbh-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/fbbh/an90-fbbh-b.wav@<s> NO </s> (an90-fbbh-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/fbbh/cen1-fbbh-b.wav@<s> H O W E L L </s> (cen1-fbbh-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/fbbh/cen2-fbbh-b.wav@<s> B E V E R L Y </s> (cen2-fbbh-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/fbbh/cen3-fbbh-b.wav@<s> FIFTY ONE FIFTY SIX </s> (cen3-fbbh-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/fbbh/cen4-fbbh-b.wav@<s> P R I N C E </s> (cen4-fbbh-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/fbbh/cen5-fbbh-b.wav@<s> G I B S O N I A </s> (cen5-fbbh-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/fbbh/cen6-fbbh-b.wav@<s> ONE FIVE OH FOUR FOUR </s> (cen6-fbbh-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/fbbh/cen7-fbbh-b.wav@<s> FOUR FOUR THREE SIX THREE ONE TWO </s> (cen7-fbbh-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/fbbh/cen8-fbbh-b.wav@<s> MARCH THIRD NINETEEN TWENTY EIGHT </s> (cen8-fbbh-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/fclc/an146-fclc-b.wav@<s> N L N S ONE SEVENTY FIVE </s> (an146-fclc-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/fclc/an147-fclc-b.wav@<s> Q E E A SIX </s> (an147-fclc-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/fclc/an148-fclc-b.wav@<s> ERASE O J T K S THIRTY FIVE </s> (an148-fclc-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/fclc/an149-fclc-b.wav@<s> ENTER NINE EIGHTY NINE </s> (an149-fclc-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/fclc/an150-fclc-b.wav@<s> ERASE C K C W FOURTEEN EIGHTY FIVE </s> (an150-fclc-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/fclc/cen1-fclc-b.wav@<s> C O N N E L L Y </s> (cen1-fclc-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/fclc/cen2-fclc-b.wav@<s> C I N D Y </s> (cen2-fclc-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/fclc/cen3-fclc-b.wav@<s> FIVE FIVE THREE FIVE </s> (cen3-fclc-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/fclc/cen4-fclc-b.wav@<s> A Y L E S B O R O </s> (cen4-fclc-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/fclc/cen5-fclc-b.wav@<s> P I T T S B U R G H </s> (cen5-fclc-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/fclc/cen6-fclc-b.wav@<s> ONE FIVE TWO ONE SEVEN </s> (cen6-fclc-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/fclc/cen7-fclc-b.wav@<s> SIX EIGHT SEVEN FIVE EIGHT OH EIGHT </s> (cen7-fclc-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/fclc/cen8-fclc-b.wav@<s> JUNE ELEVENTH NINETEEN SIXTY SEVEN </s> (cen8-fclc-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/fejs/an36-fejs-b.wav@<s> RUBOUT C Y R B SEVEN EIGHT </s> (an36-fejs-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/fejs/an37-fejs-b.wav@<s> ERASE J G Q Y EIGHT SIX ONE </s> (an37-fejs-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/fejs/an38-fejs-b.wav@<s> GO </s> (an38-fejs-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/fejs/an39-fejs-b.wav@<s> G C D O FOUR </s> (an39-fejs-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/fejs/an40-fejs-b.wav@<s> Z I R K SIX FOUR FOUR </s> (an40-fejs-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/fejs/cen1-fejs-b.wav@<s> S C A V I N C K Y </s> (cen1-fejs-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/fejs/cen2-fejs-b.wav@<s> J E A N </s> (cen2-fejs-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/fejs/cen3-fejs-b.wav@<s> ONE ZERO SIX FIVE </s> (cen3-fejs-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/fejs/cen4-fejs-b.wav@<s> F I N D L E Y D R I V E </s> (cen4-fejs-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/fejs/cen5-fejs-b.wav@<s> P I T T S B U R G H </s> (cen5-fejs-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/fejs/cen6-fejs-b.wav@<s> ONE FIVE TWO TWO ONE </s> (cen6-fejs-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/fejs/cen7-fejs-b.wav@<s> TWO SIX EIGHT THREE EIGHT ZERO TWO </s> (cen7-fejs-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/fejs/cen8-fejs-b.wav@<s> TWO FIFTEEN SIXTY TWO </s> (cen8-fejs-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/ffmm/an291-ffmm-b.wav@<s> ENTER FIVE </s> (an291-ffmm-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/ffmm/an292-ffmm-b.wav@<s> ENTER SEVENTY EIGHT </s> (an292-ffmm-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/ffmm/an293-ffmm-b.wav@<s> K L M U FIVE TWO SEVEN FOUR </s> (an293-ffmm-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/ffmm/an294-ffmm-b.wav@<s> H B G L SEVENTY SEVEN </s> (an294-ffmm-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/ffmm/an295-ffmm-b.wav@<s> V A D R THIRTY ONE OH SEVEN </s> (an295-ffmm-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/ffmm/cen1-ffmm-b.wav@<s> M O D U G N O </s> (cen1-ffmm-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/ffmm/cen2-ffmm-b.wav@<s> F R A N C E S M A R Y </s> (cen2-ffmm-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/ffmm/cen3-ffmm-b.wav@<s> FIFTY SIX THIRTY TWO </s> (cen3-ffmm-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/ffmm/cen4-ffmm-b.wav@<s> P H I L L I P S </s> (cen4-ffmm-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/ffmm/cen5-ffmm-b.wav@<s> P I T T S B U R G H </s> (cen5-ffmm-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/ffmm/cen6-ffmm-b.wav@<s> ONE FIVE TWO ONE SEVEN </s> (cen6-ffmm-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/ffmm/cen7-ffmm-b.wav@<s> FOUR ONE TWO FOUR TWO ONE EIGHT EIGHT NINE SIX </s> (cen7-ffmm-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/ffmm/cen8-ffmm-b.wav@<s> SEPTEMBER FIFTEENTH NINETEEN SIXTY FIVE </s> (cen8-ffmm-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/fjam/an76-fjam-b.wav@<s> YES </s> (an76-fjam-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/fjam/an77-fjam-b.wav@<s> ERASE V X S X TWO FOUR NINE NINE </s> (an77-fjam-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/fjam/an78-fjam-b.wav@<s> R Q Z H FOUR </s> (an78-fjam-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/fjam/an79-fjam-b.wav@<s> RUBOUT J U I P THREE TWO EIGHT </s> (an79-fjam-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/fjam/an80-fjam-b.wav@<s> STOP </s> (an80-fjam-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/fjam/cen1-fjam-b.wav@<s> M A R N E L L </s> (cen1-fjam-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/fjam/cen2-fjam-b.wav@<s> J U L I E </s> (cen2-fjam-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/fjam/cen3-fjam-b.wav@<s> SEVEN FIFTY FIVE </s> (cen3-fjam-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/fjam/cen4-fjam-b.wav@<s> M E M O R Y L A N E </s> (cen4-fjam-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/fjam/cen5-fjam-b.wav@<s> M C K E E S P O R T </s> (cen5-fjam-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/fjam/cen6-fjam-b.wav@<s> ONE FIVE ONE THREE THREE </s> (cen6-fjam-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/fjam/cen7-fjam-b.wav@<s> SIX SIX FOUR SEVEN TWO NINE THREE </s> (cen7-fjam-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/fjam/cen8-fjam-b.wav@<s> MAY TWENTY FIRST NINETEEN SIXTY </s> (cen8-fjam-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/fjdn/an121-fjdn-b.wav@<s> HELP </s> (an121-fjdn-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/fjdn/an122-fjdn-b.wav@<s> ENTER EIGHT TWO FOUR TWO </s> (an122-fjdn-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/fjdn/an123-fjdn-b.wav@<s> ENTER FIFTY FOUR </s> (an123-fjdn-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/fjdn/an124-fjdn-b.wav@<s> RUBOUT O Q I M I THIRTY TWO </s> (an124-fjdn-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/fjdn/an125-fjdn-b.wav@<s> ENTER FIFTEEN </s> (an125-fjdn-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/fjdn/cen1-fjdn-b.wav@<s> N E L S O N </s> (cen1-fjdn-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/fjdn/cen2-fjdn-b.wav@<s> J E N N I F E R </s> (cen2-fjdn-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/fjdn/cen3-fjdn-b.wav@<s> THIRTY THREE </s> (cen3-fjdn-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/fjdn/cen4-fjdn-b.wav@<s> K U N T Z </s> (cen4-fjdn-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/fjdn/cen5-fjdn-b.wav@<s> B E R K E L E Y </s> (cen5-fjdn-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/fjdn/cen6-fjdn-b.wav@<s> OH SEVEN NINE TWO TWO </s> (cen6-fjdn-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/fjdn/cen7-fjdn-b.wav@<s> TWO OH ONE FOUR SIX FOUR SIX OH EIGHT THREE </s> (cen7-fjdn-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/fjdn/cen8-fjdn-b.wav@<s> MARCH TWENTIETH NINETEEN SEVENTY </s> (cen8-fjdn-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/fjmd/an10-fjmd-b.wav@<s> G TWO EIGHTY NINE </s> (an10-fjmd-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/fjmd/an6-fjmd-b.wav@<s> NO </s> (an6-fjmd-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/fjmd/an7-fjmd-b.wav@<s> O U FOUR SEVEN TWENTY NINE </s> (an7-fjmd-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/fjmd/an8-fjmd-b.wav@<s> B SEVEN TWENTY FIVE </s> (an8-fjmd-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/fjmd/an9-fjmd-b.wav@<s> J FOUR THIRTY THREE </s> (an9-fjmd-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/fjmd/cen1-fjmd-b.wav@<s> D R A V K </s> (cen1-fjmd-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/fjmd/cen2-fjmd-b.wav@<s> J E A N E T T E </s> (cen2-fjmd-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/fjmd/cen3-fjmd-b.wav@<s> ONE TEN </s> (cen3-fjmd-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/fjmd/cen4-fjmd-b.wav@<s> S P R I N G H O U S E </s> (cen4-fjmd-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/fjmd/cen5-fjmd-b.wav@<s> W R I G H T S V I L L E </s> (cen5-fjmd-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/fjmd/cen6-fjmd-b.wav@<s> ONE SEVEN THREE SIX EIGHT </s> (cen6-fjmd-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/fjmd/cen7-fjmd-b.wav@<s> TWO FIVE TWO TWO OH TWO NINE </s> (cen7-fjmd-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/fjmd/cen8-fjmd-b.wav@<s> ELEVEN NINE SIXTY EIGHT </s> (cen8-fjmd-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/fkai/an311-fkai-b.wav@<s> ERASE I S L F THIRTY EIGHT </s> (an311-fkai-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/fkai/an312-fkai-b.wav@<s> ERASE Z Y G N P EIGHT HUNDRED AND TWENTY THREE </s> (an312-fkai-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/fkai/an313-fkai-b.wav@<s> ERASE T M A Z X TWO THOUSAND FIVE HUNDRED AND FIFTY TWO </s> (an313-fkai-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/fkai/an314-fkai-b.wav@<s> A M S J SEVEN THOUSAND ONE HUNDRED AND EIGHTY SIX </s> (an314-fkai-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/fkai/an315-fkai-b.wav@<s> ENTER FIFTY ONE </s> (an315-fkai-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/fkai/cen1-fkai-b.wav@<s> I V A R S O N </s> (cen1-fkai-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/fkai/cen2-fkai-b.wav@<s> K A R L A </s> (cen2-fkai-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/fkai/cen3-fkai-b.wav@<s> ONE THOUSAND </s> (cen3-fkai-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/fkai/cen4-fkai-b.wav@<s> M O R E W O O D </s> (cen4-fkai-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/fkai/cen5-fkai-b.wav@<s> P I T T S B U R G H </s> (cen5-fkai-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/fkai/cen6-fkai-b.wav@<s> ONE FIVE TWO ONE SEVEN </s> (cen6-fkai-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/fkai/cen7-fkai-b.wav@<s> FOUR FOUR FOUR SEVEN </s> (cen7-fkai-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/fkai/cen8-fkai-b.wav@<s> OCTOBER FIRST NINETEEN SIXTY NINE </s> (cen8-fkai-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/fkdo/an131-fkdo-b.wav@<s> RUBOUT W L F X Y SEVEN OH SIX NINE </s> (an131-fkdo-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/fkdo/an132-fkdo-b.wav@<s> GO </s> (an132-fkdo-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/fkdo/an133-fkdo-b.wav@<s> REPEAT </s> (an133-fkdo-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/fkdo/an134-fkdo-b.wav@<s> STOP </s> (an134-fkdo-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/fkdo/an135-fkdo-b.wav@<s> RUBOUT U T F F EIGHT </s> (an135-fkdo-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/fkdo/cen1-fkdo-b.wav@<s> O L A C K </s> (cen1-fkdo-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/fkdo/cen2-fkdo-b.wav@<s> K A R E N </s> (cen2-fkdo-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/fkdo/cen3-fkdo-b.wav@<s> TWO TWO NINE THREE </s> (cen3-fkdo-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/fkdo/cen4-fkdo-b.wav@<s> A L M O N T </s> (cen4-fkdo-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/fkdo/cen5-fkdo-b.wav@<s> P I T T S B U R G H </s> (cen5-fkdo-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/fkdo/cen6-fkdo-b.wav@<s> ONE FIVE TWO ONE OH </s> (cen6-fkdo-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/fkdo/cen7-fkdo-b.wav@<s> EIGHT EIGHT TWO EIGHT ONE OH TWO </s> (cen7-fkdo-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/fkdo/cen8-fkdo-b.wav@<s> FIVE TWENTY SIX FORTY FIVE </s> (cen8-fkdo-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/flmm2/an61-flmm2-b.wav@<s> ENTER SEVEN OH THREE EIGHT </s> (an61-flmm2-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/flmm2/an62-flmm2-b.wav@<s> ENTER FIVE ZERO </s> (an62-flmm2-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/flmm2/an63-flmm2-b.wav@<s> ENTER FIVE THREE FOUR THREE </s> (an63-flmm2-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/flmm2/an64-flmm2-b.wav@<s> ENTER FOUR </s> (an64-flmm2-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/flmm2/an65-flmm2-b.wav@<s> X G I C TWO </s> (an65-flmm2-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/flmm2/cen1-flmm2-b.wav@<s> M A C A L U S O </s> (cen1-flmm2-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/flmm2/cen2-flmm2-b.wav@<s> L I N D A </s> (cen2-flmm2-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/flmm2/cen3-flmm2-b.wav@<s> THREE FOUR EIGHT ZERO </s> (cen3-flmm2-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/flmm2/cen4-flmm2-b.wav@<s> M E A D O W G A T E D R I V E </s> (cen4-flmm2-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/flmm2/cen6-flmm2-b.wav@<s> ONE FIVE SIX SIX EIGHT </s> (cen6-flmm2-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/flmm2/cen7-flmm2-b.wav@<s> THREE TWO SEVEN ONE SIX NINE FIVE </s> (cen7-flmm2-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/flmm2/cen8-flmm2-b.wav@<s> THIRTY ONE J A N U A R Y ONE NINE SEVEN ZERO </s> (cen8-flmm2-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/flrp/an21-flrp-b.wav@<s> S Z K W W TWO THIRTY SEVEN </s> (an21-flrp-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/flrp/an2121-flrp-b.wav@<s> Z C B E G SEVENTY NINE </s> (an2121-flrp-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/flrp/an22-flrp-b.wav@<s> YES </s> (an22-flrp-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/flrp/an23-flrp-b.wav@<s> RUBOUT Z Y T L FIFTY ONE </s> (an23-flrp-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/flrp/an24-flrp-b.wav@<s> REPEAT </s> (an24-flrp-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/flrp/an25-flrp-b.wav@<s> RUBOUT O G D E FOUR SEVEN FIVE SEVEN </s> (an25-flrp-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/flrp/cen1-flrp-b.wav@<s> P O M E R A N T Z </s> (cen1-flrp-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/flrp/cen2-flrp-b.wav@<s> L I N D A </s> (cen2-flrp-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/flrp/cen3-flrp-b.wav@<s> FIFTY ONE FIFTEEN </s> (cen3-flrp-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/flrp/cen4-flrp-b.wav@<s> M A R G A R E T </s> (cen4-flrp-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/flrp/cen5-flrp-b.wav@<s> P I T T S B U R G H </s> (cen5-flrp-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/flrp/cen6-flrp-b.wav@<s> ONE FIVE TWO ONE THREE </s> (cen6-flrp-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/flrp/cen7-flrp-b.wav@<s> TWO SIX EIGHT FIVE NINE FIVE TWO </s> (cen7-flrp-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/flrp/cen8-flrp-b.wav@<s> THREE TWENTY SEVEN SIXTY EIGHT </s> (cen8-flrp-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/fmjc/an116-fmjc-b.wav@<s> O A M J ONE FIVE THREE </s> (an116-fmjc-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/fmjc/an117-fmjc-b.wav@<s> RUBOUT M N Z L THREE SEVEN SEVEN </s> (an117-fmjc-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/fmjc/an118-fmjc-b.wav@<s> RUBOUT J L Y Z TWO </s> (an118-fmjc-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/fmjc/an119-fmjc-b.wav@<s> ENTER THIRTY FIVE </s> (an119-fmjc-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/fmjc/an120-fmjc-b.wav@<s> RUBOUT Y Y F X ZERO </s> (an120-fmjc-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/fmjc/cen1-fmjc-b.wav@<s> C E L L I O </s> (cen1-fmjc-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/fmjc/cen2-fmjc-b.wav@<s> M O N I C A </s> (cen2-fmjc-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/fmjc/cen3-fmjc-b.wav@<s> FIVE SIX ONE FIVE </s> (cen3-fmjc-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/fmjc/cen4-fmjc-b.wav@<s> H O B A R T </s> (cen4-fmjc-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/fmjc/cen5-fmjc-b.wav@<s> P I T T S B U R G H </s> (cen5-fmjc-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/fmjc/cen6-fmjc-b.wav@<s> ONE FIVE TWO ONE SEVEN </s> (cen6-fmjc-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/fmjc/cen7-fmjc-b.wav@<s> FOUR TWO ONE OH FOUR FIVE ONE </s> (cen7-fmjc-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/fmjc/cen8-fmjc-b.wav@<s> NINE TWENTY THREE SIXTY THREE </s> (cen8-fmjc-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/fmjd/an191-fmjd-b.wav@<s> NO </s> (an191-fmjd-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/fmjd/an192-fmjd-b.wav@<s> ERASE E O A C U THREE </s> (an192-fmjd-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/fmjd/an193-fmjd-b.wav@<s> ERASE Y B E J Q FIVE OH SEVEN </s> (an193-fmjd-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/fmjd/an194-fmjd-b.wav@<s> P T Q D Q ONE </s> (an194-fmjd-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/fmjd/an195-fmjd-b.wav@<s> I D M H SEVEN EIGHT FIVE </s> (an195-fmjd-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/fmjd/cen1-fmjd-b.wav@<s> D O W L I N G </s> (cen1-fmjd-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/fmjd/cen2-fmjd-b.wav@<s> M A R Y J O </s> (cen2-fmjd-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/fmjd/cen3-fmjd-b.wav@<s> SIX FIVE THREE FOUR </s> (cen3-fmjd-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/fmjd/cen4-fmjd-b.wav@<s> D A L Z E L L </s> (cen4-fmjd-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/fmjd/cen5-fmjd-b.wav@<s> P I T T S B U R G H </s> (cen5-fmjd-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/fmjd/cen6-fmjd-b.wav@<s> ONE FIVE TWO ONE SEVEN </s> (cen6-fmjd-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/fmjd/cen7-fmjd-b.wav@<s> FOUR TWO ONE OH ONE NINE SIX </s> (cen7-fmjd-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/fmjd/cen8-fmjd-b.wav@<s> SEVEN FOURTEEN SIXTY ONE </s> (cen8-fmjd-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/fnsv/an181-fnsv-b.wav@<s> A V M U FOUR FORTY TWO </s> (an181-fnsv-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/fnsv/an182-fnsv-b.wav@<s> REPEAT </s> (an182-fnsv-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/fnsv/an183-fnsv-b.wav@<s> O L K F FIVE FORTY FIVE </s> (an183-fnsv-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/fnsv/an184-fnsv-b.wav@<s> NO </s> (an184-fnsv-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/fnsv/an185-fnsv-b.wav@<s> HELP </s> (an185-fnsv-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/fnsv/cen1-fnsv-b.wav@<s> V E C C H I </s> (cen1-fnsv-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/fnsv/cen2-fnsv-b.wav@<s> N I C O L E </s> (cen2-fnsv-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/fnsv/cen3-fnsv-b.wav@<s> FIFTY SIX OH FIVE </s> (cen3-fnsv-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/fnsv/cen4-fnsv-b.wav@<s> E L L S W O R T H </s> (cen4-fnsv-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/fnsv/cen5-fnsv-b.wav@<s> P I T T S B U R G H </s> (cen5-fnsv-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/fnsv/cen6-fnsv-b.wav@<s> ONE FIVE TWO THREE TWO </s> (cen6-fnsv-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/fnsv/cen7-fnsv-b.wav@<s> SIX SIX ONE FIVE ZERO SIX FOUR </s> (cen7-fnsv-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/fnsv/cen8-fnsv-b.wav@<s> JANUARY FIFTEENTH NINETEEN SIXTY THREE </s> (cen8-fnsv-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/fplp/an91-fplp-b.wav@<s> ERASE M Y A M SEVEN </s> (an91-fplp-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/fplp/an92-fplp-b.wav@<s> RUBOUT N X F E EIGHT NINE SIX </s> (an92-fplp-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/fplp/an93-fplp-b.wav@<s> STOP </s> (an93-fplp-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/fplp/an94-fplp-b.wav@<s> ERASE R B D K T FIFTY </s> (an94-fplp-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/fplp/an95-fplp-b.wav@<s> RUBOUT F M Q N H THREE SEVENTY </s> (an95-fplp-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/fplp/cen1-fplp-b.wav@<s> P O M E R A N T Z </s> (cen1-fplp-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/fplp/cen2-fplp-b.wav@<s> P H Y L L I S </s> (cen2-fplp-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/fplp/cen3-fplp-b.wav@<s> ONE TWO FOUR ONE </s> (cen3-fplp-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/fplp/cen4-fplp-b.wav@<s> E A R L F O R D </s> (cen4-fplp-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/fplp/cen5-fplp-b.wav@<s> P I T T S B U R G H </s> (cen5-fplp-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/fplp/cen6-fplp-b.wav@<s> ONE FIVE TWO TWO SEVEN </s> (cen6-fplp-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/fplp/cen7-fplp-b.wav@<s> EIGHT EIGHT FOUR ONE ZERO FIVE SEVEN </s> (cen7-fplp-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/fplp/cen8-fplp-b.wav@<s> SIX SEVENTEEN THIRTY SIX </s> (cen8-fplp-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/fsaf2/an296-fsaf2-b.wav@<s> V Q D B FORTY NINE HUNDRED </s> (an296-fsaf2-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/fsaf2/an297-fsaf2-b.wav@<s> W C V Y H SEVENTY SEVEN FORTY FOUR </s> (an297-fsaf2-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/fsaf2/an298-fsaf2-b.wav@<s> REPEAT </s> (an298-fsaf2-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/fsaf2/an299-fsaf2-b.wav@<s> ERASE N T D I C FIVE NINE ONE </s> (an299-fsaf2-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/fsaf2/an300-fsaf2-b.wav@<s> RUBOUT S H K J FIVE SEVEN SIX </s> (an300-fsaf2-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/fsaf2/cen1-fsaf2-b.wav@<s> F A R R E L L Y </s> (cen1-fsaf2-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/fsaf2/cen2-fsaf2-b.wav@<s> S H E I L A </s> (cen2-fsaf2-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/fsaf2/cen3-fsaf2-b.wav@<s> ONE TWENTY </s> (cen3-fsaf2-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/fsaf2/cen4-fsaf2-b.wav@<s> T A N G L E W Y L D E </s> (cen4-fsaf2-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/fsaf2/cen5-fsaf2-b.wav@<s> B R O N X V I L L E </s> (cen5-fsaf2-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/fsaf2/cen6-fsaf2-b.wav@<s> ONE OH SEVEN OH EIGHT </s> (cen6-fsaf2-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/fsaf2/cen7-fsaf2-b.wav@<s> NINE ONE FOUR THREE THREE SEVEN ONE EIGHT SIX NINE </s> (cen7-fsaf2-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/fsaf2/cen8-fsaf2-b.wav@<s> FIVE SIXTEEN SIXTY NINE </s> (cen8-fsaf2-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/fsrb/an166-fsrb-b.wav@<s> A A I L ZERO </s> (an166-fsrb-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/fsrb/an167-fsrb-b.wav@<s> ENTER FORTY SEVEN FORTY SEVEN </s> (an167-fsrb-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/fsrb/an168-fsrb-b.wav@<s> RUBOUT L D R W TWENTY SIX </s> (an168-fsrb-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/fsrb/an169-fsrb-b.wav@<s> ENTER SIXTY ONE </s> (an169-fsrb-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/fsrb/an170-fsrb-b.wav@<s> ENTER FOUR FIFTY SIX </s> (an170-fsrb-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/fsrb/cen1-fsrb-b.wav@<s> B U R K S </s> (cen1-fsrb-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/fsrb/cen2-fsrb-b.wav@<s> S H A R O N </s> (cen2-fsrb-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/fsrb/cen3-fsrb-b.wav@<s> THIRTY TWO THIRTY ONE </s> (cen3-fsrb-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/fsrb/cen4-fsrb-b.wav@<s> A R A P A H O E </s> (cen4-fsrb-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/fsrb/cen5-fsrb-b.wav@<s> P I T T S B U R G H </s> (cen5-fsrb-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/fsrb/cen6-fsrb-b.wav@<s> ONE FIVE TWO FOUR ONE </s> (cen6-fsrb-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/fsrb/cen7-fsrb-b.wav@<s> FOUR ONE TWO EIGHT THREE ONE NINE FIVE ONE THREE </s> (cen7-fsrb-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/fsrb/cen8-fsrb-b.wav@<s> DECEMBER EIGHTEENTH NINETEEN FORTY FOUR </s> (cen8-fsrb-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/ftal/an326-ftal-b.wav@<s> STOP </s> (an326-ftal-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/ftal/an327-ftal-b.wav@<s> ENTER SEVEN SEVEN </s> (an327-ftal-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/ftal/an328-ftal-b.wav@<s> J S P S Z NINE SIX NINE </s> (an328-ftal-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/ftal/an329-ftal-b.wav@<s> B Y V M EIGHT FOUR </s> (an329-ftal-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/ftal/an330-ftal-b.wav@<s> ENTER TWO SIX </s> (an330-ftal-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/ftal/cen1-ftal-b.wav@<s> L E W I S </s> (cen1-ftal-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/ftal/cen2-ftal-b.wav@<s> T R A C Y </s> (cen2-ftal-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/ftal/cen3-ftal-b.wav@<s> FOUR OH THREE </s> (cen3-ftal-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/ftal/cen4-ftal-b.wav@<s> V A L E </s> (cen4-ftal-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/ftal/cen5-ftal-b.wav@<s> P I T T S B U R G H </s> (cen5-ftal-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/ftal/cen6-ftal-b.wav@<s> ONE FIVE TWO THREE NINE </s> (cen6-ftal-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/ftal/cen7-ftal-b.wav@<s> TWO SIX EIGHT THREE ZERO TWO SEVEN </s> (cen7-ftal-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/ftal/cen8-ftal-b.wav@<s> TEN ONE SIXTY EIGHT </s> (cen8-ftal-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/ftmj/an211-ftmj-b.wav@<s> ENTER SIXTY SIX </s> (an211-ftmj-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/ftmj/an212-ftmj-b.wav@<s> L Z R V FIFTY FIVE THIRTY FIVE </s> (an212-ftmj-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/ftmj/an213-ftmj-b.wav@<s> RUBOUT P N A M X SEVENTY TWO </s> (an213-ftmj-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/ftmj/an214-ftmj-b.wav@<s> ENTER SEVEN </s> (an214-ftmj-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/ftmj/an215-ftmj-b.wav@<s> YES </s> (an215-ftmj-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/ftmj/cen1-ftmj-b.wav@<s> J E T T </s> (cen1-ftmj-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/ftmj/cen2-ftmj-b.wav@<s> T E R I N A </s> (cen2-ftmj-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/ftmj/cen3-ftmj-b.wav@<s> TWENTY TWO TWENTY SIX </s> (cen3-ftmj-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/ftmj/cen4-ftmj-b.wav@<s> H A W T H O R N E </s> (cen4-ftmj-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/ftmj/cen5-ftmj-b.wav@<s> S W I S S V A L E </s> (cen5-ftmj-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/ftmj/cen6-ftmj-b.wav@<s> ONE FIVE TWO ONE EIGHT </s> (cen6-ftmj-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/ftmj/cen7-ftmj-b.wav@<s> TWO SEVEN ONE ZERO EIGHT TWO SIX </s> (cen7-ftmj-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/ftmj/cen8-ftmj-b.wav@<s> JULY THIRTIETH NINETEEN SIXTY FIVE </s> (cen8-ftmj-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/fwxs/an221-fwxs-b.wav@<s> G L L K H ONE </s> (an221-fwxs-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/fwxs/an222-fwxs-b.wav@<s> HELP </s> (an222-fwxs-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/fwxs/an223-fwxs-b.wav@<s> HELP </s> (an223-fwxs-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/fwxs/an224-fwxs-b.wav@<s> J V P E EIGHT SEVEN ZERO </s> (an224-fwxs-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/fwxs/an225-fwxs-b.wav@<s> YES </s> (an225-fwxs-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/fwxs/cen1-fwxs-b.wav@<s> S A T T E R F I E L D </s> (cen1-fwxs-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/fwxs/cen2-fwxs-b.wav@<s> W H I T N E Y </s> (cen2-fwxs-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/fwxs/cen3-fwxs-b.wav@<s> TWO TEN </s> (cen3-fwxs-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/fwxs/cen4-fwxs-b.wav@<s> O R C H A R D P L A C E </s> (cen4-fwxs-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/fwxs/cen5-fwxs-b.wav@<s> S E W I C K L E Y </s> (cen5-fwxs-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/fwxs/cen6-fwxs-b.wav@<s> ONE FIVE ONE FOUR THREE </s> (cen6-fwxs-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/fwxs/cen7-fwxs-b.wav@<s> SEVEN FOUR ONE OH FIVE NINE TWO </s> (cen7-fwxs-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mblb/an371-mblb-b.wav@<s> ERASE I G N M FORTY THREE SEVENTEEN </s> (an371-mblb-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mblb/an372-mblb-b.wav@<s> RUBOUT E U J O NINETY FIVE </s> (an372-mblb-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mblb/an373-mblb-b.wav@<s> K W Z A G TWO HUNDRED AND SIXTY SIX </s> (an373-mblb-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mblb/an374-mblb-b.wav@<s> ENTER THIRTY EIGHT SIXTY FIVE </s> (an374-mblb-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mblb/an375-mblb-b.wav@<s> ENTER FORTY THREE FORTY FIVE </s> (an375-mblb-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mblb/cen1-mblb-b.wav@<s> B R U M I T T </s> (cen1-mblb-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mblb/cen2-mblb-b.wav@<s> B A R R Y </s> (cen2-mblb-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mblb/cen3-mblb-b.wav@<s> ONE TEN </s> (cen3-mblb-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mblb/cen4-mblb-b.wav@<s> M I D W O O D </s> (cen4-mblb-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mblb/cen5-mblb-b.wav@<s> W A T E R B U R Y </s> (cen5-mblb-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mblb/cen6-mblb-b.wav@<s> OH SIX SEVEN OH EIGHT </s> (cen6-mblb-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mblb/cen7-mblb-b.wav@<s> TWO OH THREE SEVEN FIVE SEVEN EIGHT EIGHT NINE NINE </s> (cen7-mblb-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mblb/cen8-mblb-b.wav@<s> JULY TWELFTH NINETEEN SIXTY NINE </s> (cen8-mblb-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mblw/an1-mblw-b.wav@<s> X I SIXTY ONE </s> (an1-mblw-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mblw/an2-mblw-b.wav@<s> Z EIGHT OH TWO </s> (an2-mblw-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mblw/an3-mblw-b.wav@<s> ENTER SIXTY </s> (an3-mblw-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mblw/an4-mblw-b.wav@<s> ENTER SEVENTY TWO </s> (an4-mblw-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mblw/an5-mblw-b.wav@<s> REPEAT </s> (an5-mblw-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mblw/cen1-mblw-b.wav@<s> W E I D E </s> (cen1-mblw-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mblw/cen2-mblw-b.wav@<s> R O B E R T </s> (cen2-mblw-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mblw/cen3-mblw-b.wav@<s> FORTY THREE TWENTY THREE </s> (cen3-mblw-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mblw/cen4-mblw-b.wav@<s> L U D W I C K </s> (cen4-mblw-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mblw/cen5-mblw-b.wav@<s> P G H </s> (cen5-mblw-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mblw/cen6-mblw-b.wav@<s> ONE FIVE TWO ONE SEVEN </s> (cen6-mblw-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mblw/cen7-mblw-b.wav@<s> FOUR TWO TWO OH EIGHT ONE SIX </s> (cen7-mblw-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mblw/cen8-mblw-b.wav@<s> ONE SIXTEEN FORTY EIGHT </s> (cen8-mblw-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mbmg/an266-mbmg-b.wav@<s> ENTER FIFTY FOUR </s> (an266-mbmg-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mbmg/an267-mbmg-b.wav@<s> S U O U EIGHTY SIX </s> (an267-mbmg-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mbmg/an268-mbmg-b.wav@<s> ERASE S V N Y TEN TEN </s> (an268-mbmg-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mbmg/an269-mbmg-b.wav@<s> RUBOUT C H Y D D OH </s> (an269-mbmg-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mbmg/an270-mbmg-b.wav@<s> ENTER ONE FORTY TWO </s> (an270-mbmg-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mbmg/cen1-mbmg-b.wav@<s> G O T T I E R </s> (cen1-mbmg-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mbmg/cen2-mbmg-b.wav@<s> B R I A N </s> (cen2-mbmg-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mbmg/cen3-mbmg-b.wav@<s> THREE OH ONE </s> (cen3-mbmg-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mbmg/cen4-mbmg-b.wav@<s> P A R K R O A D </s> (cen4-mbmg-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mbmg/cen5-mbmg-b.wav@<s> D O W N I N G T O W N </s> (cen5-mbmg-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mbmg/cen6-mbmg-b.wav@<s> ONE NINE THREE THREE FIVE </s> (cen6-mbmg-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mbmg/cen7-mbmg-b.wav@<s> TWO ONE FIVE FOUR FIVE EIGHT FIVE FOUR SIX NINE </s> (cen7-mbmg-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mbmg/cen8-mbmg-b.wav@<s> SEPTEMBER TWENTY SEVENTH NINETEEN SIXTY SEVEN </s> (cen8-mbmg-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mcel/an201-mcel-b.wav@<s> STOP </s> (an201-mcel-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mcel/an202-mcel-b.wav@<s> REPEAT </s> (an202-mcel-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mcel/an203-mcel-b.wav@<s> ENTER EIGHT ONE NINE SIX </s> (an203-mcel-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mcel/an204-mcel-b.wav@<s> START </s> (an204-mcel-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mcel/an205-mcel-b.wav@<s> RUBOUT F Y N P NINETY SEVEN </s> (an205-mcel-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mcel/cen1-mcel-b.wav@<s> L A M P S O N </s> (cen1-mcel-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mcel/cen2-mcel-b.wav@<s> C L A R K </s> (cen2-mcel-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mcel/cen3-mcel-b.wav@<s> SIX THREE EIGHT </s> (cen3-mcel-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mcel/cen4-mcel-b.wav@<s> G A R L A N D </s> (cen4-mcel-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mcel/cen5-mcel-b.wav@<s> S U N N Y V A L E </s> (cen5-mcel-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mcel/cen6-mcel-b.wav@<s> NINE FOUR OH EIGHT SIX </s> (cen6-mcel-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mcel/cen8-mcel-b.wav@<s> TWELVE NINE OF SIXTY </s> (cen8-mcel-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mcen/an126-mcen-b.wav@<s> START </s> (an126-mcen-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mcen/an127-mcen-b.wav@<s> REPEAT </s> (an127-mcen-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mcen/an128-mcen-b.wav@<s> RUBOUT I T D K M FOUR SEVENTY ONE </s> (an128-mcen-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mcen/an129-mcen-b.wav@<s> ENTER SIXTY </s> (an129-mcen-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mcen/an130-mcen-b.wav@<s> HELP </s> (an130-mcen-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mcen/cen1-mcen-b.wav@<s> N E W E L L </s> (cen1-mcen-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mcen/cen2-mcen-b.wav@<s> C H R I S </s> (cen2-mcen-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mcen/cen3-mcen-b.wav@<s> FIFTY EIGHT OH NINE AND A HALF </s> (cen3-mcen-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mcen/cen4-mcen-b.wav@<s> H O B A R T </s> (cen4-mcen-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mcen/cen5-mcen-b.wav@<s> P I T T S B U R G H </s> (cen5-mcen-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mcen/cen6-mcen-b.wav@<s> ONE FIVE TWO THREE TWO </s> (cen6-mcen-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mcen/cen7-mcen-b.wav@<s> FIVE TWO ONE SIXTY FIFTY FIVE </s> (cen7-mcen-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mcen/cen8-mcen-b.wav@<s> THREE FOURTEEN SIXTY SEVEN </s> (cen8-mcen-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mcfl/an261-mcfl-b.wav@<s> START </s> (an261-mcfl-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mcfl/an262-mcfl-b.wav@<s> I P A C F TWO FIVE EIGHT </s> (an262-mcfl-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mcfl/an263-mcfl-b.wav@<s> RUBOUT I R D D J ONE </s> (an263-mcfl-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mcfl/an264-mcfl-b.wav@<s> GO </s> (an264-mcfl-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mcfl/an265-mcfl-b.wav@<s> YES </s> (an265-mcfl-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mcfl/cen1-mcfl-b.wav@<s> F E D O R </s> (cen1-mcfl-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mcfl/cen2-mcfl-b.wav@<s> C H R I S T O P H E R </s> (cen2-mcfl-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mcfl/cen3-mcfl-b.wav@<s> ONE FOUR EIGHT TWO THREE </s> (cen3-mcfl-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mcfl/cen4-mcfl-b.wav@<s> L O N G V I E W </s> (cen4-mcfl-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mcfl/cen5-mcfl-b.wav@<s> N E W B U R Y </s> (cen5-mcfl-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mcfl/cen6-mcfl-b.wav@<s> FOUR FOUR OH SIX FIVE </s> (cen6-mcfl-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mcfl/cen7-mcfl-b.wav@<s> SIX FOUR FIVE THREE THREE SIX FOUR </s> (cen7-mcfl-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mcfl/cen8-mcfl-b.wav@<s> EIGHT FOURTEEN SIXTY FOUR </s> (cen8-mcfl-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mcrt/an141-mcrt-b.wav@<s> NO </s> (an141-mcrt-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mcrt/an142-mcrt-b.wav@<s> ENTER NINETY FOUR </s> (an142-mcrt-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mcrt/an143-mcrt-b.wav@<s> HELP </s> (an143-mcrt-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mcrt/an144-mcrt-b.wav@<s> RUBOUT F B M J SEVEN TEN </s> (an144-mcrt-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mcrt/an145-mcrt-b.wav@<s> ENTER SIX </s> (an145-mcrt-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mcrt/cen1-mcrt-b.wav@<s> T A Y L O R </s> (cen1-mcrt-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mcrt/cen2-mcrt-b.wav@<s> R O Y </s> (cen2-mcrt-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mcrt/cen3-mcrt-b.wav@<s> THREE OH SIX </s> (cen3-mcrt-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mcrt/cen4-mcrt-b.wav@<s> H A S T I N G S </s> (cen4-mcrt-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mcrt/cen5-mcrt-b.wav@<s> P I T T S B U R G H </s> (cen5-mcrt-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mcrt/cen6-mcrt-b.wav@<s> ONE FIVE TWO OH SIX </s> (cen6-mcrt-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mcrt/cen7-mcrt-b.wav@<s> THREE SIX THREE OH NINE SIX TWO </s> (cen7-mcrt-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mcrt/cen8-mcrt-b.wav@<s> SEVEN MAY NINETEEN FORTY FOUR </s> (cen8-mcrt-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mcsc/an231-mcsc-b.wav@<s> ENTER FIVE </s> (an231-mcsc-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mcsc/an232-mcsc-b.wav@<s> HELP </s> (an232-mcsc-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mcsc/an233-mcsc-b.wav@<s> GO </s> (an233-mcsc-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mcsc/an234-mcsc-b.wav@<s> REPEAT </s> (an234-mcsc-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mcsc/an235-mcsc-b.wav@<s> NO </s> (an235-mcsc-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mcsc/cen1-mcsc-b.wav@<s> C A L I G I U R I </s> (cen1-mcsc-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mcsc/cen2-mcsc-b.wav@<s> C H A R L E S </s> (cen2-mcsc-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mcsc/cen3-mcsc-b.wav@<s> ONE ZERO ZERO SIX </s> (cen3-mcsc-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mcsc/cen4-mcsc-b.wav@<s> T R E N T O N </s> (cen4-mcsc-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mcsc/cen5-mcsc-b.wav@<s> P G H </s> (cen5-mcsc-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mcsc/cen6-mcsc-b.wav@<s> ONE FIVE TWO TWO ONE </s> (cen6-mcsc-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mcsc/cen7-mcsc-b.wav@<s> SEVEN THREE ONE ONE THREE THREE EIGHT </s> (cen7-mcsc-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mcsc/cen8-mcsc-b.wav@<s> THREE TWELVE FIFTY EIGHT </s> (cen8-mcsc-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mdcs/an241-mdcs-b.wav@<s> ENTER FIFTY SIXTY THREE </s> (an241-mdcs-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mdcs/an242-mdcs-b.wav@<s> V W A B W TWO FOURTEEN </s> (an242-mdcs-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mdcs/an243-mdcs-b.wav@<s> REPEAT </s> (an243-mdcs-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mdcs/an244-mdcs-b.wav@<s> L R R K I FOUR </s> (an244-mdcs-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mdcs/an245-mdcs-b.wav@<s> RUBOUT U F Z Z SIXTY NINE </s> (an245-mdcs-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mdcs/cen1-mdcs-b.wav@<s> S T E E R E </s> (cen1-mdcs-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mdcs/cen2-mdcs-b.wav@<s> D A V I D </s> (cen2-mdcs-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mdcs/cen3-mdcs-b.wav@<s> SIXTY THREE SIXTY FOUR AND A HALF </s> (cen3-mdcs-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mdcs/cen4-mdcs-b.wav@<s> F O R W A R D </s> (cen4-mdcs-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mdcs/cen5-mdcs-b.wav@<s> P I T T S B U R G H </s> (cen5-mdcs-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mdcs/cen6-mdcs-b.wav@<s> ONE FIVE TWO ONE SEVEN </s> (cen6-mdcs-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mdcs/cen7-mdcs-b.wav@<s> FOUR ONE TWO FOUR TWO TWO THREE FIVE SEVEN EIGHT </s> (cen7-mdcs-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mdcs/cen8-mdcs-b.wav@<s> AUGUST SIXTEENTH NINETEEN SIXTY FIVE </s> (cen8-mdcs-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mdcs2/an111-mdcs2-b.wav@<s> P U X P I FIVE </s> (an111-mdcs2-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mdcs2/an112-mdcs2-b.wav@<s> F Y Z O TWO TWO TWO </s> (an112-mdcs2-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mdcs2/an113-mdcs2-b.wav@<s> RUBOUT H A X X N SIX SEVEN NINE ONE </s> (an113-mdcs2-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mdcs2/an114-mdcs2-b.wav@<s> L R L Y U SEVEN THREE </s> (an114-mdcs2-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mdcs2/an115-mdcs2-b.wav@<s> RUBOUT O K T L E TWO EIGHT ONE </s> (an115-mdcs2-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mdcs2/cen1-mdcs2-b.wav@<s> S N O W </s> (cen1-mdcs2-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mdcs2/cen2-mdcs2-b.wav@<s> D O N A L D </s> (cen2-mdcs2-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mdcs2/cen3-mdcs2-b.wav@<s> FOURTEEN FOURTEEN </s> (cen3-mdcs2-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mdcs2/cen4-mdcs2-b.wav@<s> S O U T H </s> (cen4-mdcs2-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mdcs2/cen5-mdcs2-b.wav@<s> P I T T S B U R G </s> (cen5-mdcs2-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mdcs2/cen6-mdcs2-b.wav@<s> ONE FIVE TWO ONE SEVEN </s> (cen6-mdcs2-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mdcs2/cen7-mdcs2-b.wav@<s> FOUR TWO ONE SIX TWO EIGHT THREE </s> (cen7-mdcs2-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mdcs2/cen8-mdcs2-b.wav@<s> SEPTEMBER FIRST NINETEEN SIXTY NINE </s> (cen8-mdcs2-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mdmc/an206-mdmc-b.wav@<s> RUBOUT Z O T F TWO </s> (an206-mdmc-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mdmc/an207-mdmc-b.wav@<s> RUBOUT H F D W Q SIX TWO TWO </s> (an207-mdmc-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mdmc/an208-mdmc-b.wav@<s> RUBOUT N B A K NINETY SIX </s> (an208-mdmc-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mdmc/an209-mdmc-b.wav@<s> R G C S SEVEN SIXTY SEVEN </s> (an209-mdmc-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mdmc/an210-mdmc-b.wav@<s> RUBOUT Z G D R G NINE NINE FOUR SIX </s> (an210-mdmc-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mdmc/cen1-mdmc-b.wav@<s> C A R R E L </s> (cen1-mdmc-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mdmc/cen2-mdmc-b.wav@<s> D A V I D </s> (cen2-mdmc-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mdmc/cen3-mdmc-b.wav@<s> FIVE TEN </s> (cen3-mdmc-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mdmc/cen4-mdmc-b.wav@<s> H I G H L A N D </s> (cen4-mdmc-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mdmc/cen5-mdmc-b.wav@<s> P I T T S B U R G H </s> (cen5-mdmc-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mdmc/cen6-mdmc-b.wav@<s> ONE FIVE TWO OH SIX </s> (cen6-mdmc-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mdmc/cen7-mdmc-b.wav@<s> THREE SIX ONE ZERO ONE FIVE FIVE </s> (cen7-mdmc-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mdmc/cen8-mdmc-b.wav@<s> NINTH OF SEPTEMBER NINETEEN SIXTY FOUR </s> (cen8-mdmc-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mdxn/an106-mdxn-b.wav@<s> ENTER ZERO </s> (an106-mdxn-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mdxn/an107-mdxn-b.wav@<s> T V A H FIFTY TWO FIFTY THREE </s> (an107-mdxn-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mdxn/an108-mdxn-b.wav@<s> ENTER FORTY ONE </s> (an108-mdxn-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mdxn/an109-mdxn-b.wav@<s> B V I Q G EIGHTY SIX </s> (an109-mdxn-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mdxn/an110-mdxn-b.wav@<s> ENTER SIXTY TWO THIRTY ONE </s> (an110-mdxn-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mdxn/cen1-mdxn-b.wav@<s> N O O N B U R G </s> (cen1-mdxn-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mdxn/cen2-mdxn-b.wav@<s> D E R E K </s> (cen2-mdxn-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mdxn/cen3-mdxn-b.wav@<s> ONE OH SIX </s> (cen3-mdxn-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mdxn/cen4-mdxn-b.wav@<s> C O N C O R D </s> (cen4-mdxn-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mdxn/cen5-mdxn-b.wav@<s> I T H A C A </s> (cen5-mdxn-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mdxn/cen6-mdxn-b.wav@<s> ONE FOUR EIGHT FIVE OH </s> (cen6-mdxn-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mdxn/cen7-mdxn-b.wav@<s> TWO SIX EIGHT FOUR ONE SIX ONE </s> (cen7-mdxn-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mdxn/cen8-mdxn-b.wav@<s> SEVEN FIFTEEN NINETEEN SEVENTY </s> (cen8-mdxn-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mdxs/an26-mdxs-b.wav@<s> YES </s> (an26-mdxs-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mdxs/an27-mdxs-b.wav@<s> X H B A C FIVE THREE FOUR FOUR </s> (an27-mdxs-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mdxs/an28-mdxs-b.wav@<s> START </s> (an28-mdxs-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mdxs/an29-mdxs-b.wav@<s> REPEAT </s> (an29-mdxs-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mdxs/an30-mdxs-b.wav@<s> NO </s> (an30-mdxs-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mdxs/cen1-mdxs-b.wav@<s> S T O D O L S K Y </s> (cen1-mdxs-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mdxs/cen2-mdxs-b.wav@<s> D A N I E L </s> (cen2-mdxs-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mdxs/cen3-mdxs-b.wav@<s> THREE SEVENTY ONE </s> (cen3-mdxs-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mdxs/cen4-mdxs-b.wav@<s> B O U Q U E T </s> (cen4-mdxs-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mdxs/cen5-mdxs-b.wav@<s> P I T T S B U R G H </s> (cen5-mdxs-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mdxs/cen6-mdxs-b.wav@<s> ONE FIVE TWO ONE THREE </s> (cen6-mdxs-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mdxs/cen7-mdxs-b.wav@<s> FOUR ONE TWO SIX EIGHT SEVEN EIGHT EIGHT SEVEN ONE </s> (cen7-mdxs-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mdxs/cen8-mdxs-b.wav@<s> JULY TWENTY NINE NINETEEN SIXTY NINE </s> (cen8-mdxs-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/meab/an136-meab-b.wav@<s> ERASE W E S F TWENTY FOUR OH THREE </s> (an136-meab-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/meab/an137-meab-b.wav@<s> RUBOUT G U K E V NINE </s> (an137-meab-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/meab/an138-meab-b.wav@<s> J Z A P SEVENTEEN </s> (an138-meab-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/meab/an139-meab-b.wav@<s> ENTER EIGHT THIRTY TWO </s> (an139-meab-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/meab/an140-meab-b.wav@<s> RUBOUT R E F V S ONE FIVE THREE THREE </s> (an140-meab-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/meab/cen1-meab-b.wav@<s> B L A C K W O O D </s> (cen1-meab-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/meab/cen2-meab-b.wav@<s> E D W I N </s> (cen2-meab-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/meab/cen3-meab-b.wav@<s> THREE ONE TWO </s> (cen3-meab-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/meab/cen4-meab-b.wav@<s> B R A D D O C K </s> (cen4-meab-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/meab/cen5-meab-b.wav@<s> P I T T S B U R G H </s> (cen5-meab-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/meab/cen6-meab-b.wav@<s> ONE FIVE TWO TWO ONE </s> (cen6-meab-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/meab/cen7-meab-b.wav@<s> FOUR ONE TWO TWO FOUR TWO SIX SIX TWO SIX </s> (cen7-meab-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/meab/cen8-meab-b.wav@<s> SIX SIXTEEN SIXTY </s> (cen8-meab-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/meht/an66-meht-b.wav@<s> ENTER FOUR THOUSAND EIGHT HUNDRED EIGHTY THREE </s> (an66-meht-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/meht/an67-meht-b.wav@<s> NO </s> (an67-meht-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/meht/an68-meht-b.wav@<s> F E G B FORTY EIGHT </s> (an68-meht-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/meht/an69-meht-b.wav@<s> REPEAT </s> (an69-meht-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/meht/an70-meht-b.wav@<s> NO </s> (an70-meht-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/meht/cen1-meht-b.wav@<s> T H A Y E R </s> (cen1-meht-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/meht/cen2-meht-b.wav@<s> E R I C </s> (cen2-meht-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/meht/cen3-meht-b.wav@<s> FIFTY SIX SIXTY NINE </s> (cen3-meht-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/meht/cen4-meht-b.wav@<s> B E A C O N </s> (cen4-meht-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/meht/cen5-meht-b.wav@<s> P I T T S B U R G H </s> (cen5-meht-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/meht/cen6-meht-b.wav@<s> ONE FIVE TWO ONE SEVEN </s> (cen6-meht-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/meht/cen7-meht-b.wav@<s> FOUR ONE TWO FIVE TWO ONE TWO EIGHT TWO FOUR </s> (cen7-meht-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/meht/cen8-meht-b.wav@<s> FOUR SEVEN SIXTY FOUR </s> (cen8-meht-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mema/an286-mema-b.wav@<s> REPEAT </s> (an286-mema-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mema/an287-mema-b.wav@<s> R H H U F TWO </s> (an287-mema-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mema/an288-mema-b.wav@<s> STOP </s> (an288-mema-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mema/an289-mema-b.wav@<s> ENTER NINE EIGHT NINE </s> (an289-mema-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mema/an290-mema-b.wav@<s> N G N N THREE NINE NINE </s> (an290-mema-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mema/cen1-mema-b.wav@<s> A L T M A N N </s> (cen1-mema-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mema/cen2-mema-b.wav@<s> E R I K </s> (cen2-mema-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mema/cen3-mema-b.wav@<s> SEVEN THREE ZERO </s> (cen3-mema-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mema/cen4-mema-b.wav@<s> E A S T E N D A V E </s> (cen4-mema-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mema/cen5-mema-b.wav@<s> P G H </s> (cen5-mema-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mema/cen6-mema-b.wav@<s> ONE FIVE TWO TWO ONE </s> (cen6-mema-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mema/cen7-mema-b.wav@<s> TWO FOUR THREE EIGHT THREE TWO EIGHT </s> (cen7-mema-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mema/cen8-mema-b.wav@<s> F E B ONE EIGHT ONE NINE SIX FOUR </s> (cen8-mema-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mewl/an256-mewl-b.wav@<s> NO </s> (an256-mewl-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mewl/an257-mewl-b.wav@<s> RUBOUT H W O N J FOUR THOUSAND SEVEN HUNDRED TWENTY THREE </s> (an257-mewl-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mewl/an258-mewl-b.wav@<s> ENTER FOURTEEN </s> (an258-mewl-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mewl/an259-mewl-b.wav@<s> REPEAT </s> (an259-mewl-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mewl/an260-mewl-b.wav@<s> B A I Q W EIGHT </s> (an260-mewl-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mewl/cen1-mewl-b.wav@<s> L E U L I E T T E </s> (cen1-mewl-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mewl/cen2-mewl-b.wav@<s> E R I C </s> (cen2-mewl-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mewl/cen3-mewl-b.wav@<s> B O X EIGHT OH SEVEN </s> (cen3-mewl-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mewl/cen4-mewl-b.wav@<s> FIVE ONE ONE FIVE M A R G A R E T </s> (cen4-mewl-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mewl/cen5-mewl-b.wav@<s> P I T T S B U R G H </s> (cen5-mewl-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mewl/cen6-mewl-b.wav@<s> ONE FIVE TWO ONE THREE </s> (cen6-mewl-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mewl/cen7-mewl-b.wav@<s> TWO SIX EIGHT FOUR SIX FIVE EIGHT </s> (cen7-mewl-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mewl/cen8-mewl-b.wav@<s> TWELVE FOUR SIXTY SEVEN </s> (cen8-mewl-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mfaa/an161-mfaa-b.wav@<s> H P D F T SIXTY THREE </s> (an161-mfaa-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mfaa/an162-mfaa-b.wav@<s> ERASE J N R G FORTY EIGHT </s> (an162-mfaa-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mfaa/an163-mfaa-b.wav@<s> ENTER NINETY EIGHT TWENTY EIGHT </s> (an163-mfaa-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mfaa/an164-mfaa-b.wav@<s> X E D V SEVEN </s> (an164-mfaa-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mfaa/an165-mfaa-b.wav@<s> Y F J K TWO EIGHT </s> (an165-mfaa-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mfaa/cen1-mfaa-b.wav@<s> A L L E V A </s> (cen1-mfaa-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mfaa/cen2-mfaa-b.wav@<s> F I L </s> (cen2-mfaa-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mfaa/cen3-mfaa-b.wav@<s> FIVE SIX THREE ONE </s> (cen3-mfaa-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mfaa/cen4-mfaa-b.wav@<s> W I L K I N S </s> (cen4-mfaa-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mfaa/cen5-mfaa-b.wav@<s> P I T T S B U R G H </s> (cen5-mfaa-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mfaa/cen6-mfaa-b.wav@<s> ONE FIVE TWO ONE SEVEN </s> (cen6-mfaa-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mfaa/cen7-mfaa-b.wav@<s> FIVE TWO ONE OH TWO SIX EIGHT </s> (cen7-mfaa-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mfaa/cen8-mfaa-b.wav@<s> TEN THIRTY ONE FIFTY EIGHT </s> (cen8-mfaa-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mgah/an196-mgah-b.wav@<s> ENTER SEVENTY ONE </s> (an196-mgah-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mgah/an197-mgah-b.wav@<s> ENTER FOUR TWENTY ONE </s> (an197-mgah-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mgah/an198-mgah-b.wav@<s> ENTER ONE NINETY SIX </s> (an198-mgah-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mgah/an199-mgah-b.wav@<s> NO </s> (an199-mgah-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mgah/an200-mgah-b.wav@<s> START </s> (an200-mgah-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mgah/cen1-mgah-b.wav@<s> H O Y </s> (cen1-mgah-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mgah/cen2-mgah-b.wav@<s> G L E N N </s> (cen2-mgah-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mgah/cen3-mgah-b.wav@<s> ONE TWO ZERO </s> (cen3-mgah-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mgah/cen4-mgah-b.wav@<s> R U S K I N </s> (cen4-mgah-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mgah/cen5-mgah-b.wav@<s> P I T T S B U R G H </s> (cen5-mgah-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mgah/cen6-mgah-b.wav@<s> ONE FIVE TWO ONE THREE </s> (cen6-mgah-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mgah/cen7-mgah-b.wav@<s> SIX EIGHT THREE FIVE ZERO FOUR ONE </s> (cen7-mgah-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mgah/cen8-mgah-b.wav@<s> AUGUST TWENTY SECOND NINETEEN SIXTY ONE </s> (cen8-mgah-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mjbh/an246-mjbh-b.wav@<s> HELP </s> (an246-mjbh-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mjbh/an247-mjbh-b.wav@<s> GO </s> (an247-mjbh-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mjbh/an248-mjbh-b.wav@<s> X Z I V Y ONE </s> (an248-mjbh-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mjbh/an249-mjbh-b.wav@<s> STOP </s> (an249-mjbh-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mjbh/an250-mjbh-b.wav@<s> YES </s> (an250-mjbh-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mjbh/cen1-mjbh-b.wav@<s> H A M P S H I R E </s> (cen1-mjbh-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mjbh/cen2-mjbh-b.wav@<s> J O H N </s> (cen2-mjbh-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mjbh/cen3-mjbh-b.wav@<s> FIVE SIX FOUR ZERO </s> (cen3-mjbh-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mjbh/cen4-mjbh-b.wav@<s> E L G I N </s> (cen4-mjbh-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mjbh/cen5-mjbh-b.wav@<s> P I T T S B U R G H </s> (cen5-mjbh-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mjbh/cen6-mjbh-b.wav@<s> ONE FIVE TWO ZERO SIX </s> (cen6-mjbh-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mjbh/cen7-mjbh-b.wav@<s> TWO SIX EIGHT THREE ZERO SIX SIX </s> (cen7-mjbh-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mjbh/cen8-mjbh-b.wav@<s> SEVEN TWENTY NINE FIFTY EIGHT </s> (cen8-mjbh-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mjda/an171-mjda-b.wav@<s> RUBOUT U G A M THIRTY NINE </s> (an171-mjda-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mjda/an172-mjda-b.wav@<s> ENTER EIGHT SEVENTY ONE </s> (an172-mjda-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mjda/an173-mjda-b.wav@<s> RUBOUT C T L E SEVENTY SIX TWELVE </s> (an173-mjda-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mjda/an174-mjda-b.wav@<s> ENTER FIVE </s> (an174-mjda-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mjda/an175-mjda-b.wav@<s> HELP </s> (an175-mjda-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mjda/cen1-mjda-b.wav@<s> A S P N E S </s> (cen1-mjda-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mjda/cen2-mjda-b.wav@<s> J A M E S </s> (cen2-mjda-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mjda/cen3-mjda-b.wav@<s> SEVEN THIRTY </s> (cen3-mjda-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mjda/cen4-mjda-b.wav@<s> E A S T E N D A V E N U E </s> (cen4-mjda-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mjda/cen5-mjda-b.wav@<s> P I T T S B U R G H </s> (cen5-mjda-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mjda/cen6-mjda-b.wav@<s> ONE FIVE TWO TWO ONE </s> (cen6-mjda-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mjda/cen7-mjda-b.wav@<s> TWO SIX EIGHT THREE OH FIVE FOUR </s> (cen7-mjda-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mjda/cen8-mjda-b.wav@<s> JANUARY TWELFTH NINETEEN SIXTY SIX </s> (cen8-mjda-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mjdr/an16-mjdr-b.wav@<s> E M B Z SIX EIGHT SIX </s> (an16-mjdr-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mjdr/an18-mjdr-b.wav@<s> ENTER FOUR FIFTY ONE </s> (an18-mjdr-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mjdr/an19-mjdr-b.wav@<s> RUBOUT O H G P D TWO NINE SEVEN SIX </s> (an19-mjdr-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mjdr/an20-mjdr-b.wav@<s> A T T G K EIGHTY FOUR </s> (an20-mjdr-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mjdr/cen1-mjdr-b.wav@<s> R O S E N F E L D </s> (cen1-mjdr-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mjdr/cen2-mjdr-b.wav@<s> J E F F </s> (cen2-mjdr-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mjdr/cen3-mjdr-b.wav@<s> FOUR SEVEN TWO ZERO </s> (cen3-mjdr-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mjdr/cen4-mjdr-b.wav@<s> C E N T R E A V E N U E </s> (cen4-mjdr-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mjdr/cen5-mjdr-b.wav@<s> P I T T S B U R G H </s> (cen5-mjdr-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mjdr/cen6-mjdr-b.wav@<s> ONE FIVE TWO ONE THREE </s> (cen6-mjdr-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mjdr/cen7-mjdr-b.wav@<s> FOUR ONE TWO SIX EIGHT ONE ONE EIGHT FOUR TWO </s> (cen7-mjdr-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mjdr/cen8-mjdr-b.wav@<s> OH SIX OH SEVEN SIX SIX </s> (cen8-mjdr-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mjes/an156-mjes-b.wav@<s> ERASE Q K X Y U ONE SIXTY TWO </s> (an156-mjes-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mjes/an157-mjes-b.wav@<s> ENTER THIRTY SEVEN </s> (an157-mjes-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mjes/an158-mjes-b.wav@<s> RUBOUT V E W Z SEVEN SEVENTY TWO </s> (an158-mjes-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mjes/an159-mjes-b.wav@<s> STOP </s> (an159-mjes-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mjes/an160-mjes-b.wav@<s> J C H E Q FIFTY EIGHT THOUSAND NINE THIRTY NINE </s> (an160-mjes-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mjes/cen1-mjes-b.wav@<s> S W A R T Z </s> (cen1-mjes-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mjes/cen2-mjes-b.wav@<s> J O N A T H A N </s> (cen2-mjes-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mjes/cen3-mjes-b.wav@<s> THIRTY </s> (cen3-mjes-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mjes/cen4-mjes-b.wav@<s> E A S T EIGHTY FIFTH S T R E E T </s> (cen4-mjes-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mjes/cen5-mjes-b.wav@<s> N E W Y O R K </s> (cen5-mjes-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mjes/cen6-mjes-b.wav@<s> ONE OH OH TWO EIGHT </s> (cen6-mjes-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mjes/cen7-mjes-b.wav@<s> TWO ONE TWO FIVE SEVEN OH TWO SEVEN EIGHT FOUR </s> (cen7-mjes-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mjes/cen8-mjes-b.wav@<s> AUGUST TWENTY SECOND NINETEEN SIXTY NINE </s> (cen8-mjes-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mjgk/an216-mjgk-b.wav@<s> V E R K E THIRTY FIVE THIRTY </s> (an216-mjgk-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mjgk/an217-mjgk-b.wav@<s> ENTER EIGHT SEVEN </s> (an217-mjgk-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mjgk/an218-mjgk-b.wav@<s> STOP </s> (an218-mjgk-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mjgk/an219-mjgk-b.wav@<s> GO </s> (an219-mjgk-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mjgk/an220-mjgk-b.wav@<s> ENTER THREE EIGHTY SIX </s> (an220-mjgk-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mjgk/cen1-mjgk-b.wav@<s> K E A N E </s> (cen1-mjgk-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mjgk/cen2-mjgk-b.wav@<s> J O S E P H </s> (cen2-mjgk-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mjgk/cen4-mjgk-b.wav@<s> S P R I N G H O U S E L A N E </s> (cen4-mjgk-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mjgk/cen5-mjgk-b.wav@<s> O APOSTROPHE H A R A </s> (cen5-mjgk-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mjgk/cen6-mjgk-b.wav@<s> ONE FIVE TWO THREE EIGHT </s> (cen6-mjgk-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mjgk/cen7-mjgk-b.wav@<s> FOUR TWO TWO TWO OH EIGHT NINE </s> (cen7-mjgk-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mjgk/cen8-mjgk-b.wav@<s> JUNE TWENTY THIRD NINETEEN SIXTY NINE </s> (cen8-mjgk-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mjhp/an56-mjhp-b.wav@<s> ERASE X B M N T FOUR ONE OH NINE </s> (an56-mjhp-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mjhp/an57-mjhp-b.wav@<s> F K A U TWO FOUR </s> (an57-mjhp-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mjhp/an58-mjhp-b.wav@<s> ERASE E X X S ZERO </s> (an58-mjhp-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mjhp/an59-mjhp-b.wav@<s> A G L G A SIX FOUR NINE </s> (an59-mjhp-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mjhp/an60-mjhp-b.wav@<s> NO </s> (an60-mjhp-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mjhp/cen1-mjhp-b.wav@<s> P O L I F R O N I </s> (cen1-mjhp-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mjhp/cen2-mjhp-b.wav@<s> J O S E P H </s> (cen2-mjhp-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mjhp/cen3-mjhp-b.wav@<s> ONE FIVE THREE TWO </s> (cen3-mjhp-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mjhp/cen4-mjhp-b.wav@<s> A S B U R Y P L A C E </s> (cen4-mjhp-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mjhp/cen5-mjhp-b.wav@<s> P I T T S B U R G H </s> (cen5-mjhp-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mjhp/cen6-mjhp-b.wav@<s> ONE FIVE TWO ONE SEVEN </s> (cen6-mjhp-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mjhp/cen7-mjhp-b.wav@<s> FOUR ONE TWO FIVE TWO ONE EIGHT TWO SIX OH </s> (cen7-mjhp-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mjhp/cen8-mjhp-b.wav@<s> SEVEN SEVENTEEN FIFTY SEVEN </s> (cen8-mjhp-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mjjs2/an176-mjjs2-b.wav@<s> V L C Z TWENTY SIX </s> (an176-mjjs2-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mjjs2/an177-mjjs2-b.wav@<s> START </s> (an177-mjjs2-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mjjs2/an178-mjjs2-b.wav@<s> NO </s> (an178-mjjs2-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mjjs2/an179-mjjs2-b.wav@<s> ERASE Q E J Q T SEVENTY SEVEN </s> (an179-mjjs2-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mjjs2/an180-mjjs2-b.wav@<s> YES </s> (an180-mjjs2-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mjjs2/cen1-mjjs2-b.wav@<s> S K E E S </s> (cen1-mjjs2-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mjjs2/cen2-mjjs2-b.wav@<s> J A M E S </s> (cen2-mjjs2-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mjjs2/cen4-mjjs2-b.wav@<s> A M P E R E </s> (cen4-mjjs2-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mjjs2/cen5-mjjs2-b.wav@<s> P I T T S B U R G H </s> (cen5-mjjs2-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mjjs2/cen6-mjjs2-b.wav@<s> ONE FIVE TWO ZERO SEVEN </s> (cen6-mjjs2-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mjjs2/cen7-mjjs2-b.wav@<s> FOUR TWO TWO ZERO SEVEN NINE ONE </s> (cen7-mjjs2-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mjjs2/cen8-mjjs2-b.wav@<s> FEBRUARY EIGHTH NINETEEN FIFTY TWO </s> (cen8-mjjs2-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mkdb/an316-mkdb-b.wav@<s> D S K U FOUR FIVE OH FIVE </s> (an316-mkdb-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mkdb/an317-mkdb-b.wav@<s> ENTER SEVEN </s> (an317-mkdb-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mkdb/an318-mkdb-b.wav@<s> ENTER FOUR </s> (an318-mkdb-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mkdb/an319-mkdb-b.wav@<s> RUBOUT R Z R V Z NINETY EIGHT </s> (an319-mkdb-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mkdb/an320-mkdb-b.wav@<s> E Z A K O EIGHT </s> (an320-mkdb-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mkdb/cen1-mkdb-b.wav@<s> B E C H T E L </s> (cen1-mkdb-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mkdb/cen2-mkdb-b.wav@<s> K A R L </s> (cen2-mkdb-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mkdb/cen3-mkdb-b.wav@<s> FIFTY SEVEN FOURTEEN A </s> (cen3-mkdb-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mkdb/cen4-mkdb-b.wav@<s> B E A C O N </s> (cen4-mkdb-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mkdb/cen5-mkdb-b.wav@<s> P I T T S B U R G H </s> (cen5-mkdb-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mkdb/cen6-mkdb-b.wav@<s> ONE FIVE TWO ONE SEVEN </s> (cen6-mkdb-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mkdb/cen7-mkdb-b.wav@<s> FIVE TWO ONE FOUR NINE FIVE FOUR </s> (cen7-mkdb-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mkdb/cen8-mkdb-b.wav@<s> MARCH TWENTY FIFTH NINETEEN SIXTY SEVEN </s> (cen8-mkdb-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mkem/an186-mkem-b.wav@<s> ERASE V R F O FIVE </s> (an186-mkem-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mkem/an187-mkem-b.wav@<s> ENTER ONE THIRTY ONE </s> (an187-mkem-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mkem/an188-mkem-b.wav@<s> U S I Q N SEVENTY ONE </s> (an188-mkem-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mkem/an189-mkem-b.wav@<s> STOP </s> (an189-mkem-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mkem/an190-mkem-b.wav@<s> RUBOUT U J M K NINE </s> (an190-mkem-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mkem/cen1-mkem-b.wav@<s> M O H N K E R N </s> (cen1-mkem-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mkem/cen2-mkem-b.wav@<s> K E N </s> (cen2-mkem-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mkem/cen4-mkem-b.wav@<s> C M U </s> (cen4-mkem-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mkem/cen5-mkem-b.wav@<s> P I T T S B U R G H </s> (cen5-mkem-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mkem/cen6-mkem-b.wav@<s> ONE FIVE TWO ONE THREE </s> (cen6-mkem-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mkem/cen7-mkem-b.wav@<s> THREE OH EIGHT FIVE </s> (cen7-mkem-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mkem/cen8-mkem-b.wav@<s> MAY NINTH SIXTY TWO </s> (cen8-mkem-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mmaf/an51-mmaf-b.wav@<s> V F O F H NINE FOUR </s> (an51-mmaf-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mmaf/an52-mmaf-b.wav@<s> ENTER SEVEN </s> (an52-mmaf-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mmaf/an53-mmaf-b.wav@<s> ERASE B M E E THREE FIVE TWO </s> (an53-mmaf-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mmaf/an54-mmaf-b.wav@<s> START </s> (an54-mmaf-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mmaf/an55-mmaf-b.wav@<s> ENTER NINETY FIVE </s> (an55-mmaf-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mmaf/cen1-mmaf-b.wav@<s> F R A N Z I N I </s> (cen1-mmaf-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mmaf/cen2-mmaf-b.wav@<s> M I C H A E L </s> (cen2-mmaf-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mmaf/cen3-mmaf-b.wav@<s> FIVE TWO SEVEN </s> (cen3-mmaf-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mmaf/cen4-mmaf-b.wav@<s> S U M M E R L E A </s> (cen4-mmaf-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mmaf/cen5-mmaf-b.wav@<s> P I T T S B U R G H </s> (cen5-mmaf-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mmaf/cen6-mmaf-b.wav@<s> ONE FIVE TWO THREE TWO </s> (cen6-mmaf-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mmaf/cen7-mmaf-b.wav@<s> FOUR FOUR ONE ONE SEVEN TWO FOUR </s> (cen7-mmaf-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mmaf/cen8-mmaf-b.wav@<s> SEPTEMBER SIXTH NINETEEN SIXTY SEVEN </s> (cen8-mmaf-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mmal/an321-mmal-b.wav@<s> M M V Q D ONE EIGHT SEVEN </s> (an321-mmal-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mmal/an322-mmal-b.wav@<s> RUBOUT T B P B SIX </s> (an322-mmal-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mmal/an323-mmal-b.wav@<s> ENTER TWO OH FIVE </s> (an323-mmal-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mmal/an324-mmal-b.wav@<s> YES </s> (an324-mmal-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mmal/an325-mmal-b.wav@<s> GO </s> (an325-mmal-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mmal/cen1-mmal-b.wav@<s> L U B I N S K I </s> (cen1-mmal-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mmal/cen2-mmal-b.wav@<s> M A R K </s> (cen2-mmal-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mmal/cen3-mmal-b.wav@<s> FIFTY THREE FORTY TWO </s> (cen3-mmal-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mmal/cen4-mmal-b.wav@<s> B E E L E R </s> (cen4-mmal-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mmal/cen5-mmal-b.wav@<s> P I T T S B U R G H </s> (cen5-mmal-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mmal/cen6-mmal-b.wav@<s> ONE FIVE TWO ONE SEVEN </s> (cen6-mmal-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mmal/cen7-mmal-b.wav@<s> SIX EIGHT ONE SEVEN SEVEN FIVE TWO </s> (cen7-mmal-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mmal/cen8-mmal-b.wav@<s> TEN TWELVE SIXTY SEVEN </s> (cen8-mmal-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mmap/an46-mmap-b.wav@<s> STOP </s> (an46-mmap-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mmap/an47-mmap-b.wav@<s> ENTER SEVEN TWO ONE SIX </s> (an47-mmap-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mmap/an48-mmap-b.wav@<s> ENTER ONE NINE </s> (an48-mmap-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mmap/an49-mmap-b.wav@<s> N H O T Q TWO EIGHT THREE </s> (an49-mmap-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mmap/an50-mmap-b.wav@<s> P T K X ZERO </s> (an50-mmap-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mmap/cen1-mmap-b.wav@<s> P U S K A R </s> (cen1-mmap-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mmap/cen2-mmap-b.wav@<s> M A R K </s> (cen2-mmap-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mmap/cen3-mmap-b.wav@<s> SIX THIRTY </s> (cen3-mmap-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mmap/cen4-mmap-b.wav@<s> B R O A D H E A D R O A D </s> (cen4-mmap-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mmap/cen5-mmap-b.wav@<s> C R A F T O N </s> (cen5-mmap-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mmap/cen6-mmap-b.wav@<s> ONE FIVE TWO OH FIVE </s> (cen6-mmap-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mmap/cen7-mmap-b.wav@<s> NINE TWO TWO SEVEN TWO TWO ZERO </s> (cen7-mmap-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mmap/cen8-mmap-b.wav@<s> TWELVE TWENTY ONE FIFTY EIGHT </s> (cen8-mmap-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mmdg/an336-mmdg-b.wav@<s> G A B H TWO </s> (an336-mmdg-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mmdg/an337-mmdg-b.wav@<s> HELP </s> (an337-mmdg-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mmdg/an338-mmdg-b.wav@<s> ENTER SIX ONE TWO FIVE </s> (an338-mmdg-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mmdg/an339-mmdg-b.wav@<s> ENTER TWO FIVE FOUR SIX </s> (an339-mmdg-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mmdg/an340-mmdg-b.wav@<s> YES </s> (an340-mmdg-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mmdg/cen1-mmdg-b.wav@<s> G R O S S M A N </s> (cen1-mmdg-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mmdg/cen2-mmdg-b.wav@<s> M I C H A E L </s> (cen2-mmdg-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mmdg/cen3-mmdg-b.wav@<s> SIX THREE TWO THREE </s> (cen3-mmdg-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mmdg/cen4-mmdg-b.wav@<s> D O U G L A S </s> (cen4-mmdg-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mmdg/cen5-mmdg-b.wav@<s> P I T T S B U R G H </s> (cen5-mmdg-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mmdg/cen6-mmdg-b.wav@<s> ONE FIVE TWO ONE SEVEN </s> (cen6-mmdg-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mmdg/cen7-mmdg-b.wav@<s> FOUR ONE TWO FIVE TWO ONE FIVE THREE THREE NINE </s> (cen7-mmdg-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mmdg/cen8-mmdg-b.wav@<s> TWO TWENTY FOUR FORTY NINE </s> (cen8-mmdg-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mmkw/an361-mmkw-b.wav@<s> O A W F FIVE NINE </s> (an361-mmkw-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mmkw/an362-mmkw-b.wav@<s> V K Z O SIXTY TWO </s> (an362-mmkw-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mmkw/an363-mmkw-b.wav@<s> RUBOUT D Q T W X FIVE HUNDRED EIGHTY SEVEN </s> (an363-mmkw-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mmkw/an364-mmkw-b.wav@<s> HELP </s> (an364-mmkw-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mmkw/an365-mmkw-b.wav@<s> B J X K TWENTY THREE </s> (an365-mmkw-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mmkw/an59-mmkw-b.wav@<s> A G L G A SIX HUNDRED FORTY NINE </s> (an59-mmkw-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mmkw/cen1-mmkw-b.wav@<s> W I L L I A M S </s> (cen1-mmkw-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mmkw/cen2-mmkw-b.wav@<s> M A T T H E W </s> (cen2-mmkw-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mmkw/cen3-mmkw-b.wav@<s> THREE TWO SEVEN </s> (cen3-mmkw-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mmkw/cen4-mmkw-b.wav@<s> P I N E H U R S T </s> (cen4-mmkw-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mmkw/cen5-mmkw-b.wav@<s> M A U L D I N </s> (cen5-mmkw-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mmkw/cen6-mmkw-b.wav@<s> TWO NINE SIX SIX TWO </s> (cen6-mmkw-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mmkw/cen7-mmkw-b.wav@<s> EIGHT OH THREE TWO THREE FOUR FIVE NINE SEVEN TWO </s> (cen7-mmkw-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mmkw/cen8-mmkw-b.wav@<s> EIGHTEEN FEBRUARY NINETEEN SEVENTY </s> (cen8-mmkw-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mmsh/an381-mmsh-b.wav@<s> RUBOUT F X C W N FOUR </s> (an381-mmsh-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mmsh/an382-mmsh-b.wav@<s> RUBOUT E Z U A I FIFTEEN </s> (an382-mmsh-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mmsh/an383-mmsh-b.wav@<s> ENTER SIXTY ONE </s> (an383-mmsh-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mmsh/an384-mmsh-b.wav@<s> RUBOUT N Z X L THIRTY ONE </s> (an384-mmsh-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mmsh/an385-mmsh-b.wav@<s> GO </s> (an385-mmsh-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mmsh/cen1-mmsh-b.wav@<s> H O F F R I C H T E R </s> (cen1-mmsh-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mmsh/cen2-mmsh-b.wav@<s> M A R K </s> (cen2-mmsh-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mmsh/cen3-mmsh-b.wav@<s> THREE FOUR FOUR </s> (cen3-mmsh-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mmsh/cen4-mmsh-b.wav@<s> F I F T H A V E N U E </s> (cen4-mmsh-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mmsh/cen5-mmsh-b.wav@<s> B R O O M A L L </s> (cen5-mmsh-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mmsh/cen6-mmsh-b.wav@<s> ONE NINE OH OH EIGHT </s> (cen6-mmsh-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mmsh/cen7-mmsh-b.wav@<s> SIX EIGHT THREE ONE FIVE FIVE EIGHT </s> (cen7-mmsh-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mmsh/cen8-mmsh-b.wav@<s> APRIL THIRTIETH NINETEEN SIXTY NINE </s> (cen8-mmsh-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mmtm/an386-mmtm-b.wav@<s> ENTER SIX FOUR FIVE ONE </s> (an386-mmtm-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mmtm/an387-mmtm-b.wav@<s> Y W A A M TWO </s> (an387-mmtm-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mmtm/an388-mmtm-b.wav@<s> START </s> (an388-mmtm-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mmtm/an389-mmtm-b.wav@<s> RUBOUT X C Z T P FOUR </s> (an389-mmtm-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mmtm/an390-mmtm-b.wav@<s> REPEAT </s> (an390-mmtm-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mmtm/cen1-mmtm-b.wav@<s> M A S O N </s> (cen1-mmtm-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mmtm/cen2-mmtm-b.wav@<s> M A T T H E W </s> (cen2-mmtm-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mmtm/cen3-mmtm-b.wav@<s> ONE ELEVEN </s> (cen3-mmtm-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mmtm/cen4-mmtm-b.wav@<s> O L D B A R N D R I V E </s> (cen4-mmtm-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mmtm/cen5-mmtm-b.wav@<s> V E R O N A </s> (cen5-mmtm-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mmtm/cen6-mmtm-b.wav@<s> ONE FIVE ONE FOUR SEVEN </s> (cen6-mmtm-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mmtm/cen7-mmtm-b.wav@<s> SEVEN NINE THREE FIVE FOUR TWO NINE </s> (cen7-mmtm-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mmtm/cen8-mmtm-b.wav@<s> AUGUST TWENTY FOURTH NINETEEN FIFTY TWO </s> (cen8-mmtm-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mnfe/an346-mnfe-b.wav@<s> ERASE O T E B SEVENTY NINE </s> (an346-mnfe-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mnfe/an347-mnfe-b.wav@<s> HELP </s> (an347-mnfe-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mnfe/an348-mnfe-b.wav@<s> ENTER EIGHT TWENTY SEVEN </s> (an348-mnfe-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mnfe/an349-mnfe-b.wav@<s> RUBOUT R R N A A NINETY FOUR </s> (an349-mnfe-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mnfe/an350-mnfe-b.wav@<s> ENTER THREE </s> (an350-mnfe-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mnfe/cen1-mnfe-b.wav@<s> E F R O M </s> (cen1-mnfe-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mnfe/cen2-mnfe-b.wav@<s> N E I L </s> (cen2-mnfe-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mnfe/cen3-mnfe-b.wav@<s> TEN SEVENTY ONE </s> (cen3-mnfe-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mnfe/cen4-mnfe-b.wav@<s> M O R E W O O D </s> (cen4-mnfe-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mnfe/cen5-mnfe-b.wav@<s> P I T T S B U R G H </s> (cen5-mnfe-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mnfe/cen6-mnfe-b.wav@<s> ONE FIVE TWO ONE THREE </s> (cen6-mnfe-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mnfe/cen7-mnfe-b.wav@<s> TWO SIX EIGHT FIVE FIVE TWO FOUR </s> (cen7-mnfe-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mnfe/cen8-mnfe-b.wav@<s> FOUR TWENTY EIGHT SEVENTY ONE </s> (cen8-mnfe-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mnjl/an81-mnjl-b.wav@<s> ENTER EIGHTY NINE FORTY THREE </s> (an81-mnjl-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mnjl/an82-mnjl-b.wav@<s> RUBOUT T J J C L TWO </s> (an82-mnjl-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mnjl/an83-mnjl-b.wav@<s> ENTER SIX </s> (an83-mnjl-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mnjl/an84-mnjl-b.wav@<s> ENTER SEVEN THIRTY EIGHT </s> (an84-mnjl-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mnjl/an85-mnjl-b.wav@<s> RUBOUT A D E U Y THREE SIXTY FOUR </s> (an85-mnjl-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mnjl/cen1-mnjl-b.wav@<s> L O O F B O U R R O W </s> (cen1-mnjl-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mnjl/cen2-mnjl-b.wav@<s> N A T H A N </s> (cen2-mnjl-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mnjl/cen3-mnjl-b.wav@<s> ONE THOUSAND </s> (cen3-mnjl-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mnjl/cen5-mnjl-b.wav@<s> P I T T S B U R G H </s> (cen5-mnjl-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mnjl/cen6-mnjl-b.wav@<s> ONE FIVE TWO ONE THREE </s> (cen6-mnjl-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mnjl/cen7-mnjl-b.wav@<s> FOUR ONE TWO TWO SIX EIGHT FOUR FOUR SEVEN FOUR </s> (cen7-mnjl-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mnjl/cen8-mnjl-b.wav@<s> TWELVE NINETEEN SIXTY NINE </s> (cen8-mnjl-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mrab/an71-mrab-b.wav@<s> G E E P C SEVEN ONE OH SEVEN </s> (an71-mrab-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mrab/an72-mrab-b.wav@<s> STOP </s> (an72-mrab-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mrab/an73-mrab-b.wav@<s> ENTER TWO OH SEVEN </s> (an73-mrab-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mrab/an74-mrab-b.wav@<s> RUBOUT Q Q Q P FORTY FIVE </s> (an74-mrab-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mrab/an75-mrab-b.wav@<s> ERASE C B J V C THIRTY FIVE </s> (an75-mrab-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mrab/cen1-mrab-b.wav@<s> B R E N N A N </s> (cen1-mrab-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mrab/cen2-mrab-b.wav@<s> R O B E R T </s> (cen2-mrab-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mrab/cen3-mrab-b.wav@<s> ONE TWENTY TWO </s> (cen3-mrab-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mrab/cen4-mrab-b.wav@<s> O A K D A L E D R I V E </s> (cen4-mrab-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mrab/cen5-mrab-b.wav@<s> Z E L I E N O P L E </s> (cen5-mrab-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mrab/cen6-mrab-b.wav@<s> ONE SIX OH SIX THREE </s> (cen6-mrab-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mrab/cen7-mrab-b.wav@<s> FOUR FIVE TWO EIGHT FIVE ONE EIGHT </s> (cen7-mrab-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mrab/cen8-mrab-b.wav@<s> THREE TWENTY EIGHT SIXTY ONE </s> (cen8-mrab-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mrcb/an101-mrcb-b.wav@<s> R E W Y EIGHT FIVE SIX </s> (an101-mrcb-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mrcb/an102-mrcb-b.wav@<s> NO </s> (an102-mrcb-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mrcb/an103-mrcb-b.wav@<s> ERASE G H X W FIVE ZERO FOUR EIGHT TWO </s> (an103-mrcb-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mrcb/an104-mrcb-b.wav@<s> START </s> (an104-mrcb-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mrcb/an105-mrcb-b.wav@<s> ENTER EIGHT FOUR </s> (an105-mrcb-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mrcb/cen1-mrcb-b.wav@<s> B R O S T </s> (cen1-mrcb-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mrcb/cen2-mrcb-b.wav@<s> R A N D Y </s> (cen2-mrcb-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mrcb/cen3-mrcb-b.wav@<s> ONE TWO FIVE TWO </s> (cen3-mrcb-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mrcb/cen4-mrcb-b.wav@<s> N E G L E Y </s> (cen4-mrcb-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mrcb/cen5-mrcb-b.wav@<s> P I T T S B U R G H </s> (cen5-mrcb-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mrcb/cen6-mrcb-b.wav@<s> ONE FIVE TWO ONE SEVEN </s> (cen6-mrcb-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mrcb/cen7-mrcb-b.wav@<s> AREA CODE FOUR ONE TWO FOUR TWO TWO ONE TWO TWO FIVE </s> (cen7-mrcb-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mrcb/cen8-mrcb-b.wav@<s> OCTOBER THIRTIETH NINETEEN SIXTY ONE </s> (cen8-mrcb-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mrjc2/an236-mrjc2-b.wav@<s> YES </s> (an236-mrjc2-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mrjc2/an237-mrjc2-b.wav@<s> ENTER SEVEN </s> (an237-mrjc2-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mrjc2/an238-mrjc2-b.wav@<s> STOP </s> (an238-mrjc2-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mrjc2/an239-mrjc2-b.wav@<s> D Y M H R SIXTY ONE </s> (an239-mrjc2-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mrjc2/an240-mrjc2-b.wav@<s> ENTER NINE SEVENTY TWO </s> (an240-mrjc2-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mrjc2/cen1-mrjc2-b.wav@<s> C L O U T I E R </s> (cen1-mrjc2-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mrjc2/cen2-mrjc2-b.wav@<s> R I C H A R D </s> (cen2-mrjc2-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mrjc2/cen3-mrjc2-b.wav@<s> SIXTY SEVEN TEN </s> (cen3-mrjc2-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mrjc2/cen4-mrjc2-b.wav@<s> F E N N I M O R E </s> (cen4-mrjc2-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mrjc2/cen5-mrjc2-b.wav@<s> P I T T S B U R G H </s> (cen5-mrjc2-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mrjc2/cen6-mrjc2-b.wav@<s> ONE FIVE TWO OH SIX </s> (cen6-mrjc2-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mrjc2/cen7-mrjc2-b.wav@<s> SIX SIX FIVE NINE SIX SIX FIVE </s> (cen7-mrjc2-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mrjc2/cen8-mrjc2-b.wav@<s> FIVE TWO FIVE FIVE FIVE </s> (cen8-mrjc2-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mrmg/an281-mrmg-b.wav@<s> ENTER TWO </s> (an281-mrmg-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mrmg/an282-mrmg-b.wav@<s> GO </s> (an282-mrmg-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mrmg/an283-mrmg-b.wav@<s> RUBOUT M D M T G NINE SIX SEVEN OH </s> (an283-mrmg-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mrmg/an284-mrmg-b.wav@<s> ENTER SIX </s> (an284-mrmg-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mrmg/an285-mrmg-b.wav@<s> RUBOUT N A F K V THIRTY </s> (an285-mrmg-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mrmg/cen1-mrmg-b.wav@<s> G R E E N </s> (cen1-mrmg-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mrmg/cen2-mrmg-b.wav@<s> R I C H A R D </s> (cen2-mrmg-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mrmg/cen3-mrmg-b.wav@<s> ONE OH TWO </s> (cen3-mrmg-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mrmg/cen4-mrmg-b.wav@<s> E A S T E N D </s> (cen4-mrmg-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mrmg/cen5-mrmg-b.wav@<s> P I T T S B U R G H </s> (cen5-mrmg-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mrmg/cen6-mrmg-b.wav@<s> ONE FIVE TWO TWO ONE </s> (cen6-mrmg-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mrmg/cen7-mrmg-b.wav@<s> TWO FOUR TWO TWO NINE ONE TWO </s> (cen7-mrmg-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mrmg/cen8-mrmg-b.wav@<s> ONE SEVEN FORTY SEVEN </s> (cen8-mrmg-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mscg2/an356-mscg2-b.wav@<s> ENTER FIFTY FIVE </s> (an356-mscg2-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mscg2/an357-mscg2-b.wav@<s> YES </s> (an357-mscg2-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mscg2/an358-mscg2-b.wav@<s> RUBOUT V A N B X NINE </s> (an358-mscg2-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mscg2/an359-mscg2-b.wav@<s> P O U N B FIVE </s> (an359-mscg2-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mscg2/an360-mscg2-b.wav@<s> REPEAT </s> (an360-mscg2-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mscg2/cen1-mscg2-b.wav@<s> G I B B S </s> (cen1-mscg2-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mscg2/cen2-mscg2-b.wav@<s> S T E V E N </s> (cen2-mscg2-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mscg2/cen3-mscg2-b.wav@<s> FIVE ONE ONE FIVE </s> (cen3-mscg2-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mscg2/cen4-mscg2-b.wav@<s> M A R G A R E T </s> (cen4-mscg2-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mscg2/cen5-mscg2-b.wav@<s> P I T T S B U R G H </s> (cen5-mscg2-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mscg2/cen6-mscg2-b.wav@<s> ONE FIVE TWO TWO SIX </s> (cen6-mscg2-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mscg2/cen7-mscg2-b.wav@<s> TWO SIX EIGHT FOUR SIX SEVEN EIGHT </s> (cen7-mscg2-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mscg2/cen8-mscg2-b.wav@<s> THREE ELEVEN SIXTY SEVEN </s> (cen8-mscg2-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/msct/an341-msct-b.wav@<s> YES </s> (an341-msct-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/msct/an342-msct-b.wav@<s> ERASE W F S O L EIGHT FOUR FOUR </s> (an342-msct-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/msct/an343-msct-b.wav@<s> ENTER TWENTY NINE </s> (an343-msct-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/msct/an344-msct-b.wav@<s> ERASE A L H N C THIRTY FIVE </s> (an344-msct-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/msct/an345-msct-b.wav@<s> ERASE V Y W L R SEVEN ZERO ONE ONE </s> (an345-msct-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/msct/cen1-msct-b.wav@<s> T I M M </s> (cen1-msct-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/msct/cen2-msct-b.wav@<s> S T E V E N </s> (cen2-msct-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/msct/cen3-msct-b.wav@<s> FIVE ONE NINE </s> (cen3-msct-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/msct/cen4-msct-b.wav@<s> S E M P L E </s> (cen4-msct-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/msct/cen5-msct-b.wav@<s> P I T T S B U R G H </s> (cen5-msct-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/msct/cen6-msct-b.wav@<s> ONE FIVE TWO ONE THREE </s> (cen6-msct-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/msct/cen7-msct-b.wav@<s> SIX EIGHT THREE THREE SEVEN EIGHT ZERO </s> (cen7-msct-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/msct/cen8-msct-b.wav@<s> NINE THIRTY SIXTY FIVE </s> (cen8-msct-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/msjm/an226-msjm-b.wav@<s> REPEAT </s> (an226-msjm-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/msjm/an227-msjm-b.wav@<s> F I Y Q FIFTY SIX </s> (an227-msjm-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/msjm/an228-msjm-b.wav@<s> ERASE G W D K F SIX EIGHTY EIGHT </s> (an228-msjm-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/msjm/an229-msjm-b.wav@<s> REPEAT </s> (an229-msjm-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/msjm/an230-msjm-b.wav@<s> STOP </s> (an230-msjm-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/msjm/cen1-msjm-b.wav@<s> M A H O N E Y </s> (cen1-msjm-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/msjm/cen2-msjm-b.wav@<s> S T E P H E N </s> (cen2-msjm-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/msjm/cen3-msjm-b.wav@<s> ONE TWO TWO TWO </s> (cen3-msjm-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/msjm/cen4-msjm-b.wav@<s> M A P L E </s> (cen4-msjm-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/msjm/cen5-msjm-b.wav@<s> G L E N S H A W </s> (cen5-msjm-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/msjm/cen6-msjm-b.wav@<s> ONE FIVE ONE ONE SIX </s> (cen6-msjm-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/msjm/cen7-msjm-b.wav@<s> FOUR EIGHT SIX THREE NINE FIVE OH </s> (cen7-msjm-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/msjm/cen8-msjm-b.wav@<s> TWELVE TWENTY FOUR SIXTY EIGHT </s> (cen8-msjm-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/msjr/an351-msjr-b.wav@<s> J H B X THREE ZERO </s> (an351-msjr-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/msjr/an352-msjr-b.wav@<s> ENTER TWO </s> (an352-msjr-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/msjr/an353-msjr-b.wav@<s> NO </s> (an353-msjr-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/msjr/an354-msjr-b.wav@<s> RUBOUT W P F J D TWO SIX </s> (an354-msjr-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/msjr/an355-msjr-b.wav@<s> ENTER SIX SEVEN </s> (an355-msjr-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/msjr/cen1-msjr-b.wav@<s> R O Z E V E L D </s> (cen1-msjr-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/msjr/cen2-msjr-b.wav@<s> S T E V E N </s> (cen2-msjr-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/msjr/cen3-msjr-b.wav@<s> EIGHT FORTY ONE </s> (cen3-msjr-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/msjr/cen4-msjr-b.wav@<s> F I F T H </s> (cen4-msjr-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/msjr/cen5-msjr-b.wav@<s> V E R O N A </s> (cen5-msjr-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/msjr/cen6-msjr-b.wav@<s> ONE FIVE ONE FOUR SEVEN </s> (cen6-msjr-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/msjr/cen7-msjr-b.wav@<s> EIGHT TWO SIX EIGHT SIX EIGHT SEVEN </s> (cen7-msjr-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/msjr/cen8-msjr-b.wav@<s> ONE THIRTY ONE SIXTY THREE </s> (cen8-msjr-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mskh/an100-mskh-b.wav@<s> YES </s> (an100-mskh-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mskh/an96-mskh-b.wav@<s> YES </s> (an96-mskh-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mskh/an97-mskh-b.wav@<s> ENTER SEVENTY ONE </s> (an97-mskh-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mskh/an98-mskh-b.wav@<s> START </s> (an98-mskh-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mskh/an99-mskh-b.wav@<s> H K T E D ONE SEVENTY </s> (an99-mskh-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mskh/cen1-mskh-b.wav@<s> H A N D E R S O N </s> (cen1-mskh-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mskh/cen2-mskh-b.wav@<s> S T E V E N </s> (cen2-mskh-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mskh/cen3-mskh-b.wav@<s> SIX ZERO ONE FIVE </s> (cen3-mskh-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mskh/cen4-mskh-b.wav@<s> FIVE T H A V E N U E </s> (cen4-mskh-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mskh/cen5-mskh-b.wav@<s> P I T T S B U R G H </s> (cen5-mskh-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mskh/cen6-mskh-b.wav@<s> ONE FIVE TWO THREE TWO </s> (cen6-mskh-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mskh/cen7-mskh-b.wav@<s> SIX SIX ONE NINE EIGHT EIGHT FOUR </s> (cen7-mskh-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mskh/cen8-mskh-b.wav@<s> SIX TWENTY SIX SIXTY THREE </s> (cen8-mskh-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/msmn/an276-msmn-b.wav@<s> G W N L L NINE FOUR </s> (an276-msmn-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/msmn/an277-msmn-b.wav@<s> NO </s> (an277-msmn-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/msmn/an278-msmn-b.wav@<s> RUBOUT Q N R A J SEVEN FOUR EIGHT </s> (an278-msmn-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/msmn/an279-msmn-b.wav@<s> Q C J K EIGHT FIVE EIGHT </s> (an279-msmn-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/msmn/cen4-msmn-b.wav@<s> B U R C H F E I L D A V E </s> (cen4-msmn-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/msmn/cen5-msmn-b.wav@<s> P I T T S B U R G H </s> (cen5-msmn-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/msmn/cen6-msmn-b.wav@<s> ONE FIVE TWO ONE SEVEN </s> (cen6-msmn-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/msmn/cen7-msmn-b.wav@<s> FOUR ONE TWO FOUR TWO TWO NINE EIGHT TWO EIGHT </s> (cen7-msmn-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/msmn/cen8-msmn-b.wav@<s> S E P T E M B E R ONE TWO ONE NINE FIVE NINE </s> (cen8-msmn-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/msrb/an331-msrb-b.wav@<s> ENTER NINE </s> (an331-msrb-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/msrb/an332-msrb-b.wav@<s> RUBOUT G J H G V SEVEN </s> (an332-msrb-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/msrb/an333-msrb-b.wav@<s> YES </s> (an333-msrb-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/msrb/an334-msrb-b.wav@<s> N N P U FIVE </s> (an334-msrb-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/msrb/an335-msrb-b.wav@<s> ENTER SEVEN </s> (an335-msrb-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/msrb/cen1-msrb-b.wav@<s> B R O W N </s> (cen1-msrb-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/msrb/cen2-msrb-b.wav@<s> S T E V E </s> (cen2-msrb-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/msrb/cen3-msrb-b.wav@<s> ONE THREE SIX </s> (cen3-msrb-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/msrb/cen4-msrb-b.wav@<s> P A T T E R S O N </s> (cen4-msrb-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/msrb/cen5-msrb-b.wav@<s> C A R N E G I E </s> (cen5-msrb-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/msrb/cen6-msrb-b.wav@<s> ONE FIVE ONE OH SIX </s> (cen6-msrb-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/msrb/cen7-msrb-b.wav@<s> TWO SEVEN NINE TWO THREE TWO FOUR </s> (cen7-msrb-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/msrb/cen8-msrb-b.wav@<s> SIX THREE SIXTY EIGHT </s> (cen8-msrb-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mtcv/an301-mtcv-b.wav@<s> RUBOUT U T D A TWO </s> (an301-mtcv-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mtcv/an302-mtcv-b.wav@<s> RUBOUT M V O O FORTY SIX </s> (an302-mtcv-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mtcv/an303-mtcv-b.wav@<s> ERASE K J Z F M FIFTY FOUR </s> (an303-mtcv-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mtcv/an304-mtcv-b.wav@<s> STOP </s> (an304-mtcv-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mtcv/an305-mtcv-b.wav@<s> ENTER EIGHT ZERO SIX </s> (an305-mtcv-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mtcv/cen1-mtcv-b.wav@<s> V A N D E R L A A N </s> (cen1-mtcv-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mtcv/cen2-mtcv-b.wav@<s> T O M </s> (cen2-mtcv-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mtcv/cen3-mtcv-b.wav@<s> EIGHT FOUR SIX SEVEN </s> (cen3-mtcv-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mtcv/cen4-mtcv-b.wav@<s> S L E E P Y H O L L O W </s> (cen4-mtcv-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mtcv/cen5-mtcv-b.wav@<s> W A R R E N </s> (cen5-mtcv-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mtcv/cen6-mtcv-b.wav@<s> FOUR FOUR FOUR EIGHT FOUR </s> (cen6-mtcv-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mtcv/cen7-mtcv-b.wav@<s> EIGHT FIVE SIX ONE FOUR NINE ZERO </s> (cen7-mtcv-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mtcv/cen8-mtcv-b.wav@<s> ONE TWO SEVEN SIX THREE </s> (cen8-mtcv-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mtje/an31-mtje-b.wav@<s> ERASE S S W Z NINE </s> (an31-mtje-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mtje/an32-mtje-b.wav@<s> YES </s> (an32-mtje-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mtje/an33-mtje-b.wav@<s> ERASE F H B K Z SIXTY NINE </s> (an33-mtje-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mtje/an34-mtje-b.wav@<s> YES </s> (an34-mtje-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mtje/an35-mtje-b.wav@<s> H Z A E THREE SEVEN FIVE ONE </s> (an35-mtje-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mtje/cen1-mtje-b.wav@<s> E W A L D </s> (cen1-mtje-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mtje/cen2-mtje-b.wav@<s> T I M O T H Y </s> (cen2-mtje-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mtje/cen3-mtje-b.wav@<s> FOUR OH ONE </s> (cen3-mtje-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mtje/cen4-mtje-b.wav@<s> C E N T R E A V E </s> (cen4-mtje-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mtje/cen5-mtje-b.wav@<s> P I T T S B U R G H </s> (cen5-mtje-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mtje/cen6-mtje-b.wav@<s> ONE FIVE TWO THREE TWO </s> (cen6-mtje-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mtje/cen7-mtje-b.wav@<s> FOUR ONE TWO SIX EIGHT SEVEN NINE FIVE TWO SIX </s> (cen7-mtje-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mtje/cen8-mtje-b.wav@<s> TEN TWENTY EIGHT SIXTY NINE </s> (cen8-mtje-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mtos/an366-mtos-b.wav@<s> M F G I K TWO SIXTY </s> (an366-mtos-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mtos/an367-mtos-b.wav@<s> S F Q Q K SIX THOUSAND EIGHT HUNDRED AND EIGHTY ONE </s> (an367-mtos-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mtos/an368-mtos-b.wav@<s> H Q F X FOUR THOUSAND THREE HUNDRED AND EIGHTY SIX </s> (an368-mtos-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mtos/an369-mtos-b.wav@<s> YES </s> (an369-mtos-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mtos/an370-mtos-b.wav@<s> RUBOUT N A G K K THREE THIRTY SIX </s> (an370-mtos-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mtos/cen1-mtos-b.wav@<s> S M I T H </s> (cen1-mtos-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mtos/cen2-mtos-b.wav@<s> T H O M A S </s> (cen2-mtos-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mtos/cen3-mtos-b.wav@<s> M G E FOUR OH TWO </s> (cen3-mtos-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mtos/cen4-mtos-b.wav@<s> M O R E W O O D </s> (cen4-mtos-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mtos/cen5-mtos-b.wav@<s> P I T T S B U R G H </s> (cen5-mtos-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mtos/cen6-mtos-b.wav@<s> ONE FIVE TWO ONE THREE </s> (cen6-mtos-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mtos/cen7-mtos-b.wav@<s> FOUR EIGHT FOUR TWO </s> (cen7-mtos-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mtos/cen8-mtos-b.wav@<s> TWELVE TEN SIXTY NINE </s> (cen8-mtos-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mtxj/an376-mtxj-b.wav@<s> ENTER FIVE TWO FOUR </s> (an376-mtxj-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mtxj/an377-mtxj-b.wav@<s> RUBOUT J B X R Z NINE TWENTY </s> (an377-mtxj-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mtxj/an378-mtxj-b.wav@<s> ENTER SIXTY FOUR </s> (an378-mtxj-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mtxj/an379-mtxj-b.wav@<s> STOP </s> (an379-mtxj-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mtxj/an380-mtxj-b.wav@<s> ENTER SIX OH EIGHT OH </s> (an380-mtxj-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mtxj/cen1-mtxj-b.wav@<s> J O H N S O N </s> (cen1-mtxj-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mtxj/cen2-mtxj-b.wav@<s> T H A D </s> (cen2-mtxj-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mtxj/cen3-mtxj-b.wav@<s> ONE HUNDRED </s> (cen3-mtxj-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mtxj/cen4-mtxj-b.wav@<s> S A Y B R O O K H A R B O R </s> (cen4-mtxj-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mtxj/cen5-mtxj-b.wav@<s> B R A D F O R D W O O D S </s> (cen5-mtxj-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mtxj/cen6-mtxj-b.wav@<s> ONE FIVE OH ONE FIVE </s> (cen6-mtxj-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mtxj/cen7-mtxj-b.wav@<s> NINE THREE FIVE OH SIX NINE TWO </s> (cen7-mtxj-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mtxj/cen8-mtxj-b.wav@<s> OCTOBER TWENTY THIRD NINETEEN SIXTY SEVEN </s> (cen8-mtxj-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mwhw/an151-mwhw-b.wav@<s> H A H L E FOUR NINETY ONE </s> (an151-mwhw-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mwhw/an152-mwhw-b.wav@<s> START </s> (an152-mwhw-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mwhw/an153-mwhw-b.wav@<s> Y D N E D FORTY SEVEN </s> (an153-mwhw-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mwhw/an154-mwhw-b.wav@<s> RUBOUT P O O B EIGHT </s> (an154-mwhw-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mwhw/an155-mwhw-b.wav@<s> ENTER SIXTY </s> (an155-mwhw-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mwhw/cen1-mwhw-b.wav@<s> W A R D </s> (cen1-mwhw-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mwhw/cen2-mwhw-b.wav@<s> W A Y N E </s> (cen2-mwhw-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mwhw/cen3-mwhw-b.wav@<s> ONE FIFTY </s> (cen3-mwhw-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mwhw/cen4-mwhw-b.wav@<s> B U C K W H E A T </s> (cen4-mwhw-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mwhw/cen5-mwhw-b.wav@<s> G I B S O N I A </s> (cen5-mwhw-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mwhw/cen6-mwhw-b.wav@<s> ONE FIVE OH FOUR FOUR </s> (cen6-mwhw-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mwhw/cen7-mwhw-b.wav@<s> SIX TWO FIVE ONE FIVE SIX FOUR </s> (cen7-mwhw-b)@
+/data1/yuanyang/torch_projects/data/an4/wav/an4_clstk/mwhw/cen8-mwhw-b.wav@<s> ELEVEN SEVENTEEN FIFTY ONE </s> (cen8-mwhw-b)@

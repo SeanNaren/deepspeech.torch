@@ -1,5 +1,6 @@
 require 'loader'
 require 'util'
+require 'mapper'
 local threads = require 'threads'
 local WERCalculator = {}
 

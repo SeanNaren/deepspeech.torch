@@ -5,7 +5,7 @@ local Network = require 'Network'
 local Batcher = require 'Batcher'
 
 --Training parameters
-local epochs = 70
+local epochs = 2
 local numberOfValidationSamples = 20
 torch.setdefaulttensortype('torch.FloatTensor')
 
@@ -16,7 +16,7 @@ local networkParams = {
     modelName = 'DeepSpeechModel',
     backend = 'cudnn',
     nGPU = 2, -- Set -1 to use CPU
-    lmdb_path = '/data1/yuanyang/torch_projects/data/an4_lmdb/',-- online loading path
+    lmdb_path = '/data1/yuanyang/torch_projects/data/an4_lmdb2/',-- online loading path
     batch_size = 50
 }
 --Parameters for the stochastic gradient descent (using the optim library).

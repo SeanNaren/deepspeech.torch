@@ -80,12 +80,11 @@ function loader:__init(_dir)
     self.db_trans = lmdb.env{Path=_dir..'/train_trans',Name='train_trans'}
 end
 
-function loader:nxt_batch(inds, ...)
+function loader:nxt_batch(inds, flag)
     --[[
         return a batch by loading from lmdb just-in-time
 
-        NOTE:
-            can accept one more bool value indicates whether to load trans    
+        flag: indicates whether to load trans
 
         TODO we allocate 2 * batch_size space
     --]]
@@ -97,7 +96,6 @@ function loader:nxt_batch(inds, ...)
 
     local trans_list = {}
     local txn_trans
-    local flag = #arg == 1 and arg[1] == true -- see if you want trans
     
     self.db_spect:open();local txn_spect = self.db_spect:txn(true) -- readonly
     self.db_label:open();local txn_label = self.db_label:txn(true)

@@ -88,7 +88,7 @@ function Network:trainNetwork(epochs, sgd_params)
     -- load first batch
     local inds = self.indexer:nxt_inds()
     self.pool:addjob(function()
-                    return loader:nxt_batch(inds)
+                    return loader:nxt_batch(inds, false)
                 end,
                 function(spect,label)
                     spect_buf=spect
@@ -105,7 +105,7 @@ function Network:trainNetwork(epochs, sgd_params)
         local inputsCPU,targets = spect_buf,label_buf   -- move buf to training data
         inds = self.indexer:nxt_inds()                  -- load nxt batch
         self.pool:addjob(function()
-                            return loader:nxt_batch(inds)
+                            return loader:nxt_batch(inds, false)
                         end,
                         function(spect,label)
                             spect_buf=spect

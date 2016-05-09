@@ -24,7 +24,7 @@ local stride = 75
 local an4FolderDir = "/data/LLL/data/speech/an4"
 
 --The test set in spectrogram tensor form.
-local testDataSet = AudioData.retrieveAN4TestDataSet(an4FolderDir, windowSize, stride)
+-- local testDataSet = AudioData.retrieveAN4TestDataSet(an4FolderDir, windowSize, stride)
 
 -- File path to the big.txt (see readme for download link). Due to the randomness of the an4 dataset
 -- I've combined the transcripts to calculate word probabilities from it. Should be replaced by a proper language model.
@@ -35,7 +35,10 @@ local networkParams = {
     loadModel = true,
     saveModel = false,
     fileName = "CTCNetwork.t7",
-    gpu = true -- Set this to false to revert back to CPU.
+    modelName = 'DeepSpeechModel',
+    gpu = true, -- Set this to false to revert back to CPU.
+    lmdb_path = '/data1/yuanyang/torch_projects/data/an4_lmdb_test/',
+    batch_size = 1
 }
 
 Network:init(networkParams)
@@ -44,12 +47,12 @@ print("Network loaded")
 -- test iteration. Since batch size is 1 so iter should be the same as test set size
 test_iter = 130
 -- TODO test/dict lmdb path
-_dir = ''
-dict_path = ''
+_dir = '/data1/yuanyang/torch_projects/data/an4_lmdb_test/'
+dict_path = 'dictionary'
 
 assert(#_dir>1 and #dict_path>1, 'set dir and dict_path first')
 
-local spellCheckedWER = WERCalculator.calculateWordErrorRate(false, test_iter, SpellingChecker, Network. model, gpu, _dir, dict_path)
+local spellCheckedWER = WERCalculator.calculateWordErrorRate(false, test_iter, SpellingChecker, Network.model, gpu, _dir, dict_path)
 print(string.format("Without Spellcheck WER : %.2f percent", spellCheckedWER))
 
 local spellCheckedWER = WERCalculator.calculateWordErrorRate(true, test_iter, SpellingChecker, Network.model, gpu, _dir, dict_path)
