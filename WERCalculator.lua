@@ -1,9 +1,17 @@
-local AudioData = require 'AudioData'
+require 'loader'
+require 'util'
+require 'mapper'
+local threads = require 'threads'
 local WERCalculator = {}
 
 
---[[Takes the resulting predictions and the transcript sentence. Returns tables of words said in both.]]
-local function getWords(predictions, targetSentence, shouldSpellCheck, SpellingChecker)
+
+
+local function getWords(predictions, targetSentence, shouldSpellCheck, SpellingChecker, mapper)
+    --[[
+        Takes the resulting predictions and the transcript sentence. Returns tables of words said in both.
+    --]]
+
     local predictionString = ""
     local prevLetter = ""
     -- Iterate through the results of the prediction and append the letter that was predicted in the sample.
@@ -14,7 +22,7 @@ local function getWords(predictions, targetSentence, shouldSpellCheck, SpellingC
         maxIndex = maxIndex[1] - 1
         -- If the index is 0, that means that the character was a CTC blank.
         if (maxIndex ~= 0) then
-            local letter = AudioData.findLetter(maxIndex)
+            local letter = mapper.token2alphabet[maxIndex]
             -- We do not add the character if it is the same as the previous character.
             if (letter ~= prevLetter) then
                 predictionString = predictionString .. letter
@@ -35,6 +43,8 @@ local function getWords(predictions, targetSentence, shouldSpellCheck, SpellingC
     end
     return predictedWords, targetWords
 end
+
+
 
 -- Calculates the word error rate (as a percentage).
 function wordErrorRate(target, prediction)
@@ -64,21 +74,62 @@ function wordErrorRate(target, prediction)
     return d[#target + 1][#prediction + 1] / #target * 100
 end
 
-function WERCalculator.calculateWordErrorRate(shouldSpellCheck, testDataSet, SpellingChecker, model, gpu, progress)
+
+
+function WERCalculator.calculateWordErrorRate(shouldSpellCheck, test_iter, SpellingChecker, model, gpu, _dir, dict_path)
+    --[[
+        input:
+            test_iter: iter of testing
+            _dir: dir where test lmdb is stored
+            dict_path: path to dict
+    --]]
+
     -- We collapse all the words into one large table to pass into the WER calculation.
     local totalPredictedWords = {}
     local totalTargetWords = {}
 
-    for i = 1, #testDataSet do
-        local inputAndTarget = testDataSet[i]
-        local inputs, targets = inputAndTarget.tensor, inputAndTarget.target
+    local loader = loader(_dir)
+    local indexer = indexer(_dir, 1)
+    local mapper = mapper(dict_path)
+    local spect_buf, label_buf, trans_buf
+    local pool = threads.Threads(1,function()require 'loader'end)
+
+    -- load first batch
+    local inds = indexer:nxt_inds()
+    pool:addjob(function()
+                    return loader:nxt_batch(inds, true) -- set true to load trans
+                end,
+                function(spect, label, trans)
+                    spect_buf=spect
+                    label_buf=label
+                    trans_buf=trans
+                end
+                )
+
+
+    for i = 1, test_iter do
+
+        pool:synchronize()
+        local inputs, _, true_text = spect_buf, label_buf, trans_buf
+        inds = indexer:nxt_inds()
+        pool:addjob(function()
+                        return loader:nxt_batch(inds, true)
+                    end,
+                    function(spect, label, trans)
+                        spect_buf=spect
+                        label_buf=label
+                        trans_buf=trans
+                    end
+                    )
+
         -- We create an input of size batch x channels x freq x time (batch size in this case is 1).
-        inputs = inputs:view(1, 1, inputs:size(1), inputs:size(2)):transpose(3, 4)
+        -- inputs = inputs:view(1, 1, inputs:size(1), inputs:size(2))
+
         if (gpu) then
             inputs = inputs:cuda()
         end
         local predictions = model:forward(inputs)
-        local predictedWords, targetWords = getWords(predictions, inputAndTarget.truthText, shouldSpellCheck, SpellingChecker)
+        local predictedWords, targetWords = getWords(predictions, true_text[1], shouldSpellCheck, SpellingChecker, mapper)
 
         for index, word in ipairs(predictedWords) do
             table.insert(totalPredictedWords, word)
@@ -87,7 +138,7 @@ function WERCalculator.calculateWordErrorRate(shouldSpellCheck, testDataSet, Spe
             table.insert(totalTargetWords, word)
         end
         if progress then
-            xlua.progress(i, #testDataSet)
+            xlua.progress(i, test_iter)
         end
     end
 

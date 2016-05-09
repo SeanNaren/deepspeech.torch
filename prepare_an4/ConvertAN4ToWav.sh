@@ -1,6 +1,6 @@
 #!/bin/bash
 #Place inside the an4 directory to convert the raw samples into wav.
-for entry in "$PWD/wav"
+for entry in "$1/wav"
 do
 	for wav_folder in "$entry"/*
 	do
