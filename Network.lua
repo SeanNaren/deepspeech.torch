@@ -12,13 +12,15 @@ local WERCalculator = require 'WERCalculator'
 local Network = {}
 local logger = optim.Logger('train.log')
 logger:setNames { 'loss', 'WER' }
-logger:style{'-', '-'}
+logger:style { '-', '-' }
 
 
 function Network:init(networkParams)
     self.fileName = networkParams.fileName -- The file name to save/load the network from.
     self.nGPU = networkParams.nGPU
     self.lmdb_path = networkParams.lmdb_path
+    self.val_path = networkParams.val_path
+    WERCalculator:init(networkParams.val_path)
     -- setting model saving/loading
     if (self.loadModel) then
         assert(networkParams.fileName, "Filename hasn't been given to load model.")
@@ -54,14 +56,12 @@ function Network:predict(inputTensors)
     return prediction
 end
 
-local function WERValidationSet(self, validationSet)
-    if(validationSet) then
-        self.model:evaluate()
-        local wer =  WERCalculator.calculateWordErrorRate(false, validationSet, nil, self.model, self.nGPU > 0)
-        self.model:zeroGradParameters()
-        self.model:training()
-        return wer
-    end
+local function WERValidationSet(self)
+    self.model:evaluate()
+    local wer = WERCalculator:calculateValidationWER(self.nGPU>0, self.model)
+    self.model:zeroGradParameters()
+    self.model:training()
+    return wer
 end
 
 function Network:trainNetwork(epochs, sgd_params)
@@ -88,13 +88,13 @@ function Network:trainNetwork(epochs, sgd_params)
     -- load first batch
     local inds = self.indexer:nxt_inds()
     self.pool:addjob(function()
-                    return loader:nxt_batch(inds, false)
-                end,
-                function(spect,label)
-                    spect_buf=spect
-                    label_buf=label
-                end
-                )
+                        return loader:nxt_batch(inds, false)
+                    end,
+                    function(spect,label)
+                        spect_buf=spect
+                        label_buf=label
+                    end
+                    )
 
     -- ===========================================================
     -- define the feval
@@ -132,12 +132,16 @@ function Network:trainNetwork(epochs, sgd_params)
     local currentLoss
     local startTime = os.time()
     local dataSetSize = 20 -- TODO dataset:size()
+    local wer = 1
     for i = 1, epochs do
         local averageLoss = 0
         print(string.format("Training Epoch: %d", i))
 
-        local wer = WERValidationSet(self, validationDataset)
-        if wer then table.insert(validationHistory, wer) end
+        -- Periodically update validation error rates
+        if (i % 2 == 0 and  self.val_path) then
+            wer = WERValidationSet(self)
+            if wer then table.insert(validationHistory, 100 * wer) end
+        end
 
         for j = 1, dataSetSize do
             currentLoss = 0
@@ -149,9 +153,9 @@ function Network:trainNetwork(epochs, sgd_params)
 
         averageLoss = averageLoss / dataSetSize -- Calculate the average loss at this epoch.
         table.insert(lossHistory, averageLoss) -- Add the average loss value to the logger.
-        print(string.format("Training Epoch: %d Average Loss: %f", i, averageLoss))
+        print(string.format("Training Epoch: %d Average Loss: %f WER: %.0f%%", i, averageLoss, 100 * wer))
 
-        logger:add{averageLoss, wer}
+        logger:add { averageLoss, 1000 * wer }
     end
 
     local endTime = os.time()
@@ -165,6 +169,92 @@ function Network:trainNetwork(epochs, sgd_params)
     end
 
     return lossHistory, validationHistory, minutesTaken
+end
+
+function Network:testNetwork(test_iter, dict_path)
+    require 'mapper'
+    local mapper = mapper(dict_path)
+    local Evaluator = require 'Evaluator'
+    -- Run the test data set through the net and print the results
+    local testResults = {}
+    local cumWER = 0
+    local input = torch.Tensor()
+    if (self.nGPU > 0) then input = input:cuda() end
+
+    local loader = loader(self.val_path)
+    local indexer = indexer(self.val_path, 1)
+    local pool = threads.Threads(1,function()require 'loader'end)
+    local inds = indexer:nxt_inds()
+    pool:addjob(function()
+                    return loader:nxt_batch(inds, true) -- set true to load trans
+                end,
+                function(spect, label, trans)
+                    spect_buf=spect
+                    label_buf=label
+                    trans_buf=trans
+                end
+                )
+    for i = 1,test_iter do
+        pool:synchronize()
+        local inputCPU, targets, trans = spect_buf, label_buf, trans_buf
+        inds = indexer:nxt_inds()
+        pool:addjob(function()
+                        return loader:nxt_batch(inds, true)
+                    end,
+                    function(spect, label, trans)
+                        spect_buf=spect
+                        label_buf=label
+                        trans_buf=trans
+                    end
+                    )
+        -- transfer over to GPU
+        input:resize(inputCPU:size()):copy(inputCPU)
+        local prediction = Network:predict(input)
+
+        local predictedPhones = Evaluator.getPredictedCharacters(prediction)
+        local WER = Evaluator.sequenceErrorRate(targets, predictedPhones)
+
+        local targetPhoneString = ""
+        local predictedPhoneString = ""
+
+        -- Turn targets into text string
+        for i = 1,#targets[1] do
+            local spacer
+            if (i < #targets) then spacer = " " else spacer = "" end
+            targetPhoneString = targetPhoneString .. mapper.token2alphabet[targets[1][i]] .. spacer
+        end
+
+        -- Turn predictions into text string
+        for i = 1,#predictedPhones do
+            local spacer
+            if (i < #predictedPhones) then spacer = " " else spacer = "" end
+            predictedPhoneString = predictedPhoneString .. mapper.token2alphabet[predictedPhones[i]] .. spacer
+        end
+        cumWER = cumWER + WER
+        local row = {}
+        row.WER = WER
+        row.text = trans_buf[1]
+        row.predicted = predictedPhoneString
+        row.target = targetPhoneString
+        table.insert(testResults, row)
+        xlua.progress(i, test_iter)
+    end
+
+    -- Print the results sorted by WER
+    table.sort(testResults, function (a,b) if (a.WER < b.WER) then return true else return false end end)
+    for i = 1,#testResults do
+        local row = testResults[i]
+        print(string.format("WER = %.0f%% | Text = \"%s\" | Predicted characters = \"%s\" | Target characters = \"%s\"",
+            row.WER*100, row.text, row.predicted, row.target))
+    end
+    print("-----------------------------------------")
+    print("Individual WER above are from low to high")
+
+    -- Print the overall average PER
+    local averageWER = cumWER / test_iter
+
+    print ("\n")
+    print(string.format("Testset Word Error Rate : %.0f%%", averageWER*100))
 end
 
 function Network:createLossGraph()

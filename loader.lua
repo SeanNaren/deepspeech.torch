@@ -88,7 +88,6 @@ function loader:nxt_batch(inds, flag)
 
         TODO we allocate 2 * batch_size space
     --]]
-
     local tensor_list = {}
     local label_list = {}
     local max_w = 0

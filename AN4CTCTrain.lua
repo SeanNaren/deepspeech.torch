@@ -3,8 +3,8 @@
 local Network = require 'Network'
 
 --Training parameters
-local epochs = 2
 torch.setdefaulttensortype('torch.FloatTensor')
+local epochs = 70
 
 local networkParams = {
     loadModel = false,
@@ -14,6 +14,7 @@ local networkParams = {
     backend = 'cudnn',
     nGPU = 2, -- Number of GPUs, set -1 to use CPU
     lmdb_path = 'prepare_an4/train/',-- online loading path
+    val_path = 'prepare_an4/test/',
     batch_size = 50
 }
 --Parameters for the stochastic gradient descent (using the optim library).
@@ -25,9 +26,6 @@ local sgdParams = {
     dampening = 0,
     nesterov = true
 }
-
---The larger this value, the larger the batches, however the more padding is added to make variable sentences the same.
-local maximumSizeDifference = 0 -- Setting this to zero makes it batch together the same length sentences.
 
 --Create and train the network based on the parameters and training data.
 Network:init(networkParams)
