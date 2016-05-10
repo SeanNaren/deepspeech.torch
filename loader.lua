@@ -4,7 +4,9 @@ require 'lmdb'
 
 --[[
 
-    this file defines a loader that load one batch on each call
+    this file defines indexer and loader:
+        - indexer returns different inds of nxt btach
+        - loader loads data from lmdb given the inds
 
 --]]
 
@@ -36,7 +38,52 @@ function indexer:__init(_dir, batch_size)
     self.db_trans:close()
 
     assert(self.lmdb_size > self.batch_size, 'batch_size larger than lmdb_size')
+    self.same_len_inds = {}
 
+end
+
+function indexer:prep_same_len_inds()
+    --[[
+        make a table of inds with ascending lens, so that we can return inds
+        with same seqLength using nxt_same_len_inds()
+    --]]
+    self.db_spect:open(); local txn = self.db_spect:txn(true)
+
+    for i = 1, self.lmdb_size do
+        local _len = txn:get(i):size(2) -- get the len of spect
+        table.insert(self.same_len_inds, {i, _len})
+    end
+
+    txn:abort(); self.db_spect:close()
+    
+    -- sort table
+    local function comp(a, b) return a[2] < b[2] end
+    table.sort(self.same_len_inds, comp)
+
+    --debug
+    --print(self.same_len_inds)
+end
+
+function indexer:nxt_same_len_inds()
+    --[[
+        return inds with same seqLength, a solution before zero-masking can work
+
+        NOTE:
+            call prep_same_len_inds before this    
+    --]]
+    assert(#self.same_len_inds > 0, 'call prep_same_len_inds before this')
+
+    local _len = self.same_len_inds[self.cnt][2]
+    local inds = {}
+    while(self.cnt <= self.lmdb_size and self.same_len_inds[self.cnt][2] == _len) do
+        -- NOTE: true index store in table, instead of cnt
+        table.insert(inds, self.same_len_inds[self.cnt][1])
+        self.cnt = self.cnt + 1
+    end
+    
+    if self.cnt > self.lmdb_size then self.cnt = 1 end
+
+    return inds
 end
 
 function indexer:nxt_inds()
@@ -67,6 +114,8 @@ function indexer:nxt_inds()
     return inds
 
 end
+
+
 
 local loader = torch.class('loader')
 

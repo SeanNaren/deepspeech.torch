@@ -42,6 +42,7 @@ function Network:init(networkParams)
     assert((networkParams.saveModel or networkParams.loadModel) and networkParams.fileName, "To save/load you must specify the fileName you want to save to")
     -- setting online loading
     self.indexer = indexer(networkParams.lmdb_path, networkParams.batch_size)
+    self.indexer:prep_same_len_inds() -- rm this if zero-masking is done
     self.pool = threads.Threads(1,function() require 'loader' end)
 end
 
@@ -86,7 +87,7 @@ function Network:trainNetwork(epochs, sgd_params)
     local spect_buf, label_buf
 
     -- load first batch
-    local inds = self.indexer:nxt_inds()
+    local inds = self.indexer:nxt_same_len_inds() -- use nxt_inds if zero-mask is done
     self.pool:addjob(function()
                         return loader:nxt_batch(inds, false)
                     end,
@@ -103,7 +104,7 @@ function Network:trainNetwork(epochs, sgd_params)
         --------------------- data load ------------------------
         self.pool:synchronize()                         -- wait previous loading
         local inputsCPU,targets = spect_buf,label_buf   -- move buf to training data
-        inds = self.indexer:nxt_inds()                  -- load nxt batch
+        inds = self.indexer:nxt_same_len_inds()                  -- load nxt batch
         self.pool:addjob(function()
                             return loader:nxt_batch(inds, false)
                         end,
@@ -131,7 +132,7 @@ function Network:trainNetwork(epochs, sgd_params)
     -- ==========================================================
     local currentLoss
     local startTime = os.time()
-    local dataSetSize = 20 -- TODO dataset:size()
+    local dataSetSize = 58 -- TODO dataset:size()
     local wer = 1
     for i = 1, epochs do
         local averageLoss = 0
