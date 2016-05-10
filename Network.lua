@@ -132,7 +132,7 @@ function Network:trainNetwork(epochs, sgd_params)
     -- ==========================================================
     local currentLoss
     local startTime = os.time()
-    local dataSetSize = 58 -- TODO dataset:size()
+    local dataSetSize = self.indexer.len_num -- obtained when calling prep_same_len_inds
     local wer = 1
     for i = 1, epochs do
         local averageLoss = 0

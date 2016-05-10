@@ -1,6 +1,7 @@
 require 'nn'
 require 'torch'
 require 'lmdb'
+require 'xlua'
 
 --[[
 
@@ -39,6 +40,7 @@ function indexer:__init(_dir, batch_size)
 
     assert(self.lmdb_size > self.batch_size, 'batch_size larger than lmdb_size')
     self.same_len_inds = {}
+    self.len_num = 0 -- number of unique seqLengths
 
 end
 
@@ -47,11 +49,16 @@ function indexer:prep_same_len_inds()
         make a table of inds with ascending lens, so that we can return inds
         with same seqLength using nxt_same_len_inds()
     --]]
-    self.db_spect:open(); local txn = self.db_spect:txn(true)
+    
+    print('preparing the inds with the same seqLengths..')
 
+    self.db_spect:open(); local txn = self.db_spect:txn(true)
+    local len_set = {}
     for i = 1, self.lmdb_size do
         local _len = txn:get(i):size(2) -- get the len of spect
         table.insert(self.same_len_inds, {i, _len})
+        if len_set[_len] == nil then len_set[_len] = true end
+        xlua.progress(i, self.lmdb_size)
     end
 
     txn:abort(); self.db_spect:close()
@@ -62,6 +69,9 @@ function indexer:prep_same_len_inds()
 
     --debug
     --print(self.same_len_inds)
+    
+    for _ in pairs(len_set) do self.len_num = self.len_num + 1 end -- number of different seqLengths
+    print('there are ' .. self.len_num .. ' unique seqLengths')
 end
 
 function indexer:nxt_same_len_inds()
