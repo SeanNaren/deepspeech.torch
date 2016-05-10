@@ -103,6 +103,14 @@ function util.mk_lmdb(root_path, index_path, dict_path, out_dir, windowSize, str
         txn_spect:put(cnt, spect:byte())
         txn_label:put(cnt, label)
         txn_trans:put(cnt, modified_trans)
+
+        -- commit buffer
+        if cnt%show_gap == 0 then
+            txn_spect:commit(); txn_spect = db_spect:txn()
+            txn_label:commit(); txn_label = db_label:txn()
+            txn_trans:commit(); txn_trans = db_trans:txn()
+        end
+
         xlua.progress(cnt%show_gap+1, show_gap)
         cnt = cnt + 1
     end
