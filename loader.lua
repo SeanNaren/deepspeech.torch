@@ -58,7 +58,7 @@ function indexer:prep_same_len_inds()
         local _len = txn:get(i):size(2) -- get the len of spect
         table.insert(self.same_len_inds, {i, _len})
         if len_set[_len] == nil then len_set[_len] = true end
-        xlua.progress(i, self.lmdb_size)
+        if i % 100 == 0 then xlua.progress(i, self.lmdb_size) end
     end
 
     txn:abort(); self.db_spect:close()
@@ -159,13 +159,15 @@ function loader:nxt_batch(inds, flag)
     self.db_label:open();local txn_label = self.db_label:txn(true)
     if flag then self.db_trans:open();txn_trans = self.db_trans:txn(true) end
 
-
+    local sizes_array = torch.Tensor(#inds, 1)
+    local cnt = 1
     -- reads out a batch and store in lists
     for _, ind in next, inds, nil do
         local tensor = txn_spect:get(ind):double()
         local label = torch.deserialize(txn_label:get(ind))
 
         h = tensor:size(1)
+        sizes_array[cnt] = h; cnt = cnt + 1 -- record true length
         if max_w < tensor:size(2) then max_w = tensor:size(2) end -- find the max len in this batch
 
         table.insert(tensor_list, tensor)
@@ -183,7 +185,7 @@ function loader:nxt_batch(inds, flag)
     txn_label:abort();self.db_label:close()
     if flag then txn_trans:abort();self.db_trans:close() end
 
-    if flag then return tensor_array, label_list, trans_list end
-    return tensor_array, label_list
+    if flag then return tensor_array, label_list, sizes_array, trans_list end
+    return tensor_array, label_list, sizes_array
 
 end

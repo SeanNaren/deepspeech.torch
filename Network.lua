@@ -84,16 +84,17 @@ function Network:trainNetwork(epochs, sgd_params)
 
     -- def loading buf and loader
     local loader = loader(self.lmdb_path)
-    local spect_buf, label_buf
+    local spect_buf, label_buf, sizes_buf
 
     -- load first batch
     local inds = self.indexer:nxt_same_len_inds() -- use nxt_inds if zero-mask is done
     self.pool:addjob(function()
                         return loader:nxt_batch(inds, false)
                     end,
-                    function(spect,label)
+                    function(spect,label,sizes)
                         spect_buf=spect
                         label_buf=label
+                        sizes_buf=sizes
                     end
                     )
 
@@ -108,9 +109,10 @@ function Network:trainNetwork(epochs, sgd_params)
         self.pool:addjob(function()
                             return loader:nxt_batch(inds, false)
                         end,
-                        function(spect,label)
+                        function(spect,label,sizes)
                             spect_buf=spect
                             label_buf=label
+                            sizes_buf=sizes
                         end
                         )
 
@@ -189,10 +191,11 @@ function Network:testNetwork(test_iter, dict_path)
     pool:addjob(function()
                     return loader:nxt_batch(inds, true) -- set true to load trans
                 end,
-                function(spect, label, trans)
+                function(spect, label, sizes, trans)
                     spect_buf=spect
                     label_buf=label
                     trans_buf=trans
+                    sizes_buf=sizes
                 end
                 )
     for i = 1,test_iter do
@@ -202,10 +205,11 @@ function Network:testNetwork(test_iter, dict_path)
         pool:addjob(function()
                         return loader:nxt_batch(inds, true)
                     end,
-                    function(spect, label, trans)
+                    function(spect, label, sizes, trans)
                         spect_buf=spect
                         label_buf=label
                         trans_buf=trans
+                        sizes_buf=sizes
                     end
                     )
         -- transfer over to GPU
