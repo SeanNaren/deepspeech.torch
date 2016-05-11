@@ -27,7 +27,11 @@ function WERCalculator:calculateValidationWER(gpu, model)
     local sampleSize = 10
     local cumWER = 0
     local input = torch.Tensor()
-    if (gpu) then input = input:cuda() end
+    local sizes = torch.Tensor()
+    if (gpu) then
+        input = input:cuda()
+        sizes = sizes:cuda()
+    end
 
     for i = 1, sampleSize do
         self.pool:synchronize()
@@ -41,8 +45,9 @@ function WERCalculator:calculateValidationWER(gpu, model)
                             self.label_buf=label
                         end
                         )
+        sizes:resize(inputsCPU:size(1)):fill(inputsCPU:size(4)) -- TODO: use real length
         input:resize(inputCPU:size()):copy(inputCPU)
-        local prediction = model:forward(input)
+        local prediction = model:forward({input, sizes})
 
         local predictedCharacters = Evaluator.getPredictedCharacters(prediction)
         local WER = Evaluator.sequenceErrorRate(targets, predictedCharacters)

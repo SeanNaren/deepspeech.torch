@@ -4,10 +4,8 @@ require 'torch'
 local mapper = torch.class('mapper')
 
 function mapper:__init(dict_path)
-	if paths.filep(dict_path) == false then
-		print (dict_path..' not found')
-		os.exit()
-	end
+    assert(paths.filep(dict_path), dict_path..' not found')
+
     self.alphabet2token = {}
     self.token2alphabet = {}
 

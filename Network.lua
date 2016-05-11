@@ -6,6 +6,7 @@ require 'gnuplot'
 require 'xlua'
 require 'utils_multi_gpu'
 require 'loader'
+require 'nngraph'
 local threads = require 'threads'
 
 local WERCalculator = require 'WERCalculator'
@@ -34,11 +35,11 @@ function Network:init(networkParams)
         if networkParams.backend == 'cudnn' then
             require 'cudnn'
             cudnn.fastest = true
+            -- cudnn.benchmark = true -- this option makes it slower
             cudnn.convert(self.model, cudnn)
         end
     end
-    print (self.model)
-    self.model:training()
+    graph.dot(self.model.bg, 'deepSpeech', 'deepSpeech_back') -- view graph
     assert((networkParams.saveModel or networkParams.loadModel) and networkParams.fileName, "To save/load you must specify the fileName you want to save to")
     -- setting online loading
     self.indexer = indexer(networkParams.lmdb_path, networkParams.batch_size)
@@ -47,7 +48,7 @@ end
 
 function Network:prepSpeechModel(modelName, backend)
     local model = require (modelName)
-    self.model = model(self.nGPU, backend)
+    self.model = model(self.nGPU, backend=='cudnn')
 end
 
 -- Returns a prediction of the input net and input tensors.
@@ -68,6 +69,7 @@ function Network:trainNetwork(epochs, sgd_params)
     --[[
         train network with self-defined feval (sgd inside); use ctc for evaluation
     --]]
+    self.model:training()
 
     local lossHistory = {}
     local validationHistory = {}
@@ -76,9 +78,11 @@ function Network:trainNetwork(epochs, sgd_params)
 
     -- inputs (preallocate)
     local inputs = torch.Tensor()
+    local sizes = torch.Tensor()
     if self.nGPU > 0 then
         ctcCriterion = nn.CTCCriterion():cuda()
         inputs = inputs:cuda()
+        sizes = sizes:cuda()
     end
 
     -- def loading buf and loader
@@ -112,12 +116,12 @@ function Network:trainNetwork(epochs, sgd_params)
                             label_buf=label
                         end
                         )
-
         --------------------- fwd and bwd ---------------------
+        sizes:resize(inputsCPU:size(1)):fill(inputsCPU:size(4)) -- TODO: use real length
         inputs:resize(inputsCPU:size()):copy(inputsCPU) -- transfer over to GPU
         gradParameters:zero()
         cutorch.synchronize()
-        local predictions = self.model:forward(inputs)
+        local predictions = self.model:forward({inputs, sizes})
         local loss = ctcCriterion:forward(predictions, targets)
         self.model:zeroGradParameters()
         local gradOutput = ctcCriterion:backward(predictions, targets)
@@ -178,8 +182,12 @@ function Network:testNetwork(test_iter, dict_path)
     -- Run the test data set through the net and print the results
     local testResults = {}
     local cumWER = 0
+    local sizes = torch.Tensor()
     local input = torch.Tensor()
-    if (self.nGPU > 0) then input = input:cuda() end
+    if (self.nGPU > 0) then
+        input = input:cuda()
+        sizes = sizes:cuda()
+    end
 
     local loader = loader(self.val_path)
     local indexer = indexer(self.val_path, 1)
@@ -208,8 +216,9 @@ function Network:testNetwork(test_iter, dict_path)
                     end
                     )
         -- transfer over to GPU
+        sizes:resize(inputsCPU:size(1)):fill(inputsCPU:size(4)) -- TODO: use real length
         input:resize(inputCPU:size()):copy(inputCPU)
-        local prediction = Network:predict(input)
+        local prediction = Network:predict({input, sizes})
 
         local predictedPhones = Evaluator.getPredictedCharacters(prediction)
         local WER = Evaluator.sequenceErrorRate(targets, predictedPhones)

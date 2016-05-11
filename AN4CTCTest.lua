@@ -8,11 +8,6 @@ require 'rnn'
 
 progress = true -- Set to true if you want to see progress of calculation of WER.
 
-function fileExists(name)
-    local f = io.open(name, "r")
-    if f ~= nil then io.close(f) return true else return false end
-end
-
 -- Load the network from the saved model.
 local networkParams = {
     loadModel = true,

@@ -1,46 +1,60 @@
 require 'ctchelpers'
 require 'rnn'
+require 'nngraph'
+require 'MaskRNN'
+require 'ReverseRNN'
+require 'utils_multi_gpu'
 
-local function deepSpeech(nGPU, backend)
-
-    GRU = false
-
-    local model = nn.Sequential()
-    model:add(nn.SpatialConvolution(1, 32, 41, 11, 2, 2))
-    model:add(nn.SpatialBatchNormalization(32))
-    model:add(nn.ReLU(true))
-    model:add(nn.SpatialConvolution(32, 32, 21, 11, 2, 1))
-    model:add(nn.SpatialBatchNormalization(32))
-    model:add(nn.ReLU(true))
-    model:add(nn.SpatialMaxPooling(2, 2, 2, 2))
-
-    if backend == 'cudnn' then
-        model:add(nn.SplitTable(1)) -- batchsize x featuremap x freq x time
-        model:add(nn.Sequencer(nn.View(1, 32 * 25, -1))) -- features x freq x time
-        model:add(nn.JoinTable(1)) -- batch x features x time
-        model:add(nn.Transpose({ 2, 3 }, { 1, 2 })) -- batch x time x features
-        require 'cudnn'
-        if (GRU) then
-            model:add(cudnn.BGRU(32 * 25, 400, 4))
-        else
-            model:add(cudnn.BLSTM(32 * 25, 400, 4))
+function get_rnn_module(nIn, nHidden, GRU, is_cudnn)
+    if (GRU) then
+        if is_cudnn then
+            require 'cudnn'
+            return cudnn.GRU(nIn, nHidden, 1)
         end
-        model:add(nn.Transpose({ 1, 2 })) -- batch x seqLength x features
-        model:add(nn.MergeConcat(400, 3)) -- Sums the outputDims of the two outputs layers from BRNN into one.
-    else
-        model:add(nn.CombineDimensions(2, 3)) -- Combine the middle two dimensions from 4D to 3D (features x batch x seqLength)
-        model:add(nn.Transpose({1,2},{2,3})) -- Transpose till batch x seqLength x features
-        require 'BRNN'
-        model:add(nn.BRNN(nn.SeqLSTM(32 * 25, 400)))
-        model:add(nn.TemporalBatchNormalization(400))
-        model:add(nn.BRNN(nn.SeqLSTM(400, 400)))
-        model:add(nn.TemporalBatchNormalization(400))
+        return nn.GRU(nIn, nHidden)
     end
-
-    model:add(nn.Linear3D(400, 28))
-    model = makeDataParallel(model, nGPU)
-    return model
+    if is_cudnn then
+        require 'cudnn'
+        return cudnn.LSTM(nIn, nHidden, 1)
+    end
+    return nn.SeqLSTM(nIn, nHidden)
 end
 
-return deepSpeech
+function BRNN(feat, seqLengths, rnn_module)
+    local fwdLstm = nn.MaskRNN(rnn_module)({feat, seqLengths})
+    local bwdLstm = nn.ReverseRNN(rnn_module)({feat, seqLengths})
+    return nn.CAddTable()({fwdLstm, bwdLstm})
+end
 
+local function deepSpeech(nGPU, is_cudnn)
+    GRU = false
+    local seqLengths = nn.Identity()()
+    local input = nn.Identity()()
+    local feature = nn.Sequential()
+    feature:add(nn.SpatialConvolution(1, 32, 41, 11, 2, 2))
+    feature:add(nn.SpatialBatchNormalization(32))
+    feature:add(nn.ReLU(true))
+    feature:add(nn.SpatialConvolution(32, 32, 21, 11, 2, 1))
+    feature:add(nn.SpatialBatchNormalization(32))
+    feature:add(nn.ReLU(true))
+    feature:add(nn.SpatialMaxPooling(2, 2, 2, 2))
+    feature:add(nn.View(32 * 25, -1):setNumInputDims(3)) -- batch x features x seqLength
+    feature:add(nn.Transpose({ 2, 3 }, { 1, 2 })) -- seqLength x batch x features
+    local rnn = nn.Identity()({feature(input)})
+    rnn_module = get_rnn_module(32 * 25, 400, GRU, is_cudnn)
+    rnn = BRNN(rnn, seqLengths, rnn_module)
+    rnn_module = get_rnn_module(400, 400, GRU, is_cudnn)
+    for i=1,1 do
+        rnn = BRNN(rnn, seqLengths, rnn_module)
+    end
+    local post_sequential = nn.Sequential()
+    post_sequential:add(nn.Transpose({ 1, 2 })) -- This should be removed, 
+                                                -- as ctc transpose this again.
+                                                -- We can use a simpler ctc
+    post_sequential:add(nn.MergeConcat(400, 3))
+    post_sequential:add(nn.Linear3D(400, 28))
+    local model = nn.gModule({input, seqLengths}, {post_sequential(rnn)})
+    -- graph.dot(model.fg, 'deepSpeech', 'deepSpeech') -- view graph
+    return model
+end
+return deepSpeech
