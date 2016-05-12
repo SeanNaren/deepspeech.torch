@@ -15,7 +15,10 @@ local networkParams = {
     nGPU = 2, -- Number of GPUs, set -1 to use CPU
     lmdb_path = 'prepare_an4/train/',-- online loading path
     val_path = 'prepare_an4/test/',
-    batch_size = 50
+    dict_path = './dictionary',
+    batch_size = 48,
+    test_batch_size = 1,
+    test_iter = 10
 }
 --Parameters for the stochastic gradient descent (using the optim library).
 local sgdParams = {

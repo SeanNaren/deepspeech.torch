@@ -28,28 +28,31 @@ function Evaluator.sequenceErrorRate(target, prediction)
     return d[#target + 1][#prediction + 1] / #target
 end
 
--- Turns the predictions tensor into a list of the most likely characters
-function Evaluator.getPredictedCharacters(predictions)
-    local predictedCharacters = {}
-    local prevCharacter = 0
+ 
+function Evaluator.predict2tokens(predictions, mapper)
+    --[[
+        Turns the predictions tensor into a list of the most likely tokens
+    --]]
+    local tokens = {}
+    local blank_token = mapper.alphabet2token['$']
+    local pre_token = blank_token
+
 
     -- The prediction is a sequence of likelihood vectors
     predictions = predictions:squeeze()
     local maxValues, maxIndexes = torch.max(predictions, 2)
     maxIndexes = maxIndexes:squeeze()
+
     for i=1,maxIndexes:size(1) do
-        -- If the index is 1, that means that the prediction was a blank label
-        local character = maxIndexes[i] - 1 -- Caveat about CTC indexes and our labeling scheme
-        if (character ~= 0) then
-            -- We do not add the phone if it is the same as the previous phone.
-            if (character ~= prevCharacter) then
-                table.insert(predictedCharacters, character)
-                prevCharacter = character
-            end
+        local token = maxIndexes[i] - 1 -- CTC indexes start from 1, while token starts from 0    
+        -- add token if it's not blank, and is not the same as pre_token
+        if token ~= blank_token and token ~= pre_token then
+            table.insert(tokens, token)
+            pre_token = token
         end
     end
 
-    return predictedCharacters
+    return tokens
 end
 
 

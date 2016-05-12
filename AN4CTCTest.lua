@@ -26,9 +26,7 @@ local networkParams = {
     batch_size = 1
 }
 
-test_iter = 130
-dict = 'dictionary'
 Network:init(networkParams)
 print("Network loaded")
 
-Network:testNetwork(test_iter, dict)
+test(Network)
