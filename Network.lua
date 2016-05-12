@@ -43,6 +43,7 @@ function Network:init(networkParams)
     assert((networkParams.saveModel or networkParams.loadModel) and networkParams.fileName, "To save/load you must specify the fileName you want to save to")
     -- setting online loading
     self.indexer = indexer(networkParams.lmdb_path, networkParams.batch_size)
+    self.indexer:prep_same_len_inds() -- rm this if zero-masking is done
     self.pool = threads.Threads(1,function() require 'loader' end)
 end
 
@@ -87,16 +88,17 @@ function Network:trainNetwork(epochs, sgd_params)
 
     -- def loading buf and loader
     local loader = loader(self.lmdb_path)
-    local spect_buf, label_buf
+    local spect_buf, label_buf, sizes_buf
 
     -- load first batch
-    local inds = self.indexer:nxt_inds()
+    local inds = self.indexer:nxt_same_len_inds() -- use nxt_inds if zero-mask is done
     self.pool:addjob(function()
                         return loader:nxt_batch(inds, false)
                     end,
-                    function(spect,label)
+                    function(spect,label,sizes)
                         spect_buf=spect
                         label_buf=label
+                        sizes_buf=sizes
                     end
                     )
 
@@ -107,13 +109,14 @@ function Network:trainNetwork(epochs, sgd_params)
         --------------------- data load ------------------------
         self.pool:synchronize()                         -- wait previous loading
         local inputsCPU,targets = spect_buf,label_buf   -- move buf to training data
-        inds = self.indexer:nxt_inds()                  -- load nxt batch
+        inds = self.indexer:nxt_same_len_inds()                  -- load nxt batch
         self.pool:addjob(function()
                             return loader:nxt_batch(inds, false)
                         end,
-                        function(spect,label)
+                        function(spect,label,sizes)
                             spect_buf=spect
                             label_buf=label
+                            sizes_buf=sizes
                         end
                         )
         --------------------- fwd and bwd ---------------------
@@ -135,7 +138,7 @@ function Network:trainNetwork(epochs, sgd_params)
     -- ==========================================================
     local currentLoss
     local startTime = os.time()
-    local dataSetSize = 20 -- TODO dataset:size()
+    local dataSetSize = self.indexer.len_num -- obtained when calling prep_same_len_inds
     local wer = 1
     for i = 1, epochs do
         local averageLoss = 0
@@ -196,10 +199,11 @@ function Network:testNetwork(test_iter, dict_path)
     pool:addjob(function()
                     return loader:nxt_batch(inds, true) -- set true to load trans
                 end,
-                function(spect, label, trans)
+                function(spect, label, sizes, trans)
                     spect_buf=spect
                     label_buf=label
                     trans_buf=trans
+                    sizes_buf=sizes
                 end
                 )
     for i = 1,test_iter do
@@ -209,10 +213,11 @@ function Network:testNetwork(test_iter, dict_path)
         pool:addjob(function()
                         return loader:nxt_batch(inds, true)
                     end,
-                    function(spect, label, trans)
+                    function(spect, label, sizes, trans)
                         spect_buf=spect
                         label_buf=label
                         trans_buf=trans
+                        sizes_buf=sizes
                     end
                     )
         -- transfer over to GPU
