@@ -5,7 +5,7 @@ require 'MaskRNN'
 require 'ReverseRNN'
 require 'utils_multi_gpu'
 
-function get_rnn_module(nIn, nHidden, GRU, is_cudnn)
+local function get_rnn_module(nIn, nHidden, GRU, is_cudnn)
     if (GRU) then
         if is_cudnn then
             require 'cudnn'
@@ -20,9 +20,9 @@ function get_rnn_module(nIn, nHidden, GRU, is_cudnn)
     return nn.SeqLSTM(nIn, nHidden)
 end
 
-function BRNN(feat, seqLengths, rnn_module)
-    local fwdLstm = nn.MaskRNN(rnn_module)({feat, seqLengths})
-    local bwdLstm = nn.ReverseRNN(rnn_module)({feat, seqLengths})
+local function BRNN(feat, seqLengths, rnn_module)
+    local fwdLstm = nn.NaN(nn.MaskRNN(rnn_module:clone()))({feat, seqLengths})
+    local bwdLstm = nn.ReverseRNN(rnn_module:clone())({feat, seqLengths})
     return nn.CAddTable()({fwdLstm, bwdLstm})
 end
 
@@ -40,21 +40,24 @@ local function deepSpeech(nGPU, is_cudnn)
     feature:add(nn.SpatialMaxPooling(2, 2, 2, 2))
     feature:add(nn.View(32 * 25, -1):setNumInputDims(3)) -- batch x features x seqLength
     feature:add(nn.Transpose({ 2, 3 }, { 1, 2 })) -- seqLength x batch x features
-    local rnn = nn.Identity()({feature(input)})
+    local rnn = nn.Identity()({nn.NaN(feature)(input)})
     rnn_module = get_rnn_module(32 * 25, 400, GRU, is_cudnn)
     rnn = BRNN(rnn, seqLengths, rnn_module)
     rnn_module = get_rnn_module(400, 400, GRU, is_cudnn)
-    for i=1,1 do
+    for i=1,0 do
         rnn = BRNN(rnn, seqLengths, rnn_module)
     end
     local post_sequential = nn.Sequential()
-    post_sequential:add(nn.Transpose({ 1, 2 })) -- This should be removed, 
-                                                -- as ctc transpose this again.
-                                                -- We can use a simpler ctc
-    post_sequential:add(nn.MergeConcat(400, 3))
     post_sequential:add(nn.Linear3D(400, 28))
     local model = nn.gModule({input, seqLengths}, {post_sequential(rnn)})
-    -- graph.dot(model.fg, 'deepSpeech', 'deepSpeech') -- view graph
     return model
 end
-return deepSpeech
+
+local function calSize(sizes)
+    sizes = torch.floor((sizes-41)/2+1) -- conv1
+    sizes = torch.floor((sizes-21)/2+1) -- conv2
+    sizes = torch.floor((sizes-2)/2+1) -- pool1
+    return sizes
+end
+
+return {deepSpeech, calSize}

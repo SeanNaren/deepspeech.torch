@@ -10,6 +10,7 @@ require 'xlua'
         - loader loads data from lmdb given the inds
 
 --]]
+torch.setdefaulttensortype('torch.FloatTensor')
 
 local indexer = torch.class('indexer')
 
@@ -49,7 +50,7 @@ function indexer:prep_same_len_inds()
         make a table of inds with ascending lens, so that we can return inds
         with same seqLength using nxt_same_len_inds()
     --]]
-    
+
     print('preparing the inds with the same seqLengths..')
 
     self.db_spect:open(); local txn = self.db_spect:txn(true)
@@ -58,18 +59,18 @@ function indexer:prep_same_len_inds()
         local _len = txn:get(i):size(2) -- get the len of spect
         table.insert(self.same_len_inds, {i, _len})
         if len_set[_len] == nil then len_set[_len] = true end
-        if i % 100 == 0 then xlua.progress(i, self.lmdb_size) end
+        -- if i % 100 == 0 then xlua.progress(i, self.lmdb_size) end
     end
 
     txn:abort(); self.db_spect:close()
-    
+
     -- sort table
     local function comp(a, b) return a[2] < b[2] end
     table.sort(self.same_len_inds, comp)
 
     --debug
     --print(self.same_len_inds)
-    
+
     for _ in pairs(len_set) do self.len_num = self.len_num + 1 end -- number of different seqLengths
     print('there are ' .. self.len_num .. ' unique seqLengths')
 end
@@ -79,7 +80,7 @@ function indexer:nxt_same_len_inds()
         return inds with same seqLength, a solution before zero-masking can work
 
         NOTE:
-            call prep_same_len_inds before this    
+            call prep_same_len_inds before this
     --]]
     assert(#self.same_len_inds > 0, 'call prep_same_len_inds before this')
 
@@ -90,7 +91,7 @@ function indexer:nxt_same_len_inds()
         table.insert(inds, self.same_len_inds[self.cnt][1])
         self.cnt = self.cnt + 1
     end
-    
+
     if self.cnt > self.lmdb_size then self.cnt = 1 end
 
     return inds
@@ -159,11 +160,11 @@ function loader:nxt_batch(inds, flag)
     self.db_label:open();local txn_label = self.db_label:txn(true)
     if flag then self.db_trans:open();txn_trans = self.db_trans:txn(true) end
 
-    local sizes_array = torch.Tensor(#inds, 1)
+    local sizes_array = torch.Tensor(#inds)
     local cnt = 1
     -- reads out a batch and store in lists
     for _, ind in next, inds, nil do
-        local tensor = txn_spect:get(ind):double()
+        local tensor = txn_spect:get(ind)
         local label = torch.deserialize(txn_label:get(ind))
 
         h = tensor:size(1)
@@ -176,7 +177,7 @@ function loader:nxt_batch(inds, flag)
     end
 
     -- store tensors into a fixed len tensor_array [TODO should find a better way to do this]
-    local tensor_array = torch.Tensor(#inds, 1, h, max_w)
+    local tensor_array = torch.Tensor(#inds, 1, h, max_w):zero()
     for ind, tensor in ipairs(tensor_list) do
         tensor_array[ind][1]:narrow(2, 1, tensor:size(2)):copy(tensor)
     end

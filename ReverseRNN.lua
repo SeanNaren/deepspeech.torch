@@ -12,7 +12,7 @@ end
 function ReverseRNN:reverse(input, seqLengths)
    local batchsize = input:size(2)
    assert(batchsize == seqLengths:size(1))
-   local output = input.new():resizeAs(input)
+   local output = input.new():resizeAs(input):zero()
    for i=1,batchsize do
       local T = seqLengths[i]
       for t=1,T do
@@ -30,9 +30,21 @@ function ReverseRNN:updateOutput(input)
 end
 
 function ReverseRNN:updateGradInput(input, gradOutput)
-   reverse_gradOutput = self:reverse(gradOutput, input[2])
+   self.reverse_gradOutput = self:reverse(gradOutput, input[2])
    reverse_gradInput = self.module:updateGradInput(self.reverse_input,
-   													reverse_gradOutput)
+   													self.reverse_gradOutput)
    self.gradInput = self:reverse(reverse_gradInput, input[2])
    return {self.gradInput, nil}
+end
+
+function ReverseRNN:accGradParameters(input, gradOutput, scale) 
+   self.module:accGradParameters(self.reverse_input, self.reverse_gradOutput, scale)
+end
+
+function ReverseRNN:accUpdateGradParameters(input, gradOutput, lr)
+   self.module:accUpdateGradParameters(self.reverse_input, self.reverse_gradOutput, lr)
+end
+
+function ReverseRNN:sharedAccUpdateGradParameters(input, gradOutput, lr)
+   self.module:sharedAccUpdateGradParameters(self.reverse_input, self.reverse_gradOutput, lr)
 end

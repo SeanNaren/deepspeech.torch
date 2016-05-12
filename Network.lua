@@ -7,6 +7,7 @@ require 'xlua'
 require 'utils_multi_gpu'
 require 'loader'
 require 'nngraph'
+require 'CTCCriterion'
 local threads = require 'threads'
 
 local WERCalculator = require 'WERCalculator'
@@ -39,17 +40,22 @@ function Network:init(networkParams)
             cudnn.convert(self.model, cudnn)
         end
     end
-    graph.dot(self.model.bg, 'deepSpeech', 'deepSpeech_back') -- view graph
+    if torch.typename(self.model) == 'nn.gModule' then
+        graph.dot(self.model.fg, networkParams.modelName, networkParams.modelName) -- view graph
+    else
+        print (self.model)
+    end
     assert((networkParams.saveModel or networkParams.loadModel) and networkParams.fileName, "To save/load you must specify the fileName you want to save to")
     -- setting online loading
     self.indexer = indexer(networkParams.lmdb_path, networkParams.batch_size)
-    self.indexer:prep_same_len_inds() -- rm this if zero-masking is done
+    -- self.indexer:prep_same_len_inds() -- rm this if zero-masking is done
     self.pool = threads.Threads(1,function() require 'loader' end)
 end
 
 function Network:prepSpeechModel(modelName, backend)
     local model = require (modelName)
-    self.model = model(self.nGPU, backend=='cudnn')
+    self.model = model[1](self.nGPU, backend=='cudnn')
+    self.calSize = model[2]
 end
 
 -- Returns a prediction of the input net and input tensors.
@@ -60,7 +66,7 @@ end
 
 local function WERValidationSet(self)
     self.model:evaluate()
-    local wer = WERCalculator:calculateValidationWER(self.nGPU>0, self.model)
+    local wer = WERCalculator:calculateValidationWER(self.nGPU>0, self.model, self.calSize)
     self.model:zeroGradParameters()
     self.model:training()
     return wer
@@ -74,14 +80,14 @@ function Network:trainNetwork(epochs, sgd_params)
 
     local lossHistory = {}
     local validationHistory = {}
-    local ctcCriterion = nn.CTCCriterion()
+    local ctcCriterion = nn.CTCCriterionTest()
     local x, gradParameters = self.model:getParameters()
 
     -- inputs (preallocate)
     local inputs = torch.Tensor()
     local sizes = torch.Tensor()
     if self.nGPU > 0 then
-        ctcCriterion = nn.CTCCriterion():cuda()
+        ctcCriterion = ctcCriterion:cuda()
         inputs = inputs:cuda()
         sizes = sizes:cuda()
     end
@@ -91,7 +97,7 @@ function Network:trainNetwork(epochs, sgd_params)
     local spect_buf, label_buf, sizes_buf
 
     -- load first batch
-    local inds = self.indexer:nxt_same_len_inds() -- use nxt_inds if zero-mask is done
+    local inds = self.indexer:nxt_inds() -- use nxt_inds if zero-mask is done
     self.pool:addjob(function()
                         return loader:nxt_batch(inds, false)
                     end,
@@ -108,8 +114,8 @@ function Network:trainNetwork(epochs, sgd_params)
     local function feval(x_new)
         --------------------- data load ------------------------
         self.pool:synchronize()                         -- wait previous loading
-        local inputsCPU,targets = spect_buf,label_buf   -- move buf to training data
-        inds = self.indexer:nxt_same_len_inds()                  -- load nxt batch
+        local inputsCPU,sizes,targets = spect_buf,sizes_buf,label_buf   -- move buf to training data
+        inds = self.indexer:nxt_inds()                  -- load nxt batch
         self.pool:addjob(function()
                             return loader:nxt_batch(inds, false)
                         end,
@@ -120,12 +126,12 @@ function Network:trainNetwork(epochs, sgd_params)
                         end
                         )
         --------------------- fwd and bwd ---------------------
-        sizes:resize(inputsCPU:size(1)):fill(inputsCPU:size(4)) -- TODO: use real length
         inputs:resize(inputsCPU:size()):copy(inputsCPU) -- transfer over to GPU
+        sizes = self.calSize(sizes)
         gradParameters:zero()
         cutorch.synchronize()
         local predictions = self.model:forward({inputs, sizes})
-        local loss = ctcCriterion:forward(predictions, targets)
+        local loss = ctcCriterion:forward(predictions, targets, sizes)
         self.model:zeroGradParameters()
         local gradOutput = ctcCriterion:backward(predictions, targets)
         self.model:backward(inputs, gradOutput)
@@ -138,7 +144,8 @@ function Network:trainNetwork(epochs, sgd_params)
     -- ==========================================================
     local currentLoss
     local startTime = os.time()
-    local dataSetSize = self.indexer.len_num -- obtained when calling prep_same_len_inds
+    -- local dataSetSize = self.indexer.len_num -- obtained when calling prep_same_len_inds
+    local dataSetSize = 47
     local wer = 1
     for i = 1, epochs do
         local averageLoss = 0
@@ -186,10 +193,9 @@ function Network:testNetwork(test_iter, dict_path)
     local testResults = {}
     local cumWER = 0
     local sizes = torch.Tensor()
-    local input = torch.Tensor()
+    local inputs = torch.Tensor()
     if (self.nGPU > 0) then
-        input = input:cuda()
-        sizes = sizes:cuda()
+        inputs = inputs:cuda()
     end
 
     local loader = loader(self.val_path)
@@ -208,7 +214,7 @@ function Network:testNetwork(test_iter, dict_path)
                 )
     for i = 1,test_iter do
         pool:synchronize()
-        local inputCPU, targets, trans = spect_buf, label_buf, trans_buf
+        local inputsCPU, targets, trans, sizes = spect_buf, label_buf, trans_buf, sizes_buf
         inds = indexer:nxt_inds()
         pool:addjob(function()
                         return loader:nxt_batch(inds, true)
@@ -221,8 +227,8 @@ function Network:testNetwork(test_iter, dict_path)
                     end
                     )
         -- transfer over to GPU
-        sizes:resize(inputsCPU:size(1)):fill(inputsCPU:size(4)) -- TODO: use real length
-        input:resize(inputCPU:size()):copy(inputCPU)
+        inputs:resize(inputsCPU:size()):copy(inputsCPU)
+        sizes = self.calSize(sizes)
         local prediction = Network:predict({input, sizes})
 
         local predictedPhones = Evaluator.getPredictedCharacters(prediction)
@@ -247,7 +253,7 @@ function Network:testNetwork(test_iter, dict_path)
         cumWER = cumWER + WER
         local row = {}
         row.WER = WER
-        row.text = trans_buf[1]
+        row.text = trans[1]
         row.predicted = predictedPhoneString
         row.target = targetPhoneString
         table.insert(testResults, row)

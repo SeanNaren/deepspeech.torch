@@ -18,7 +18,7 @@ function MaskRNN:filter(input, seqLengths)
    local T = input:size(1)
    for i=1,batchsize do
       if seqLengths[i] < T then
-         input:sub(seqLengths[i]+1, T, i):zero()
+         input:sub(seqLengths[i]+1, T, i, i):zero()
       end
    end
 end
@@ -33,4 +33,16 @@ function MaskRNN:updateGradInput(input, gradOutput)
    self.gradInput = self.module:updateGradInput(input[1], gradOutput)
    self:filter(self.gradInput, input[2])
    return {self.gradInput, nil}
+end
+
+function MaskRNN:accGradParameters(input, gradOutput, scale) 
+   self.module:accGradParameters(input[1], gradOutput, scale)
+end
+
+function MaskRNN:accUpdateGradParameters(input, gradOutput, lr)
+   self.module:accUpdateGradParameters(input[1], gradOutput, lr)
+end
+
+function MaskRNN:sharedAccUpdateGradParameters(input, gradOutput, lr)
+   self.module:sharedAccUpdateGradParameters(input[1], gradOutput, lr)
 end

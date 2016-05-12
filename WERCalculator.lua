@@ -14,40 +14,41 @@ function WERCalculator:init(_dir)
     self.pool:addjob(function()
                         return _loader:nxt_batch(inds, false) -- set true to load trans
                     end,
-                    function(spect, label)
+                    function(spect, label, sizes)
                         self.spect_buf=spect
                         self.label_buf=label
+                        self.sizes_buf=sizes
                     end
                     )
 end
 
-function WERCalculator:calculateValidationWER(gpu, model)
+function WERCalculator:calculateValidationWER(gpu, model, calSize)
 
     -- Run sample of test data set through the net and print the results
     local sampleSize = 10
     local cumWER = 0
-    local input = torch.Tensor()
+    local inputs = torch.Tensor()
     local sizes = torch.Tensor()
     if (gpu) then
-        input = input:cuda()
-        sizes = sizes:cuda()
+        inputs = inputs:cuda()
     end
 
     for i = 1, sampleSize do
         self.pool:synchronize()
-        local inputCPU, targets = self.spect_buf, self.label_buf
+        local inputsCPU, targets, sizes = self.spect_buf, self.label_buf, self.sizes_buf
         local inds = self.indexer:nxt_inds()
         self.pool:addjob(function()
                         return _loader:nxt_batch(inds, false)
                         end,
-                        function(spect, label)
+                        function(spect, label, sizes)
                             self.spect_buf=spect
                             self.label_buf=label
+                            self.sizes_buf=sizes
                         end
                         )
-        sizes:resize(inputsCPU:size(1)):fill(inputsCPU:size(4)) -- TODO: use real length
-        input:resize(inputCPU:size()):copy(inputCPU)
-        local prediction = model:forward({input, sizes})
+        inputs:resize(inputsCPU:size()):copy(inputsCPU)
+        sizes = calSize(sizes)
+        local prediction = model:forward({inputs, sizes})
 
         local predictedCharacters = Evaluator.getPredictedCharacters(prediction)
         local WER = Evaluator.sequenceErrorRate(targets, predictedCharacters)
