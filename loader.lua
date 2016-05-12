@@ -167,7 +167,7 @@ function loader:nxt_batch(inds, flag)
         local label = torch.deserialize(txn_label:get(ind))
 
         h = tensor:size(1)
-        sizes_array[cnt] = h; cnt = cnt + 1 -- record true length
+        sizes_array[cnt] = tensor:size(2); cnt = cnt + 1 -- record true length
         if max_w < tensor:size(2) then max_w = tensor:size(2) end -- find the max len in this batch
 
         table.insert(tensor_list, tensor)
