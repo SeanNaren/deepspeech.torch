@@ -21,7 +21,7 @@ local function get_rnn_module(nIn, nHidden, GRU, is_cudnn)
 end
 
 local function BRNN(feat, seqLengths, rnn_module)
-    local fwdLstm = nn.NaN(nn.MaskRNN(rnn_module:clone()))({feat, seqLengths})
+    local fwdLstm = nn.MaskRNN(rnn_module:clone())({feat, seqLengths})
     local bwdLstm = nn.ReverseRNN(rnn_module:clone())({feat, seqLengths})
     return nn.CAddTable()({fwdLstm, bwdLstm})
 end
@@ -40,7 +40,7 @@ local function deepSpeech(nGPU, is_cudnn)
     feature:add(nn.SpatialMaxPooling(2, 2, 2, 2))
     feature:add(nn.View(32 * 25, -1):setNumInputDims(3)) -- batch x features x seqLength
     feature:add(nn.Transpose({ 2, 3 }, { 1, 2 })) -- seqLength x batch x features
-    local rnn = nn.Identity()({nn.NaN(feature)(input)})
+    local rnn = nn.Identity()({feature(input)})
     rnn_module = get_rnn_module(32 * 25, 400, GRU, is_cudnn)
     rnn = BRNN(rnn, seqLengths, rnn_module)
     rnn_module = get_rnn_module(400, 400, GRU, is_cudnn)

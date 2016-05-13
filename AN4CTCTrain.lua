@@ -5,7 +5,7 @@ local Network = require 'Network'
 --Training parameters
 torch.setdefaulttensortype('torch.FloatTensor')
 seed = 10
-torch.manualSeed(seed) 
+torch.manualSeed(seed)
 cutorch.manualSeedAll(seed)
 local epochs = 70
 
@@ -18,7 +18,10 @@ local networkParams = {
     nGPU = 1, -- Number of GPUs, set -1 to use CPU
     lmdb_path = 'prepare_an4/train/',-- online loading path
     val_path = 'prepare_an4/test/',
-    batch_size = 20
+    dict_path = './dictionary',
+    batch_size = 20,
+    test_batch_size = 1,
+    test_iter = 10
 }
 --Parameters for the stochastic gradient descent (using the optim library).
 local sgdParams = {
@@ -34,7 +37,7 @@ local sgdParams = {
 Network:init(networkParams)
 
 -- Network:trainNetwork(trainingDataSet, nil, epochs, sgdParams)
--- lets test jit loading 
+-- lets test jit loading
 Network:trainNetwork(epochs, sgdParams)
 
 --Creates the loss plot.
