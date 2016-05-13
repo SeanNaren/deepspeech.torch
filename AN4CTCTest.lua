@@ -18,10 +18,14 @@ local networkParams = {
     nGPU = 1, -- Number of GPUs, set -1 to use CPU
     lmdb_path = 'prepare_an4/train/',
     val_path = 'prepare_an4/test/',
-    batch_size = 1
+    dict_path = './dictionary',
+    batch_size = 1,
+    test_batch_size = 1,
+    test_iter = 130
 }
 
 Network:init(networkParams)
 print("Network loaded")
 
-test(Network)
+wer = Network:testNetwork()
+print('Testing iter: '..networkParams.test_iter..' averaged WER: '.. 100*wer ..'%')

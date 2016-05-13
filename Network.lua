@@ -72,7 +72,7 @@ function Network:predict(inputTensors)
 end
 
 
-local function test(self)
+function Network:testNetwork()
     print('testing...')
     self.model:evaluate()
     local wer = self.wer_tester:get_wer(self.nGPU>0, self.model, self.calSize, true) -- detail in log
@@ -176,7 +176,7 @@ function Network:trainNetwork(epochs, sgd_params)
 
         -- Periodically update validation error rates
         if (i % 2 == 0 and  self.val_path) then
-            local wer = test(self)
+            local wer = testNetwork
             if wer then
                 table.insert(validationHistory, 100 * wer)
                 print('Training Epoch: '..i..' averaged WER: '.. 100*wer ..'%')
