@@ -20,8 +20,8 @@ local networkParams = {
     val_path = 'prepare_an4/test/',
     dict_path = './dictionary',
     batch_size = 20,
-    test_batch_size = 1,
-    test_iter = 10
+    test_batch_size = 32,
+    test_iter = 4
 }
 --Parameters for the stochastic gradient descent (using the optim library).
 local sgdParams = {

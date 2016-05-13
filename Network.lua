@@ -156,7 +156,6 @@ function Network:trainNetwork(epochs, sgd_params)
     local startTime = os.time()
     -- local dataSetSize = self.indexer.len_num -- obtained when calling prep_same_len_inds
     local dataSetSize = 48
-    local wer = 1
 
     for i = 1, epochs do
         local averageLoss = 0
@@ -176,7 +175,7 @@ function Network:trainNetwork(epochs, sgd_params)
 
         -- Periodically update validation error rates
         if (i % 2 == 0 and  self.val_path) then
-            local wer = testNetwork
+            local wer = self:testNetwork()
             if wer then
                 table.insert(validationHistory, 100 * wer)
                 print('Training Epoch: '..i..' averaged WER: '.. 100*wer ..'%')

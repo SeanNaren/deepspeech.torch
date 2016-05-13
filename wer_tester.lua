@@ -3,6 +3,7 @@ require 'util'
 require 'mapper'
 require 'torch'
 require 'xlua'
+require 'cutorch'
 local threads = require 'threads'
 local Evaluator = require 'Evaluator'
 
@@ -34,22 +35,21 @@ function wer_tester:get_wer(gpu, model, calSize, verbose)
     --]]
 
     local cumWER = 0
-    local input = torch.Tensor()
-    local size = torch.Tensor(1)
+    local inputs = torch.Tensor()
     if (gpu) then
-        input = input:cuda()
-        size = size:cuda()
+        inputs = inputs:cuda()
     end
-    local spect_buf, label_buf
+    local spect_buf, label_buf, sizes_buf
 
     -- get first batch
     local inds = self.indexer:nxt_inds()
     self.pool:addjob(function()
                         return _loader:nxt_batch(inds, false)
                     end,
-                    function(spect, label)
+                    function(spect, label, sizes)
                         spect_buf=spect
                         label_buf=label
+                        sizes_buf=sizes
                     end
                     )
 
@@ -64,34 +64,36 @@ function wer_tester:get_wer(gpu, model, calSize, verbose)
 
         -- get buf and fetch next one
         self.pool:synchronize()
-        local inputCPU, targets = spect_buf, label_buf
+        local inputsCPU, targets, sizes_array = spect_buf, label_buf, sizes_buf
         inds = self.indexer:nxt_inds()
         self.pool:addjob(function()
                             return _loader:nxt_batch(inds, true)
                         end,
-                        function(spect, label)
+                        function(spect, label, sizes)
                             spect_buf=spect
                             label_buf=label
+                            sizes_buf=sizes
                         end
                         )
+        
+        sizes_array = calSize(sizes_array)
+        inputs:resize(inputsCPU:size()):copy(inputsCPU)
+        cutorch.synchronize()
+        local predictions = model:forward({inputs,sizes_array}):transpose(1, 2)
+        cutorch.synchronize()
 
-        -- =============== for every data point in this batch ==================
+        -- =============== for every data point in this batch ==================                
         for j = 1, self.test_batch_size do
 
-            -- make a NCHW seq, where N and C is 1
-            input:resize(1, 1, inputCPU[j][1]:size(1), inputCPU[j][1]:size(2))
-            input[1][1]:copy(inputCPU[j][1])
-            size[1] = calSize(inputCPU[j][1]:size(2))
-
-            local prediction = model:forward({input, size})
-            local predict_tokens = Evaluator.predict2tokens(prediction, self.mapper)
-            local WER = Evaluator.sequenceErrorRate(targets[1], predict_tokens)
+            local prediction_single = predictions[j]
+            local predict_tokens = Evaluator.predict2tokens(prediction_single, self.mapper)
+            local WER = Evaluator.sequenceErrorRate(targets[j], predict_tokens)
             cumWER = cumWER + WER
 
             if verbose then
                 local f = assert(io.open('test'..self.suffix..'.log', 'a'))
                 f:write(string.format("WER = %.0f%% | Text = \"%s\" | Predict = \"%s\"\n",
-                    WER*100, self:tokens2text(targets[1]), self:tokens2text(predict_tokens)))
+                    WER*100, self:tokens2text(targets[j]), self:tokens2text(predict_tokens)))
                 f:close()
             end
 

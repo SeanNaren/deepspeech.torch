@@ -32,25 +32,32 @@ end
 function Evaluator.predict2tokens(predictions, mapper)
     --[[
         Turns the predictions tensor into a list of the most likely tokens
+
+        NOTE:
+            to compute WER we strip the begining and ending spaces
     --]]
     local tokens = {}
     local blank_token = mapper.alphabet2token['$']
+    local space_token = mapper.alphabet2token[' ']
+    local strip_head = true
     local pre_token = blank_token
 
 
     -- The prediction is a sequence of likelihood vectors
-    predictions = predictions:squeeze()
-    local maxValues, maxIndexes = torch.max(predictions, 2)
+    local _, maxIndexes = torch.max(predictions, 2)
     maxIndexes = maxIndexes:squeeze()
 
     for i=1,maxIndexes:size(1) do
         local token = maxIndexes[i] - 1 -- CTC indexes start from 1, while token starts from 0
         -- add token if it's not blank, and is not the same as pre_token
         if token ~= blank_token and token ~= pre_token then
-            table.insert(tokens, token)
+            if token ~= space_token then strip_head = false end
+            if not strip_head then table.insert(tokens, token) end
             pre_token = token
         end
     end
+    
+    if tokens[#tokens] == space_token then table.remove(tokens, #tokens) end
 
     return tokens
 end
