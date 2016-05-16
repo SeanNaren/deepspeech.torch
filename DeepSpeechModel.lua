@@ -50,6 +50,7 @@ local function deepSpeech(nGPU, is_cudnn)
     local post_sequential = nn.Sequential()
     post_sequential:add(nn.Linear3D(400, 28))
     local model = nn.gModule({input, seqLengths}, {post_sequential(rnn)})
+    model = makeDataParallel(model, nGPU, is_cudnn)
     return model
 end
 

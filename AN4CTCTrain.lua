@@ -7,7 +7,7 @@ torch.setdefaulttensortype('torch.FloatTensor')
 seed = 10
 torch.manualSeed(seed)
 cutorch.manualSeedAll(seed)
-local epochs = 70
+local epochs = 1
 
 local networkParams = {
     loadModel = false,
@@ -25,7 +25,7 @@ local networkParams = {
 }
 --Parameters for the stochastic gradient descent (using the optim library).
 local sgdParams = {
-    learningRate = 1e-4,
+    learningRate = 1e-3,
     learningRateDecay = 1e-9,
     weightDecay = 0,
     momentum = 0.9,

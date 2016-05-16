@@ -1,21 +1,51 @@
 require 'cunn'
+require 'ctchelpers'
+require 'rnn'
+require 'nngraph'
+require 'MaskRNN'
+require 'ReverseRNN'
+require 'cudnn'
 local ffi=require 'ffi'
 
 local default_GPU = 1
-function makeDataParallel(model, nGPU)
-   if nGPU <= 0 then return model end
-   if nGPU > 1 then
-      print('converting module to nn.DataParallelTable')
-      assert(nGPU <= cutorch.getDeviceCount(), 'number of GPUs less than nGPU specified')
-      local model_single = model
-      model = nn.DataParallelTable(1)
-      for i=1, nGPU do
-         cutorch.setDevice(i)
-         model:add(model_single:clone():cuda(), i)
+function makeDataParallel(model, nGPU, is_cudnn)
+   -- if nGPU <= 0 then return model end
+   -- if nGPU > 1 then
+   --    print('converting module to nn.DataParallelTable')
+   --    assert(nGPU <= cutorch.getDeviceCount(), 'number of GPUs less than nGPU specified')
+   --    local model_single = model
+   --    model = nn.DataParallelTable(1)
+   --    for i=1, nGPU do
+   --       cutorch.setDevice(i)
+   --       model:add(model_single:clone():cuda(), i)
+   --    end
+   -- end
+   -- cutorch.setDevice(default_GPU)
+   if nGPU >= 1 then
+      if is_cudnn then
+         cudnn.fastest = true
+         cudnn.convert(model, cudnn)
       end
+      if nGPU > 1 then
+         gpus = torch.range(1, nGPU):totable()
+         dpt = nn.DataParallelTable(1)
+                 :add(model, gpus)
+             :threads(function()
+                     require 'nngraph'
+                     require 'ctchelpers'
+                     require 'MaskRNN'
+                     require 'ReverseRNN'
+                     if is_cudnn then
+                        local cudnn = require 'cudnn'
+                        cudnn.fastest = true
+                        -- cudnn.benchmark = true
+                     end
+                  end)
+         dpt.gradInput = nil
+         model = dpt
+      end
+      model:cuda()
    end
-   cutorch.setDevice(default_GPU)
-
    return model
 end
 
@@ -42,21 +72,26 @@ function saveDataParallel(filename, model)
          end
       end
       torch.save(filename, temp_model)
+   elseif torch.type(model) == 'nn.gModule' then
+      torch.save(filename, model)
    else
       error('This saving function only works with Sequential or DataParallelTable modules.')
    end
 end
 
-function loadDataParallel(filename, nGPU)
+function loadDataParallel(filename, nGPU, is_cudnn)
    local model = torch.load(filename)
    if torch.type(model) == 'nn.DataParallelTable' then
-      return makeDataParallel(model:get(1):float(), nGPU)
+      return makeDataParallel(model:get(1):float(), nGPU, is_cudnn)
    elseif torch.type(model) == 'nn.Sequential' then
       for i,module in ipairs(model.modules) do
          if torch.type(module) == 'nn.DataParallelTable' then
-            model.modules[i] = makeDataParallel(module:get(1):float(), nGPU)
+            model.modules[i] = makeDataParallel(module:get(1):float(), nGPU, is_cudnn)
          end
       end
+      return model
+   elseif torch.type(model) == 'nn.gModule' then
+      model = makeDataParallel(model, nGPU, is_cudnn)
       return model
    else
       error('The loaded model is not a Sequential or DataParallelTable module.')
