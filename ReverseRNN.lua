@@ -3,6 +3,7 @@
 -- Input and Output size: T*N*H ( the same as RNN)
 -- seqLengths: N, indicate the real length of each sample in a minibatch
 ------------------------------------------------------------------------
+require 'dpnn'
 local ReverseRNN, parent = torch.class("nn.ReverseRNN", "nn.Decorator")
 
 function ReverseRNN:__init(module)

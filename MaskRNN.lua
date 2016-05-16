@@ -5,6 +5,7 @@
 -- Input and Output size: T*N*H ( the same as RNN)
 -- seqLengths: N, indicate the real length of each sample in a minibatch
 ------------------------------------------------------------------------
+require 'dpnn'
 local MaskRNN, parent = torch.class("nn.MaskRNN", "nn.Decorator")
 
 function MaskRNN:__init(module)
