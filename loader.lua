@@ -2,6 +2,7 @@ require 'nn'
 require 'torch'
 require 'lmdb'
 require 'xlua'
+require 'paths'
 
 --[[
 
@@ -20,6 +21,7 @@ function indexer:__init(_dir, batch_size)
     self.db_spect = lmdb.env{Path=_dir..'/spect',Name='spect'}
     self.db_label = lmdb.env{Path=_dir..'/label',Name='label'}
     self.db_trans = lmdb.env{Path=_dir..'/trans',Name='trans'}
+    self._dir = _dir
 
     self.batch_size = batch_size
     self.cnt = 1
@@ -41,55 +43,72 @@ function indexer:__init(_dir, batch_size)
     self.db_trans:close()
 
     assert(self.lmdb_size > self.batch_size, 'batch_size larger than lmdb_size')
-    self.same_len_inds = {}
+    self.sorted_inds = {}
     self.len_num = 0 -- number of unique seqLengths
 
 end
 
-function indexer:prep_same_len_inds()
+function indexer:prep_sorted_inds()
     --[[
-        make a table of inds with ascending lens, so that we can return inds
-        with same seqLength using nxt_same_len_inds()
+        prep a table for sorted inds, can detect previously saved table in lmdb folder
     --]]
+    
+    print('preparing sorted inds..')
+    local _path = self._dir..'/'..'sorted_inds'
 
-    print('preparing the inds with the same seqLengths..')
+    -- check if there is previously saved inds
+    if paths.filep(_path) then
+        print('found previously saved inds..')        
+        self.sorted_inds = torch.load(_path)        
+        return
+    end
 
+    -- if not make a new one
+    print('did not find previously saved inds, make one now..')    
     self.db_spect:open(); local txn = self.db_spect:txn(true)
     local len_set = {}
     for i = 1, self.lmdb_size do
         local _len = txn:get(i):size(2) -- get the len of spect
-        table.insert(self.same_len_inds, {i, _len})
+        table.insert(self.sorted_inds, {i, _len})
         if len_set[_len] == nil then len_set[_len] = true end
-        -- if i % 100 == 0 then xlua.progress(i, self.lmdb_size) end
+        if i % 100 == 0 then xlua.progress(i, self.lmdb_size) end
     end
-
     txn:abort(); self.db_spect:close()
 
     -- sort table
     local function comp(a, b) return a[2] < b[2] end
-    table.sort(self.same_len_inds, comp)
-
-    --debug
-    --print(self.same_len_inds)
+    table.sort(self.sorted_inds, comp)
 
     for _ in pairs(len_set) do self.len_num = self.len_num + 1 end -- number of different seqLengths
     print('there are ' .. self.len_num .. ' unique seqLengths')
+    torch.save(_path,self.sorted_inds)
 end
+
+
+function indexer:nxt_sorted_inds()
+    local meta_inds = self:nxt_inds()
+    local inds = {}
+    for _,v in ipairs(meta_inds) do
+        table.insert(inds, self.sorted_inds[v][1])
+    end
+    return inds
+end
+
 
 function indexer:nxt_same_len_inds()
     --[[
         return inds with same seqLength, a solution before zero-masking can work
 
         NOTE:
-            call prep_same_len_inds before this
+            call prep_sorted_inds before this
     --]]
-    assert(#self.same_len_inds > 0, 'call prep_same_len_inds before this')
+    assert(#self.sorted_inds > 0, 'call prep_sorted_inds before this')
 
-    local _len = self.same_len_inds[self.cnt][2]
+    local _len = self.sorted_inds[self.cnt][2]
     local inds = {}
-    while(self.cnt <= self.lmdb_size and self.same_len_inds[self.cnt][2] == _len) do
+    while(self.cnt <= self.lmdb_size and self.sorted_inds[self.cnt][2] == _len) do
         -- NOTE: true index store in table, instead of cnt
-        table.insert(inds, self.same_len_inds[self.cnt][1])
+        table.insert(inds, self.sorted_inds[self.cnt][1])
         self.cnt = self.cnt + 1
     end
 
