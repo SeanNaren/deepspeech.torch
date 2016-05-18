@@ -22,6 +22,9 @@ function Network:init(networkParams)
 
     self.fileName = networkParams.fileName -- The file name to save/load the network from.
     self.nGPU = networkParams.nGPU
+    if self.nGPU <= 0 then
+        assert(networkParams.backend ~= 'cudnn')
+    end
     self.lmdb_path = networkParams.lmdb_path
     self.val_path = networkParams.val_path
     self.mapper = mapper(networkParams.dict_path)
@@ -29,6 +32,7 @@ function Network:init(networkParams)
         networkParams.test_iter)
     self.saveModel = networkParams.saveModel
     self.loadModel = networkParams.loadModel
+    self.snap_shot_epochs = networkParams.snap_shot_epochs or 10
 
     -- setting model saving/loading
     if (self.loadModel) then
@@ -40,7 +44,11 @@ function Network:init(networkParams)
         assert(networkParams.modelName, "Must have given a model to train.")
         self:prepSpeechModel(networkParams.modelName, networkParams.backend)
     end
-    if torch.typename(self.model) == 'nn.gModule' then
+    local typename = torch.typename(self.model)
+    if typename == 'nn.DataParallelTable' then
+        typename = torch.typename(self.model:get(1))
+    end
+    if typename == 'nn.gModule' then
         graph.dot(self.model.fg, networkParams.modelName, networkParams.modelName) -- view graph
     else
         print (self.model)
@@ -173,17 +181,17 @@ function Network:trainNetwork(epochs, sgd_params)
         end
 
         logger:add { averageLoss}
+        if self.saveModel and i % self.snap_shot_epochs == 0 then
+            print("Saving model..")
+            self:saveNetwork('epoch_'..i..'_'..self.fileName)
+        end
+
     end
 
     local endTime = os.time()
     local secondsTaken = endTime - startTime
     local minutesTaken = secondsTaken / 60
     print("Minutes taken to train: ", minutesTaken)
-
-    if (self.saveModel) then
-        print("Saving model")
-        self:saveNetwork(self.fileName)
-    end
 
     return lossHistory, validationHistory, minutesTaken
 end

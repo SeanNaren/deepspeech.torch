@@ -24,17 +24,20 @@ function ReverseRNN:reverse(input, seqLengths)
 end
 
 function ReverseRNN:updateOutput(input)
-   self.reverse_input = self:reverse(input[1], input[2])
+   self.reverse_input = input[1]:view(-1, input[2]:size(1), input[1]:size(2))
+   self.reverse_input = self:reverse(self.reverse_input, input[2])
    reverse_output = self.module:updateOutput(self.reverse_input)
    self.output = self:reverse(reverse_output, input[2])
+   self.output = self.output:view(self.reverse_input:size(1)*self.reverse_input:size(2),-1)
    return self.output
 end
 
 function ReverseRNN:updateGradInput(input, gradOutput)
-   self.reverse_gradOutput = self:reverse(gradOutput, input[2])
+   self.reverse_gradOutput = gradOutput:view(self.reverse_input:size(1), input[2]:size(1), -1)
+   self.reverse_gradOutput = self:reverse(self.reverse_gradOutput, input[2])
    reverse_gradInput = self.module:updateGradInput(self.reverse_input,
    													self.reverse_gradOutput)
-   self.gradInput = self:reverse(reverse_gradInput, input[2])
+   self.gradInput = self:reverse(reverse_gradInput, input[2]):viewAs(input[1])
    return {self.gradInput, nil}
 end
 

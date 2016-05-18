@@ -23,7 +23,7 @@ end
 function CTCCriterion:updateOutput(input, target, sizes)
     assert(sizes,
         "You must pass the size of each sequence in the batch as a tensor")
-    local acts = self.acts
+    local acts = input
     if input:dim() == 3 then
         acts:resizeAs(input):copy(input)
         if self.batchFirst then
@@ -38,21 +38,20 @@ function CTCCriterion:updateOutput(input, target, sizes)
     if input:type() == 'torch.CudaTensor' then
         self.output = sumCosts(gpu_ctc(acts, self.gradInput, target, self.sizes))
     else
-        acts = acts:float()
         self.gradInput = self.gradInput:float()
-        self.output = sumCosts(cpu_ctc(acts, self.gradInput, target, self.sizes))
+        self.output = sumCosts(cpu_ctc(acts:float(), self.gradInput, target, self.sizes))
     end
-    return self.output
+    return self.output / sizes:size(1)
 end
 
 function CTCCriterion:updateGradInput(input, target)
     if input:dim() == 2 then -- (seqLen * batchSize) x outputDim
-    return self.gradInput
+        return self.gradInput
     end
     if self.batchFirst then -- batchSize x seqLen x outputDim
-    self.gradInput = inverseInterleave(self.gradInput, input:size(1))
+        self.gradInput = inverseInterleave(self.gradInput, input:size(1))
     else -- seqLen x batchSize x outputDim
-    self.gradInput:view(self.gradInput, input:size(1), input:size(2), -1)
+        self.gradInput:view(self.gradInput, input:size(1), input:size(2), -1)
     end
     return self.gradInput
 end

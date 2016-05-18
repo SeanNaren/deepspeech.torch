@@ -25,25 +25,29 @@ function MaskRNN:filter(input, seqLengths)
 end
 
 function MaskRNN:updateOutput(input)
-   self.output = self.module:updateOutput(input[1])
+   self._input = input[1]:view(-1, input[2]:size(1), input[1]:size(2))
+   self.output = self.module:updateOutput(self._input)
    self:filter(self.output, input[2])
+   self.output = self.output:view(self._input:size(1)*self._input:size(2),-1)
    return self.output
 end
 
 function MaskRNN:updateGradInput(input, gradOutput)
-   self.gradInput = self.module:updateGradInput(input[1], gradOutput)
+   self._gradOutput = gradOutput:view(self._input:size(1), input[2]:size(1), -1)
+   self.gradInput = self.module:updateGradInput(self._input, self._gradOutput)
    self:filter(self.gradInput, input[2])
+   self.gradInput:viewAs(input[1])
    return {self.gradInput, nil}
 end
 
-function MaskRNN:accGradParameters(input, gradOutput, scale) 
-   self.module:accGradParameters(input[1], gradOutput, scale)
+function MaskRNN:accGradParameters(input, gradOutput, scale)
+   self.module:accGradParameters(self._input, self._gradOutput, scale)
 end
 
 function MaskRNN:accUpdateGradParameters(input, gradOutput, lr)
-   self.module:accUpdateGradParameters(input[1], gradOutput, lr)
+   self.module:accUpdateGradParameters(self._input, self._gradOutput, lr)
 end
 
 function MaskRNN:sharedAccUpdateGradParameters(input, gradOutput, lr)
-   self.module:sharedAccUpdateGradParameters(input[1], gradOutput, lr)
+   self.module:sharedAccUpdateGradParameters(self._input, self._gradOutput, lr)
 end

@@ -1,4 +1,4 @@
-require 'ctchelpers'
+-- require 'ctchelpers'
 require 'rnn'
 require 'nngraph'
 require 'MaskRNN'
@@ -38,17 +38,24 @@ local function deepSpeech(nGPU, is_cudnn)
     feature:add(nn.SpatialBatchNormalization(32))
     feature:add(nn.ReLU(true))
     feature:add(nn.SpatialMaxPooling(2, 2, 2, 2))
-    feature:add(nn.View(32 * 25, -1):setNumInputDims(3)) -- batch x features x seqLength
+    local rnn_nFeature_input = 32 * 25
+    local rnn_nFeature_output = 400
+    feature:add(nn.View(rnn_nFeature_input, -1):setNumInputDims(3)) -- batch x features x seqLength
     feature:add(nn.Transpose({ 2, 3 }, { 1, 2 })) -- seqLength x batch x features
+    feature:add(nn.View(-1, rnn_nFeature_input))   -- (seqLength x batch) x features
     local rnn = nn.Identity()({feature(input)})
-    rnn_module = get_rnn_module(32 * 25, 400, GRU, is_cudnn)
+    rnn_module = get_rnn_module(rnn_nFeature_input, rnn_nFeature_output,
+                                GRU, is_cudnn)
     rnn = BRNN(rnn, seqLengths, rnn_module)
-    rnn_module = get_rnn_module(400, 400, GRU, is_cudnn)
+    rnn_module = get_rnn_module(rnn_nFeature_output,
+                                rnn_nFeature_output, GRU, is_cudnn)
     for i=1,0 do
+        rnn = nn.Sequential():add(nn.BatchNormalization(rnn_nFeature_output))(rnn)
         rnn = BRNN(rnn, seqLengths, rnn_module)
     end
     local post_sequential = nn.Sequential()
-    post_sequential:add(nn.Linear3D(400, 28))
+    post_sequential:add(nn.BatchNormalization(rnn_nFeature_output))
+    post_sequential:add(nn.Linear(rnn_nFeature_output, 28))
     local model = nn.gModule({input, seqLengths}, {post_sequential(rnn)})
     model = makeDataParallel(model, nGPU, is_cudnn)
     return model

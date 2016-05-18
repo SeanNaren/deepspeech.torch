@@ -24,7 +24,7 @@ function makeDataParallel(model, nGPU, is_cudnn)
    if nGPU >= 1 then
       if is_cudnn then
          cudnn.fastest = true
-         cudnn.convert(model, cudnn)
+         model = cudnn.convert(model, cudnn)
       end
       if nGPU > 1 then
          gpus = torch.range(1, nGPU):totable()
