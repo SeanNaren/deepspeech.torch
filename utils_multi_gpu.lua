@@ -1,9 +1,8 @@
 require 'cunn'
-require 'ctchelpers'
-require 'rnn'
+-- require 'rnn'
 require 'nngraph'
-require 'MaskRNN'
-require 'ReverseRNN'
+-- require 'MaskRNN'
+-- require 'ReverseRNN'
 require 'cudnn'
 local ffi=require 'ffi'
 
@@ -32,13 +31,14 @@ function makeDataParallel(model, nGPU, is_cudnn)
                  :add(model, gpus)
              :threads(function()
                      require 'nngraph'
-                     require 'ctchelpers'
                      require 'MaskRNN'
                      require 'ReverseRNN'
                      if is_cudnn then
                         local cudnn = require 'cudnn'
                         cudnn.fastest = true
                         -- cudnn.benchmark = true
+                     else
+                        require 'rnn'
                      end
                   end)
          dpt.gradInput = nil

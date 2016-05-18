@@ -1,5 +1,3 @@
--- require 'ctchelpers'
-require 'rnn'
 require 'nngraph'
 require 'MaskRNN'
 require 'ReverseRNN'
@@ -10,12 +8,16 @@ local function get_rnn_module(nIn, nHidden, GRU, is_cudnn)
         if is_cudnn then
             require 'cudnn'
             return cudnn.GRU(nIn, nHidden, 1)
+        else
+            require 'rnn'
         end
         return nn.GRU(nIn, nHidden)
     end
     if is_cudnn then
         require 'cudnn'
         return cudnn.LSTM(nIn, nHidden, 1)
+    else
+        require 'rnn'
     end
     return nn.SeqLSTM(nIn, nHidden)
 end

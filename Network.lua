@@ -1,7 +1,5 @@
 require 'optim'
 require 'nnx'
-require 'BRNN'
-require 'ctchelpers'
 require 'gnuplot'
 require 'xlua'
 require 'utils_multi_gpu'
@@ -45,13 +43,15 @@ function Network:init(networkParams)
         self:prepSpeechModel(networkParams.modelName, networkParams.backend)
     end
     local typename = torch.typename(self.model)
+    local print_model = self.model
     if typename == 'nn.DataParallelTable' then
-        typename = torch.typename(self.model:get(1))
+        print_model = self.model:get(1)
+        typename = torch.typename(print_model)
     end
     if typename == 'nn.gModule' then
-        graph.dot(self.model.fg, networkParams.modelName, networkParams.modelName) -- view graph
+        graph.dot(print_model.fg, networkParams.modelName, networkParams.modelName) -- view graph
     else
-        print (self.model)
+        print (print_model)
     end
     assert((networkParams.saveModel or networkParams.loadModel) and networkParams.fileName, "To save/load you must specify the fileName you want to save to")
     -- setting online loading

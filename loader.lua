@@ -2,7 +2,7 @@ require 'nn'
 require 'torch'
 require 'lmdb'
 require 'xlua'
-
+tds = require 'tds'
 --[[
 
     this file defines indexer and loader:
@@ -149,7 +149,7 @@ function loader:nxt_batch(inds, flag)
 
         TODO we allocate 2 * batch_size space
     --]]
-    local tensor_list = {}
+    local tensor_list = tds.Vec()
     local label_list = {}
     local max_w = 0
     local h = 0
@@ -172,7 +172,7 @@ function loader:nxt_batch(inds, flag)
         sizes_array[cnt] = tensor:size(2); cnt = cnt + 1 -- record true length
         if max_w < tensor:size(2) then max_w = tensor:size(2) end -- find the max len in this batch
 
-        table.insert(tensor_list, tensor)
+        tensor_list:insert(tensor)
         table.insert(label_list, label)
         if flag then table.insert(trans_list, torch.deserialize(txn_trans:get(ind))) end
     end
