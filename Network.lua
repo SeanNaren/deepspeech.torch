@@ -29,6 +29,7 @@ function Network:init(networkParams)
         networkParams.test_iter)
     self.saveModel = networkParams.saveModel
     self.loadModel = networkParams.loadModel
+    self.snap_shot_epochs = networkParams.snap_shot_epochs
 
     -- setting model saving/loading
     if (self.loadModel) then
@@ -173,17 +174,17 @@ function Network:trainNetwork(epochs, sgd_params)
         end
 
         logger:add { averageLoss}
+        if self.saveModel and i % self.snap_shot_epochs == 0 then
+            print("Saving model..")
+            self:saveNetwork('epoch_'..i..'_'..self.fileName)
+        end
+
     end
 
     local endTime = os.time()
     local secondsTaken = endTime - startTime
     local minutesTaken = secondsTaken / 60
     print("Minutes taken to train: ", minutesTaken)
-
-    if (self.saveModel) then
-        print("Saving model")
-        self:saveNetwork(self.fileName)
-    end
 
     return lossHistory, validationHistory, minutesTaken
 end

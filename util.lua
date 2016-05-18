@@ -30,9 +30,9 @@ local function trans2tokens(line, _mapper)
 
     local label = {}
     line = string.lower(line)
-    -- Remove: beginning space, BOS, EOS, fileid, final space, string ids (<s> and </s>).
     line = line:gsub('^%s', ''):gsub('', ''):gsub('', ''):gsub('%(.+%)', ''):gsub('%s$', ''):gsub('<s>', ''):gsub('</s>', '')
-    --Remove the space at the end of the line.
+    -- strip
+    line = line:match("^%s*(.-)%s*$")
     for i = 1, #line do
         local character = line:sub(i, i)
         table.insert(label, _mapper.alphabet2token[character])

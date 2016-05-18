@@ -25,7 +25,8 @@ function Evaluator.sequenceErrorRate(target, prediction)
             end
         end
     end
-    return d[#target + 1][#prediction + 1] / #target
+    local wer = d[#target + 1][#prediction + 1] / #target
+    if wer > 1 then return 1 else return wer end
 end
 
 
@@ -38,8 +39,6 @@ function Evaluator.predict2tokens(predictions, mapper)
     --]]
     local tokens = {}
     local blank_token = mapper.alphabet2token['$']
-    local space_token = mapper.alphabet2token[' ']
-    local strip_head = true
     local pre_token = blank_token
 
 
@@ -51,14 +50,11 @@ function Evaluator.predict2tokens(predictions, mapper)
         local token = maxIndexes[i] - 1 -- CTC indexes start from 1, while token starts from 0
         -- add token if it's not blank, and is not the same as pre_token
         if token ~= blank_token and token ~= pre_token then
-            if token ~= space_token then strip_head = false end
-            if not strip_head then table.insert(tokens, token) end
+            table.insert(tokens, token)
             pre_token = token
         end
     end
     
-    if tokens[#tokens] == space_token then table.remove(tokens, #tokens) end
-
     return tokens
 end
 
