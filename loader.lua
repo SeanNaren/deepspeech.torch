@@ -11,7 +11,7 @@ require 'xlua'
 
 --]]
 
---torch.setdefaulttensortype('torch.FloatTensor')
+torch.setdefaulttensortype('torch.FloatTensor')
 
 local indexer = torch.class('indexer')
 
@@ -165,7 +165,7 @@ function loader:nxt_batch(inds, flag)
     local cnt = 1
     -- reads out a batch and store in lists
     for _, ind in next, inds, nil do
-        local tensor = txn_spect:get(ind):double()
+        local tensor = txn_spect:get(ind):float()
         local label = torch.deserialize(txn_label:get(ind))
 
         h = tensor:size(1)

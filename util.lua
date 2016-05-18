@@ -100,6 +100,7 @@ function util.mk_lmdb(root_path, index_path, dict_path, out_dir, windowSize, str
         local spect = audio.spectrogram(wave, windowSize, 'hamming', stride) -- freq-by-frames tensor
 
         -- put into lmdb
+        spect = spect:float()
         txn_spect:put(cnt, spect:byte())
         txn_label:put(cnt, label)
         txn_trans:put(cnt, modified_trans)
