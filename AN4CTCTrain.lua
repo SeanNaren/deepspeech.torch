@@ -7,14 +7,14 @@ torch.setdefaulttensortype('torch.FloatTensor')
 seed = 10
 torch.manualSeed(seed)
 cutorch.manualSeedAll(seed)
-local epochs = 100
+local epochs = 70
 
 local networkParams = {
     loadModel = false,
     saveModel = true,
     fileName = "CTCNetwork.t7",
     modelName = 'DeepSpeechModel',
-    backend = 'cudnn',
+    backend = 'nn',
     nGPU = 1, -- Number of GPUs, set -1 to use CPU
     lmdb_path = './prepare_an4/train/',-- online loading path
     val_path = './prepare_an4/test/',

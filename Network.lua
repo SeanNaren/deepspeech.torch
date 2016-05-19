@@ -1,7 +1,5 @@
 require 'optim'
 require 'nnx'
-require 'BRNN'
-require 'ctchelpers'
 require 'gnuplot'
 require 'xlua'
 require 'utils_multi_gpu'
@@ -23,6 +21,9 @@ function Network:init(networkParams)
 
     self.fileName = networkParams.fileName -- The file name to save/load the network from.
     self.nGPU = networkParams.nGPU
+    if self.nGPU <= 0 then
+        assert(networkParams.backend ~= 'cudnn')
+    end
     self.lmdb_path = networkParams.lmdb_path
     self.val_path = networkParams.val_path
     self.mapper = mapper(networkParams.dict_path)
@@ -30,8 +31,7 @@ function Network:init(networkParams)
         networkParams.test_iter)
     self.saveModel = networkParams.saveModel
     self.loadModel = networkParams.loadModel
-    self.snap_shot_epochs = networkParams.snap_shot_epochs
-    
+    self.snap_shot_epochs = networkParams.snap_shot_epochs or 10
 
     -- setting model saving/loading
     if (self.loadModel) then
@@ -43,10 +43,16 @@ function Network:init(networkParams)
         assert(networkParams.modelName, "Must have given a model to train.")
         self:prepSpeechModel(networkParams.modelName, networkParams.backend)
     end
-    if torch.typename(self.model) == 'nn.gModule' then
-        graph.dot(self.model.fg, networkParams.modelName, networkParams.modelName) -- view graph
+    local typename = torch.typename(self.model)
+    local print_model = self.model
+    if typename == 'nn.DataParallelTable' then
+        print_model = self.model:get(1)
+        typename = torch.typename(print_model)
+    end
+    if typename == 'nn.gModule' then
+        graph.dot(print_model.fg, networkParams.modelName, networkParams.modelName) -- view graph
     else
-        print (self.model)
+        print (print_model)
     end
     assert((networkParams.saveModel or networkParams.loadModel) and networkParams.fileName, "To save/load you must specify the fileName you want to save to")
     -- setting online loading
