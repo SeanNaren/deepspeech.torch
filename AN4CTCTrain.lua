@@ -16,13 +16,13 @@ local networkParams = {
     modelName = 'DeepSpeechModel',
     backend = 'cudnn',
     nGPU = 1, -- Number of GPUs, set -1 to use CPU
-    lmdb_path = './prepare_librispeech/train/',-- online loading path
-    val_path = './prepare_librispeech/test/',
+    lmdb_path = './prepare_an4/train/',-- online loading path
+    val_path = './prepare_an4/test/',
     dict_path = './dictionary',
-    batch_size = 48,
+    batch_size = 20,
     test_batch_size = 32,
     test_iter = 4,
-    snap_shot_epochs = 10
+    snap_shot_epochs = 50
 }
 --Parameters for the stochastic gradient descent (using the optim library).
 local sgdParams = {

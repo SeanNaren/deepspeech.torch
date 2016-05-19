@@ -11,11 +11,12 @@ require 'CTCCriterion'
 require 'mapper'
 require 'wer_tester'
 
+local suffix = '_'..os.date('%Y%m%d_%H%M%S')
 local threads = require 'threads'
 local Network = {}
-local logger = optim.Logger('train.log')
-logger:setNames { 'loss'}
-logger:style { '-'}
+local logger = optim.Logger('train'..suffix..'.log')
+logger:setNames {'loss', 'WER'}
+logger:style {'-', '-'}
 
 
 function Network:init(networkParams)
@@ -30,6 +31,7 @@ function Network:init(networkParams)
     self.saveModel = networkParams.saveModel
     self.loadModel = networkParams.loadModel
     self.snap_shot_epochs = networkParams.snap_shot_epochs
+    
 
     -- setting model saving/loading
     if (self.loadModel) then
@@ -165,18 +167,15 @@ function Network:trainNetwork(epochs, sgd_params)
         print(string.format("Training Epoch: %d Average Loss: %f", i, averageLoss))
 
         -- Periodically update validation error rates
-        if (i % 2 == 0 and  self.val_path) then
-            local wer = self:testNetwork()
-            if wer then
-                table.insert(validationHistory, 100 * wer)
-                print('Training Epoch: '..i..' averaged WER: '.. 100*wer ..'%')
-            end
-        end
-
-        logger:add { averageLoss}
+        local wer = self:testNetwork()
+        table.insert(validationHistory, 100 * wer)
+        print('Training Epoch: '.. i ..' averaged WER: '.. 100*wer ..'%')
+        logger:add {averageLoss, wer}
+        
+        -- periodically save the model
         if self.saveModel and i % self.snap_shot_epochs == 0 then
             print("Saving model..")
-            self:saveNetwork('epoch_'..i..'_'..self.fileName)
+            self:saveNetwork('epoch_'..i..suffix..self.fileName)
         end
 
     end
