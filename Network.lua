@@ -1,9 +1,14 @@
 require 'optim'
 require 'nnx'
-require 'BRNN'
 require 'ctchelpers'
 require 'gnuplot'
 require 'xlua'
+require 'cudnn'
+require 'SeqBLSTM'
+require 'TemporalBatchNormalization'
+require 'BRNN'
+require 'CTCCriterion'
+
 local WERCalculator = require 'WERCalculator'
 
 local Network = {}
@@ -65,7 +70,7 @@ function Network:trainNetwork(dataset, validationDataset, epochs, sgd_params)
     -- inputs (preallocate)
     local inputs = torch.Tensor()
     if self.gpu then
-        ctcCriterion = nn.CTCCriterion():cuda()
+        ctcCriterion = nn.CTCCriterion(true):cuda()
         inputs = inputs:cuda()
     end
 
@@ -75,9 +80,11 @@ function Network:trainNetwork(dataset, validationDataset, epochs, sgd_params)
         inputs:resize(inputsCPU:size()):copy(inputsCPU)
         gradParameters:zero()
         local predictions = self.model:forward(inputs)
-        local loss = ctcCriterion:forward(predictions, targets)
+        local tensorSizes = predictions:size()
+        local sizes = torch.Tensor(tensorSizes[1]):fill(tensorSizes[2])
+        local loss = ctcCriterion:forward(predictions, targets, sizes)
         self.model:zeroGradParameters()
-        local gradOutput = ctcCriterion:backward(predictions, targets)
+        local gradOutput = ctcCriterion:backward(predictions, targets, sizes)
         self.model:backward(inputs, gradOutput)
         return loss, gradParameters
     end
