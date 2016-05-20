@@ -80,13 +80,15 @@ function wer_tester:get_wer(gpu, model, calSize, verbose)
         inputs:resize(inputsCPU:size()):copy(inputsCPU)
         cutorch.synchronize()
         local predictions = model:forward({inputs,sizes_array})
+        print(predictions:size())
         predictions = predictions:view(self.test_batch_size, -1, predictions:size(2))
-        print('=====================')
+        print(predictions:size())
+        print(predictions[1])
         cutorch.synchronize()
 
         -- =============== for every data point in this batch ==================
         for j = 1, self.test_batch_size do
-
+            
             local prediction_single = predictions[j]
             local predict_tokens = Evaluator.predict2tokens(prediction_single, self.mapper)
             local WER = Evaluator.sequenceErrorRate(targets[j], predict_tokens)
