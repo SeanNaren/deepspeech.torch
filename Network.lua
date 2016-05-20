@@ -4,10 +4,7 @@ require 'ctchelpers'
 require 'gnuplot'
 require 'xlua'
 require 'cudnn'
-require 'SeqBLSTM'
-require 'TemporalBatchNormalization'
 require 'BRNN'
-require 'CTCCriterion'
 
 local WERCalculator = require 'WERCalculator'
 
