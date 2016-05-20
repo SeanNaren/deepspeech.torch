@@ -1,8 +1,8 @@
 require 'cunn'
--- require 'rnn'
+require 'rnn'
 require 'nngraph'
--- require 'MaskRNN'
--- require 'ReverseRNN'
+require 'MaskRNN'
+require 'ReverseRNN'
 require 'cudnn'
 local ffi=require 'ffi'
 

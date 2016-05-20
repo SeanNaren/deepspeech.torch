@@ -36,7 +36,7 @@ function MaskRNN:updateGradInput(input, gradOutput)
    self._gradOutput = gradOutput:view(self._input:size(1), input[2]:size(1), -1)
    self.gradInput = self.module:updateGradInput(self._input, self._gradOutput)
    self:filter(self.gradInput, input[2])
-   self.gradInput:viewAs(input[1])
+   self.gradInput = self.gradInput:viewAs(input[1])
    return {self.gradInput, nil}
 end
 
