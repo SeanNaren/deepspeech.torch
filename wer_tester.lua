@@ -80,10 +80,7 @@ function wer_tester:get_wer(gpu, model, calSize, verbose)
         inputs:resize(inputsCPU:size()):copy(inputsCPU)
         cutorch.synchronize()
         local predictions = model:forward({inputs,sizes_array})
-        print(predictions:size())
-        predictions = predictions:view(self.test_batch_size, -1, predictions:size(2))
-        print(predictions:size())
-        print(predictions[1])
+        predictions = predictions:view(-1, self.test_batch_size, predictions:size(2)):transpose(1,2)
         cutorch.synchronize()
 
         -- =============== for every data point in this batch ==================

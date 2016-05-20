@@ -54,7 +54,7 @@ function Evaluator.predict2tokens(predictions, mapper)
             pre_token = token
         end
     end
-    
+
     return tokens
 end
 

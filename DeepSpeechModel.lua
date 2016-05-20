@@ -35,7 +35,7 @@ local function deepSpeech(nGPU, is_cudnn)
     local feature = nn.Sequential()
 
     -- (nInputPlane, nOutputPlane, kW, kH, [dW], [dH], [padW], [padH])
-    feature:add(nn.SpatialConvolution(1, 32, 41, 11, 2, 2)) 
+    feature:add(nn.SpatialConvolution(1, 32, 41, 11, 2, 2))
     feature:add(nn.SpatialBatchNormalization(32))
     feature:add(nn.ReLU(true))
     feature:add(nn.SpatialConvolution(32, 32, 21, 11, 2, 1))

@@ -36,7 +36,7 @@ function Network:init(networkParams)
     -- setting model saving/loading
     if (self.loadModel) then
         assert(networkParams.fileName, "Filename hasn't been given to load model.")
-        self:loadNetwork(networkParams.fileName, 
+        self:loadNetwork(networkParams.fileName,
             networkParams.modelName,
             networkParams.backend == 'cudnn')
     else
@@ -177,7 +177,7 @@ function Network:trainNetwork(epochs, sgd_params)
         table.insert(validationHistory, 100 * wer)
         print('Training Epoch: '.. i ..' averaged WER: '.. 100*wer ..'%')
         logger:add {averageLoss, wer}
-        
+
         -- periodically save the model
         if self.saveModel and i % self.snap_shot_epochs == 0 then
             print("Saving model..")
