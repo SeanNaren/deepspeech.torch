@@ -1,127 +1,196 @@
 require 'optim'
 require 'nnx'
-require 'ctchelpers'
 require 'gnuplot'
 require 'xlua'
-require 'cudnn'
+require 'utils_multi_gpu'
+require 'loader'
+require 'nngraph'
+require 'CTCCriterion'
+require 'mapper'
+require 'wer_tester'
 
-local WERCalculator = require 'WERCalculator'
-
+local suffix = '_'..os.date('%Y%m%d_%H%M%S')
+local threads = require 'threads'
 local Network = {}
-local logger = optim.Logger('train.log')
-logger:setNames { 'loss', 'WER' }
-logger:style { '-', '-' }
+local logger = optim.Logger('train'..suffix..'.log')
+logger:setNames {'loss', 'WER'}
+logger:style {'-', '-'}
+
 
 function Network:init(networkParams)
-    self.loadModel = networkParams.loadModel or false -- Set to true to load the model into Network.
-    self.saveModel = networkParams.saveModel or false -- Set to true if you want to save the model after training.
+
     self.fileName = networkParams.fileName -- The file name to save/load the network from.
-    self.gpu = networkParams.gpu or false -- Set to true to use GPU.
-    self.model = nil
-    if (self.gpu) then -- Load gpu modules.
-    require 'cunn'
-    require 'cudnn'
+    self.nGPU = networkParams.nGPU
+    if self.nGPU <= 0 then
+        assert(networkParams.backend ~= 'cudnn')
     end
+    self.lmdb_path = networkParams.lmdb_path
+    self.val_path = networkParams.val_path
+    self.mapper = mapper(networkParams.dict_path)
+    self.wer_tester = wer_tester(self.val_path, self.mapper, networkParams.test_batch_size,
+        networkParams.test_iter)
+    self.saveModel = networkParams.saveModel
+    self.loadModel = networkParams.loadModel
+    self.snap_shot_epochs = networkParams.snap_shot_epochs or 10
+
+    -- setting model saving/loading
     if (self.loadModel) then
         assert(networkParams.fileName, "Filename hasn't been given to load model.")
-        self:loadNetwork(networkParams.fileName)
+        self:loadNetwork(networkParams.fileName,
+            networkParams.modelName,
+            networkParams.backend == 'cudnn')
     else
-        assert(networkParams.model, "Must have given a model to train.")
-        self:prepSpeechModel(networkParams.model)
+        assert(networkParams.modelName, "Must have given a model to train.")
+        self:prepSpeechModel(networkParams.modelName, networkParams.backend)
+    end
+    local typename = torch.typename(self.model)
+    local print_model = self.model
+    if typename == 'nn.DataParallelTable' then
+        print_model = self.model:get(1)
+        typename = torch.typename(print_model)
+    end
+    if typename == 'nn.gModule' then
+        graph.dot(print_model.fg, networkParams.modelName, networkParams.modelName) -- view graph
+    else
+        print (print_model)
     end
     assert((networkParams.saveModel or networkParams.loadModel) and networkParams.fileName, "To save/load you must specify the fileName you want to save to")
+    -- setting online loading
+    self.indexer = indexer(networkParams.lmdb_path, networkParams.batch_size)
+    self.indexer:prep_sorted_inds()
+    self.pool = threads.Threads(1,function() require 'loader' end)
+    self.batch_num = self.indexer.lmdb_size / networkParams.batch_size
 end
 
-function Network:prepSpeechModel(model)
-    if (self.gpu) then model:cuda() end
-    model:training()
-    self.model = model
+
+function Network:prepSpeechModel(modelName, backend)
+    local model = require (modelName)
+    self.model = model[1](self.nGPU, backend=='cudnn')
+    self.calSize = model[2]
 end
 
--- Returns a prediction of the input net and input tensors.
-function Network:predict(inputTensors)
-    local prediction = self.model:forward(inputTensors)
-    return prediction
+
+function Network:testNetwork()
+    print('testing...')
+    self.model:evaluate()
+    local wer = self.wer_tester:get_wer(self.nGPU>0, self.model, self.calSize, true) -- detail in log
+    self.model:zeroGradParameters()
+    self.model:training()
+    return wer
 end
 
-local function WERValidationSet(self, validationDataset)
-    if (validationDataset) then
-        self.model:evaluate()
-        local wer = WERCalculator.calculateValidationWER(validationDataset, self.gpu, self.model)
-        self.model:zeroGradParameters()
-        self.model:training()
-        return wer
-    end
-end
 
---Trains the network using SGD and the defined feval.
---Uses warp-ctc cost evaluation.
-function Network:trainNetwork(dataset, validationDataset, epochs, sgd_params)
+function Network:trainNetwork(epochs, sgd_params)
+    --[[
+        train network with self-defined feval (sgd inside); use ctc for evaluation
+    --]]
+    self.model:training()
+
     local lossHistory = {}
     local validationHistory = {}
-    local ctcCriterion = nn.CTCCriterion()
-
+    local ctcCriterion = nn.CTCCriterionTest()
     local x, gradParameters = self.model:getParameters()
 
     -- inputs (preallocate)
     local inputs = torch.Tensor()
-    if self.gpu then
-        ctcCriterion = nn.CTCCriterion(true):cuda()
+    local sizes = torch.Tensor()
+    if self.nGPU > 0 then
+        ctcCriterion = ctcCriterion:cuda()
         inputs = inputs:cuda()
+        sizes = sizes:cuda()
     end
 
+    -- def loading buf and loader
+    local loader = loader(self.lmdb_path)
+    local spect_buf, label_buf, sizes_buf
+
+    -- load first batch
+    local inds = self.indexer:nxt_sorted_inds()
+    self.pool:addjob(function()
+                        return loader:nxt_batch(inds, false)
+                    end,
+                    function(spect,label,sizes)
+                        spect_buf=spect
+                        label_buf=label
+                        sizes_buf=sizes
+                    end
+                    )
+
+    -- ===========================================================
+    -- define the feval
+    -- ===========================================================
     local function feval(x_new)
-        local inputsCPU, targets = dataset:nextData()
-        -- transfer over to GPU
-        inputs:resize(inputsCPU:size()):copy(inputsCPU)
-        gradParameters:zero()
-        local predictions = self.model:forward(inputs)
-        local tensorSizes = predictions:size()
-        local sizes = torch.Tensor(tensorSizes[1]):fill(tensorSizes[2])
+        --------------------- data load ------------------------
+        self.pool:synchronize()                         -- wait previous loading
+        local inputsCPU,sizes,targets = spect_buf,sizes_buf,label_buf   -- move buf to training data
+        inds = self.indexer:nxt_sorted_inds()                  -- load nxt batch
+        self.pool:addjob(function()
+                            return loader:nxt_batch(inds, false)
+                        end,
+                        function(spect,label,sizes)
+                            spect_buf=spect
+                            label_buf=label
+                            sizes_buf=sizes
+                        end
+                        )
+        --------------------- fwd and bwd ---------------------
+        inputs:resize(inputsCPU:size()):copy(inputsCPU) -- transfer over to GPU
+        sizes = self.calSize(sizes)
+        local predictions = self.model:forward({inputs, sizes})
         local loss = ctcCriterion:forward(predictions, targets, sizes)
         self.model:zeroGradParameters()
-        local gradOutput = ctcCriterion:backward(predictions, targets, sizes)
+        local gradOutput = ctcCriterion:backward(predictions, targets)
         self.model:backward(inputs, gradOutput)
+        gradParameters:div(inputs:size(1))
         return loss, gradParameters
     end
 
+    -- ==========================================================
+    -- training
+    -- ==========================================================
     local currentLoss
     local startTime = os.time()
-    local dataSetSize = dataset:size()
-    local wer = 1
+    -- local dataSetSize = self.indexer.len_num -- obtained when calling prep_same_len_inds
+
     for i = 1, epochs do
         local averageLoss = 0
-        print(string.format("Training Epoch: %d", i))
 
-        -- Periodically update validation error rates
-        if (i % 2 == 0) then
-            wer = WERValidationSet(self, validationDataset)
-            if wer then table.insert(validationHistory, 100 * wer) end
-        end
-
-        for j = 1, dataSetSize do
+        for j = 1, self.batch_num do
             currentLoss = 0
+            cutorch.synchronize()
             local _, fs = optim.sgd(feval, x, sgd_params)
+            cutorch.synchronize()
+            if self.model.needsSync then
+                self.model:syncParameters()
+            end
             currentLoss = currentLoss + fs[1]
-            xlua.progress(j, dataSetSize)
+            xlua.progress(j, self.batch_num)
             averageLoss = averageLoss + currentLoss
         end
 
-        averageLoss = averageLoss / dataSetSize -- Calculate the average loss at this epoch.
+        averageLoss = averageLoss / self.batch_num -- Calculate the average loss at this epoch.
         table.insert(lossHistory, averageLoss) -- Add the average loss value to the logger.
-        print(string.format("Training Epoch: %d Average Loss: %f WER: %.0f%%", i, averageLoss, 100 * wer))
+        print(string.format("Training Epoch: %d Average Loss: %f", i, averageLoss))
 
-        logger:add { averageLoss, 1000 * wer }
+        -- Periodically update validation error rates
+        local wer = self:testNetwork()
+        table.insert(validationHistory, 100 * wer)
+        print('Training Epoch: '.. i ..' averaged WER: '.. 100*wer ..'%')
+        logger:add {averageLoss, wer}
+
+        -- periodically save the model
+        if self.saveModel and i % self.snap_shot_epochs == 0 then
+            print("Saving model..")
+            self:saveNetwork('epoch_'..i..suffix..self.fileName)
+        end
+
     end
+
     local endTime = os.time()
     local secondsTaken = endTime - startTime
     local minutesTaken = secondsTaken / 60
     print("Minutes taken to train: ", minutesTaken)
 
-    if (self.saveModel) then
-        print("Saving model")
-        self:saveNetwork(self.fileName)
-    end
     return lossHistory, validationHistory, minutesTaken
 end
 
@@ -132,14 +201,15 @@ end
 
 
 function Network:saveNetwork(saveName)
-    torch.save(saveName, self.model)
+    saveDataParallel(saveName, self.model)
 end
 
+
 --Loads the model into Network.
-function Network:loadNetwork(saveName)
-    local model = torch.load(saveName)
-    self.model = model
-    model:evaluate()
+function Network:loadNetwork(saveName, modelName, is_cudnn)
+    self.model = loadDataParallel(saveName, self.nGPU, is_cudnn)
+    local model = require (modelName)
+    self.calSize = model[2]
 end
 
 return Network
