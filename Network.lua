@@ -4,7 +4,6 @@ require 'ctchelpers'
 require 'gnuplot'
 require 'xlua'
 require 'cudnn'
-require 'BRNN'
 
 local WERCalculator = require 'WERCalculator'
 

@@ -4,7 +4,7 @@ local AN4CTCCorpus = require 'AN4CTCCorpus'
 local Network = require 'Network'
 local Batcher = require 'Batcher'
 
-local deepSpeechModel = require 'DeepSpeechModel' -- The script that contains the model we will be training. Use DeepSpeechModelCPU to use CPU.
+local deepSpeechModel = require 'DeepSpeechModelCPU' -- The script that contains the model we will be training. Use DeepSpeechModelCPU to use CPU.
 
 --Training parameters
 local epochs = 70

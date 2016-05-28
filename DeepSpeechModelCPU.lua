@@ -1,6 +1,5 @@
 require 'ctchelpers'
 require 'rnn'
-require 'BRNN'
 
 local function deepSpeech(GRU)
     local model = nn.Sequential()
@@ -15,13 +14,15 @@ local function deepSpeech(GRU)
     model:add(nn.Dropout(0.4))
     model:add(nn.SpatialMaxPooling(2, 2, 2, 2))
 
-    model:add(nn.CombineDimensions(2, 3)) -- Combine the middle two dimensions from 4D to 3D (features x batch x seqLength)
-    model:add(nn.Transpose({1,2},{2,3})) -- Transpose till batch x seqLength x features
+    model:add(nn.View(32 * 25, -1):setNumInputDims(3)) -- batch x features x seqLength
+    model:add(nn.Transpose({2, 3}, {1, 2})) -- seqLength x batch x features
 
-    model:add(nn.BRNN(nn.SeqLSTM(32 * 25, 400)))
-    model:add(nn.TemporalBatchNormalization(400))
-    model:add(nn.BRNN(nn.SeqLSTM(400, 400)))
-    model:add(nn.TemporalBatchNormalization(400))
+    model:add(nn.SeqBRNN(32 * 25, 400))
+    model:add(nn.SeqBRNN(400, 400))
+    model:add(nn.SeqBRNN(400, 400))
+    model:add(nn.SeqBRNN(400, 400))
+
+    model:add(nn.Transpose({1, 2})) -- batch x seqLength x features
     model:add(nn.Linear3D(400, 28))
     return model
 end
