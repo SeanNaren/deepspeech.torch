@@ -38,8 +38,8 @@ function Evaluator.predict2tokens(predictions, mapper)
             to compute WER we strip the begining and ending spaces
     --]]
     local tokens = {}
-    local blank_token = mapper.alphabet2token['$']
-    local pre_token = blank_token
+    local blankToken = mapper.alphabet2token['$']
+    local preToken = blankToken
 
 
     -- The prediction is a sequence of likelihood vectors
@@ -49,9 +49,9 @@ function Evaluator.predict2tokens(predictions, mapper)
     for i=1,maxIndexes:size(1) do
         local token = maxIndexes[i] - 1 -- CTC indexes start from 1, while token starts from 0
         -- add token if it's not blank, and is not the same as pre_token
-        if token ~= blank_token and token ~= pre_token then
+        if token ~= blankToken and token ~= preToken then
             table.insert(tokens, token)
-            pre_token = token
+            preToken = token
         end
     end
 

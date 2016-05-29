@@ -18,9 +18,9 @@ local indexer = torch.class('indexer')
 
 function indexer:__init(_dir, batch_size)
 
-    self.db_spect = lmdb.env{Path=_dir..'/spect',Name='spect'}
-    self.db_label = lmdb.env{Path=_dir..'/label',Name='label'}
-    self.db_trans = lmdb.env{Path=_dir..'/trans',Name='trans'}
+    self.db_spect = lmdb.env { Path = _dir .. '/spect', Name = 'spect' }
+    self.db_label = lmdb.env { Path = _dir .. '/label', Name = 'label' }
+    self.db_trans = lmdb.env { Path = _dir .. '/trans', Name = 'trans' }
     self._dir = _dir
 
     self.batch_size = batch_size
@@ -45,50 +45,49 @@ function indexer:__init(_dir, batch_size)
     assert(self.lmdb_size > self.batch_size, 'batch_size larger than lmdb_size')
     self.sorted_inds = {}
     self.len_num = 0 -- number of unique seqLengths
-
 end
 
 function indexer:prep_sorted_inds()
     --[[
         prep a table for sorted inds, can detect previously saved table in lmdb folder
     --]]
-    
-    print('preparing sorted inds..')
-    local _path = self._dir..'/'..'sorted_inds'
+
+    print('preparing sorted indices..')
+    local indicesFilePath = self._dir .. '/' .. 'sorted_inds'
 
     -- check if there is previously saved inds
-    if paths.filep(_path) then
-        print('found previously saved inds..')        
-        self.sorted_inds = torch.load(_path)        
+    if paths.filep(indicesFilePath) then
+        print('found previously saved inds..')
+        self.sorted_inds = torch.load(indicesFilePath)
         return
     end
 
     -- if not make a new one
-    print('did not find previously saved inds, make one now..')    
+    print('did not find previously saved indices, generating.')
     self.db_spect:open(); local txn = self.db_spect:txn(true)
-    local len_set = {}
+    local lengths = {}
     for i = 1, self.lmdb_size do
-        local _len = txn:get(i):size(2) -- get the len of spect
-        table.insert(self.sorted_inds, {i, _len})
-        if len_set[_len] == nil then len_set[_len] = true end
+        local lengthOfAudio = txn:get(i):size(2) -- get the len of spect
+        table.insert(self.sorted_inds, { i, lengthOfAudio })
+        if lengths[lengthOfAudio] == nil then lengths[lengthOfAudio] = true end
         if i % 100 == 0 then xlua.progress(i, self.lmdb_size) end
     end
     txn:abort(); self.db_spect:close()
 
     -- sort table
     local function comp(a, b) return a[2] < b[2] end
+
     table.sort(self.sorted_inds, comp)
 
-    for _ in pairs(len_set) do self.len_num = self.len_num + 1 end -- number of different seqLengths
-    print('there are ' .. self.len_num .. ' unique seqLengths')
-    torch.save(_path,self.sorted_inds)
+    for _ in pairs(lengths) do self.len_num = self.len_num + 1 end -- number of different seqLengths
+    torch.save(indicesFilePath, self.sorted_inds)
 end
 
 
 function indexer:nxt_sorted_inds()
     local meta_inds = self:nxt_inds()
     local inds = {}
-    for _,v in ipairs(meta_inds) do
+    for _, v in ipairs(meta_inds) do
         table.insert(inds, self.sorted_inds[v][1])
     end
     return inds
@@ -106,7 +105,7 @@ function indexer:nxt_same_len_inds()
 
     local _len = self.sorted_inds[self.cnt][2]
     local inds = {}
-    while(self.cnt <= self.lmdb_size and self.sorted_inds[self.cnt][2] == _len) do
+    while (self.cnt <= self.lmdb_size and self.sorted_inds[self.cnt][2] == _len) do
         -- NOTE: true index store in table, instead of cnt
         table.insert(inds, self.sorted_inds[self.cnt][1])
         self.cnt = self.cnt + 1
@@ -119,13 +118,13 @@ end
 
 function indexer:nxt_inds()
     --[[
-        return indexs of next batch
+        return indices of the next batch
     --]]
 
     local inds = {}
     if self.lmdb_size > self.cnt + self.batch_size - 1 then
-        for i=0,self.batch_size-1 do
-            table.insert(inds,self.cnt+i)
+        for i = 0, self.batch_size - 1 do
+            table.insert(inds, self.cnt + i)
         end
 
         self.cnt = self.cnt + self.batch_size
@@ -133,17 +132,16 @@ function indexer:nxt_inds()
     end
 
     -- case where cnt+size >= total size
-    for i=self.cnt,self.lmdb_size do
-        table.insert(inds,i)
+    for i = self.cnt, self.lmdb_size do
+        table.insert(inds, i)
     end
 
     self.cnt = self.batch_size - (self.lmdb_size - self.cnt)
-    for i=1, self.cnt-1 do -- overflow inds
-        table.insert(inds,i)
+    for i = 1, self.cnt - 1 do -- overflow inds
+    table.insert(inds, i)
     end
 
     return inds
-
 end
 
 
@@ -155,9 +153,9 @@ function loader:__init(_dir)
         _dir: dir contains 3 lmdbs
     --]]
 
-    self.db_spect = lmdb.env{Path=_dir..'/spect',Name='spect'}
-    self.db_label = lmdb.env{Path=_dir..'/label',Name='label'}
-    self.db_trans = lmdb.env{Path=_dir..'/trans',Name='trans'}
+    self.db_spect = lmdb.env { Path = _dir .. '/spect', Name = 'spect' }
+    self.db_label = lmdb.env { Path = _dir .. '/label', Name = 'label' }
+    self.db_trans = lmdb.env { Path = _dir .. '/trans', Name = 'trans' }
 end
 
 function loader:nxt_batch(inds, flag)
@@ -176,9 +174,9 @@ function loader:nxt_batch(inds, flag)
     local trans_list = {}
     local txn_trans
 
-    self.db_spect:open();local txn_spect = self.db_spect:txn(true) -- readonly
-    self.db_label:open();local txn_label = self.db_label:txn(true)
-    if flag then self.db_trans:open();txn_trans = self.db_trans:txn(true) end
+    self.db_spect:open(); local txn_spect = self.db_spect:txn(true) -- readonly
+    self.db_label:open(); local txn_label = self.db_label:txn(true)
+    if flag then self.db_trans:open(); txn_trans = self.db_trans:txn(true) end
 
     local sizes_array = torch.Tensor(#inds)
     local cnt = 1
@@ -196,17 +194,16 @@ function loader:nxt_batch(inds, flag)
         if flag then table.insert(trans_list, torch.deserialize(txn_trans:get(ind))) end
     end
 
-    -- store tensors into a fixed len tensor_array [TODO should find a better way to do this]
+    -- store tensors into a fixed len tensor_array TODO should find a better way to do this
     local tensor_array = torch.Tensor(#inds, 1, h, max_w):zero()
     for ind, tensor in ipairs(tensor_list) do
         tensor_array[ind][1]:narrow(2, 1, tensor:size(2)):copy(tensor)
     end
 
-    txn_spect:abort();self.db_spect:close()
-    txn_label:abort();self.db_label:close()
-    if flag then txn_trans:abort();self.db_trans:close() end
+    txn_spect:abort(); self.db_spect:close()
+    txn_label:abort(); self.db_label:close()
+    if flag then txn_trans:abort(); self.db_trans:close() end
 
     if flag then return tensor_array, label_list, sizes_array, trans_list end
     return tensor_array, label_list, sizes_array
-
 end

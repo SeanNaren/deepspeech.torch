@@ -7,9 +7,9 @@ ln -s ../mapper.lua .
 AN4_PATH='an4'
 echo "ROOT_FOLDER: $AN4_PATH"
 find $AN4_PATH -name '*.wav' -delete
-echo "Convert..."
+echo "Converting raw an4 dataset..."
 ./ConvertAN4ToWav.sh $AN4_PATH
-echo "Generate Index..."
-./gen_index.sh $AN4_PATH
-echo "Generate LMDB..."
-th gen_lmdb.lua $AN4_PATH/wav/
+echo "Generating Indices..."
+./generateIndices.sh $AN4_PATH
+echo "Generating LMDB..."
+th generateLMDB.lua $AN4_PATH/wav/
