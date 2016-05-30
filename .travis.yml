@@ -64,5 +64,6 @@ script:
 - cd CTCSpeechRecognition/tests
 - export PATH=${INSTALL_PREFIX}/bin:$PATH
 - export TESTLUA=$(which luajit lua | head -n 1)
+- source ~/.bashrc
 - th test_rnn.lua
 - th test_evaluations.lua
