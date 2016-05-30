@@ -1,4 +1,6 @@
 language: c
+notifications:
+  email: false
 compiler:
   - gcc
   - clang
@@ -63,7 +65,5 @@ script:
 - git clone https://github.com/SeanNaren/CTCSpeechRecognition.git
 - cd CTCSpeechRecognition/tests
 - export PATH=${INSTALL_PREFIX}/bin:$PATH
-- export TESTLUA=$(which luajit lua | head -n 1)
-- source ~/.bashrc
-- th test_rnn.lua
-- th test_evaluations.lua
+- /home/travis/torch/install/bin/th test_rnn.lua
+- /home/travis/torch/install/bin/th test_evaluations.lua
