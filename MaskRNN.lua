@@ -2,7 +2,7 @@
 --[[ MaskRNN ]] --
 -- Filter out outputs and grads of unnecessary timesteps to support
 -- variable lengths in minibatch.
--- Input is of dimensions T*N*H ( the same as RNN) and output of (T*N)*H.
+-- Input is of dimensions (T*N)*H ( the same as RNN) and output of (T*N)*H.
 -- seqLengths: N, indicate the real length of each sample in a minibatch.
 ------------------------------------------------------------------------
 require 'dpnn'
@@ -26,7 +26,7 @@ function MaskRNN:filter(input, seqLengths)
 end
 
 function MaskRNN:updateOutput(input)
-    self._input = input[1]:view(-1, input[2]:size(1), input[1]:size(3))
+    self._input = input[1]:view(-1, input[2]:size(1), input[1]:size(2))
     self.output = self.module:updateOutput(self._input)
     self:filter(self.output, input[2])
     self.output = self.output:view(self._input:size(1) * self._input:size(2), -1)

@@ -12,7 +12,7 @@ local WEREvaluator = torch.class('WEREvaluator')
 local _loader
 
 function WEREvaluator:__init(_path, mapper, testBatchSize, nbOfTestIterations, logsPath)
-    _loader = loader(_path)
+    _loader = Loader(_path)
     self.testBatchSize = testBatchSize
     self.nbOfTestIterations = nbOfTestIterations
     self.indexer = indexer(_path, testBatchSize)

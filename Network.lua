@@ -98,7 +98,7 @@ function Network:trainNetwork(epochs, sgd_params)
     -- load first batch
     local inds = self.indexer:nxt_sorted_inds()
     self.pool:addjob(function()
-        return oader:nxt_batch(inds, false)
+        return loader:nxt_batch(inds, false)
     end,
         function(spect, label, sizes)
             specBuf = spect
@@ -157,7 +157,7 @@ function Network:trainNetwork(epochs, sgd_params)
         -- Update validation error rates
         local wer = self:testNetwork(i)
 
-        print(string.format("Training Epoch: %d Average Loss: %f Average Validation WER: %2f%%", i, averageLoss, 100 * wer))
+        print(string.format("Training Epoch: %d Average Loss: %f Average Validation WER: %.2f%%", i, averageLoss, 100 * wer))
         table.insert(lossHistory, averageLoss) -- Add the average loss value to the logger.
         table.insert(validationHistory, 100 * wer)
         self.logger:add { averageLoss, 100 * wer }

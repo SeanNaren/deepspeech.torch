@@ -11,18 +11,24 @@ function test.MaskRNN()
     local seqLength = torch.Tensor({ 1, 2 }) -- real sequence lengths of each batch.
     local identity = nn.Identity()
     local mask = nn.MaskRNN(identity)
-    local input = torch.rand(T, N, H)
-    local output = mask:forward({ input, seqLength })
-    output = output:view(input:size(1), input:size(2), input:size(3))
-    local expectedOutput = input:clone()
+    local input = torch.rand(T, N, H):view(T * N, H)
+    local expectedOutput = input:clone():view(T, N, H)
     expectedOutput[2][1]:fill(0)
     expectedOutput[3]:fill(0)
-    local gradInput = torch.rand(T, N, H)
-    local grads = mask:backward({ input, seqLength }, gradInput)
 
-    local expectedGrads = gradInput:clone()
+    local output = mask:forward({ input, seqLength })
+    output =  output:view(T, N, H)
+    expectedOutput = expectedOutput:view(T, N, H)
+    local gradInput = torch.rand(T * N, H)
+
+    local expectedGrads = gradInput:clone():view(T, N, H)
     expectedGrads[2][1]:fill(0)
     expectedGrads[3]:fill(0)
+
+    local grads = mask:backward({ input, seqLength }, gradInput)
+    grads =  output:view(T, N, H)
+    expectedGrads = expectedOutput:view(T, N, H)
+
     mytester:eq(output, expectedOutput, 'masking of outputs was incorrect')
     mytester:eq(grads, expectedGrads, 'masking of gradients was incorrect')
 end
@@ -35,18 +41,24 @@ function test.reverseMaskRNN()
     local seqLength = torch.Tensor({ 1, 2 }) -- real sequence lengths of each batch.
     local identity = nn.Identity()
     local mask = nn.ReverseMaskRNN(identity)
-    local input = torch.rand(T, N, H)
-    local output = mask:forward({ input, seqLength })
-    output = output:view(input:size(1), input:size(2), input:size(3))
-    local expectedOutput = input:clone()
+    local input = torch.rand(T, N, H):view(T * N, H)
+    local expectedOutput = input:clone():view(T, N, H)
     expectedOutput[2][1]:fill(0)
     expectedOutput[3]:fill(0)
-    local gradInput = torch.rand(T, N, H)
-    local grads = mask:backward({ input, seqLength }, gradInput)
 
-    local expectedGrads = gradInput:clone()
+    local output = mask:forward({ input, seqLength })
+    output =  output:view(T, N, H)
+    expectedOutput = expectedOutput:view(T, N, H)
+    local gradInput = torch.rand(T * N, H)
+
+    local expectedGrads = gradInput:clone():view(T, N, H)
     expectedGrads[2][1]:fill(0)
     expectedGrads[3]:fill(0)
+
+    local grads = mask:backward({ input, seqLength }, gradInput)
+    grads =  output:view(T, N, H)
+    expectedGrads = expectedOutput:view(T, N, H)
+
     mytester:eq(output, expectedOutput, 'masking of outputs was incorrect')
     mytester:eq(grads, expectedGrads, 'masking of gradients was incorrect')
 

@@ -21,6 +21,7 @@ local networkParams = {
     logsTrainPath = './logs/TrainingLoss/',
     logsValidationPath = './logs/ValidationScores/',
     modelTrainingPath = './models/',
+    fileName = 'CTCNetwork.t7',
     dictionaryPath = './dictionary',
     batchSize = 20,
     validationBatchSize = 2,

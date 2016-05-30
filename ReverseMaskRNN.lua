@@ -2,7 +2,7 @@
 --[[ ReverseMaskRNN ]] --
 -- Applies the same masking procedure as MaskRNN, however reverses the input.
 -- Used in bi-directional RNNs for reverse RNN.
--- Input is of dimensions T*N*H ( the same as RNN) and output of (T*N)*H.
+-- Input is of dimensions (T*N)*H ( the same as RNN) and output of (T*N)*H.
 -- seqLengths: N, indicate the real length of each sample in a minibatch.
 ------------------------------------------------------------------------
 require 'dpnn'
@@ -26,7 +26,7 @@ function ReverseMaskRNN:reverse(input, seqLengths)
 end
 
 function ReverseMaskRNN:updateOutput(input)
-    self.reverse_input = input[1]:view(-1, input[2]:size(1), input[1]:size(3))
+    self.reverse_input = input[1]:view(-1, input[2]:size(1), input[1]:size(2))
     self.reverse_input = self:reverse(self.reverse_input, input[2])
     local reverse_output = self.module:updateOutput(self.reverse_input)
     self.output = self:reverse(reverse_output, input[2])
