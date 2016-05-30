@@ -1,7 +1,7 @@
 require 'nngraph'
 require 'MaskRNN'
-require 'ReverseRNN'
-require 'utilsMultiGPU'
+require 'ReverseMaskRNN'
+require 'UtilsMultiGPU'
 
 -- Chooses RNN based on if GRU or backend GPU support.
 local function getRNNModule(nIn, nHidden, GRU, is_cudnn)
@@ -26,7 +26,7 @@ end
 -- Wraps rnn module into bi-directional.
 local function BRNN(feat, seqLengths, rnnModule)
     local fwdLstm = nn.MaskRNN(rnnModule:clone())({ feat, seqLengths })
-    local bwdLstm = nn.ReverseRNN(rnnModule:clone())({ feat, seqLengths })
+    local bwdLstm = nn.ReverseMaskRNN(rnnModule:clone())({ feat, seqLengths })
     return nn.CAddTable()({ fwdLstm, bwdLstm })
 end
 -- Creates the covnet+rnn structure.
@@ -46,7 +46,8 @@ local function deepSpeech(nGPU, isCUDNN)
     feature:add(nn.SpatialMaxPooling(2, 2, 2, 2)) -- TODO the DS2 architecture does not include this layer, but mem overhead increases.
 
     local rnnInputsize = 32 * 25 -- based on the above convolutions.
-    local rnnHiddenSize = 400
+    local rnnHiddenSize = 400 -- size of rnn hidden layers
+    local nbOfHiddenLayers = 4
 
     feature:add(nn.View(rnnInputsize, -1):setNumInputDims(3)) -- batch x features x seqLength
     feature:add(nn.Transpose({ 2, 3 }, { 1, 2 })) -- seqLength x batch x features
@@ -59,7 +60,7 @@ local function deepSpeech(nGPU, isCUDNN)
     rnn_module = getRNNModule(rnnHiddenSize,
         rnnHiddenSize, GRU, isCUDNN)
 
-    for i = 1, 0 do
+    for i = 1, nbOfHiddenLayers do
         rnn = nn.Sequential():add(nn.BatchNormalization(rnnHiddenSize))(rnn)
         rnn = BRNN(rnn, seqLengths, rnn_module)
     end
@@ -72,6 +73,7 @@ local function deepSpeech(nGPU, isCUDNN)
     return model
 end
 
+-- Based on convolution kernel and strides.
 local function calculateInputSizes(sizes)
     sizes = torch.floor((sizes - 41) / 2 + 1) -- conv1
     sizes = torch.floor((sizes - 21) / 2 + 1) -- conv2

@@ -1,14 +1,15 @@
 ------------------------------------------------------------------------
 --[[ MaskRNN ]] --
--- filter out outputs and grads of unnecessary timesteps to support
--- variant lengths in minibatch
--- Input and Output size: T*N*H ( the same as RNN)
--- seqLengths: N, indicate the real length of each sample in a minibatch
+-- Filter out outputs and grads of unnecessary timesteps to support
+-- variable lengths in minibatch.
+-- Input is of dimensions T*N*H ( the same as RNN) and output of (T*N)*H.
+-- seqLengths: N, indicate the real length of each sample in a minibatch.
 ------------------------------------------------------------------------
+require 'dpnn'
+
 local MaskRNN, parent = torch.class("nn.MaskRNN", "nn.Decorator")
 
 function MaskRNN:__init(module)
-    require 'dpnn'
     parent.__init(self, module)
     assert(torch.isTypeOf(module, 'nn.Module'))
 end
@@ -25,7 +26,7 @@ function MaskRNN:filter(input, seqLengths)
 end
 
 function MaskRNN:updateOutput(input)
-    self._input = input[1]:view(-1, input[2]:size(1), input[1]:size(2))
+    self._input = input[1]:view(-1, input[2]:size(1), input[1]:size(3))
     self.output = self.module:updateOutput(self._input)
     self:filter(self.output, input[2])
     self.output = self.output:view(self._input:size(1) * self._input:size(2), -1)

@@ -146,9 +146,9 @@ end
 
 
 
-local loader = torch.class('loader')
+local Loader = torch.class('Loader')
 
-function loader:__init(_dir)
+function Loader:__init(_dir)
     --[[
         _dir: dir contains 3 lmdbs
     --]]
@@ -158,7 +158,7 @@ function loader:__init(_dir)
     self.db_trans = lmdb.env { Path = _dir .. '/trans', Name = 'trans' }
 end
 
-function loader:nxt_batch(inds, flag)
+function Loader:nxt_batch(inds, flag)
     --[[
         return a batch by loading from lmdb just-in-time
 

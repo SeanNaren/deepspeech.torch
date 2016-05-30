@@ -4,7 +4,7 @@ require 'audio'
 require 'xlua'
 require 'lmdb'
 require 'torch'
-require 'mapper'
+require 'Mapper'
 
 -- manipulate with this object
 local util = {}
@@ -72,7 +72,7 @@ function util.mk_lmdb(root_path, index_path, dict_path, out_dir, windowSize, str
     --]]
 
     local startTime = os.time()
-    local mapper = mapper(dict_path)
+    local mapper = Mapper(dict_path)
 
     -- start writing
     local db_spect, txn_spect = start_txn(out_dir .. '/spect', 'spect')

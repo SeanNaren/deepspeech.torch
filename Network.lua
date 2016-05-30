@@ -3,10 +3,10 @@ require 'nnx'
 require 'gnuplot'
 require 'lfs'
 require 'xlua'
-require 'utilsMultiGPU'
-require 'loader'
+require 'UtilsMultiGPU'
+require 'Loader'
 require 'nngraph'
-require 'mapper'
+require 'Mapper'
 require 'WEREvaluator'
 
 local suffix = '_' .. os.date('%Y%m%d_%H%M%S')
@@ -28,7 +28,7 @@ function Network:init(networkParams)
 
     self:makeDirectories({ self.logsTrainPath, self.logsValidationPath, self.modelTrainingPath })
 
-    self.mapper = mapper(networkParams.dictionaryPath)
+    self.mapper = Mapper(networkParams.dictionaryPath)
     self.werTester = WEREvaluator(self.validationSetLMDBPath, self.mapper, networkParams.validationBatchSize,
         networkParams.validationIterations, self.logsValidationPath)
     self.saveModel = networkParams.saveModel
@@ -49,7 +49,7 @@ function Network:init(networkParams)
     -- setting online loading
     self.indexer = indexer(networkParams.trainingSetLMDBPath, networkParams.batchSize)
     self.indexer:prep_sorted_inds()
-    self.pool = threads.Threads(1, function() require 'loader' end)
+    self.pool = threads.Threads(1, function() require 'Loader' end)
     self.nbBatches = math.ceil(self.indexer.lmdb_size / networkParams.batchSize)
 
     self.logger = optim.Logger(self.logsTrainPath .. 'train' .. suffix .. '.log')
@@ -92,13 +92,13 @@ function Network:trainNetwork(epochs, sgd_params)
     end
 
     -- def loading buf and loader
-    local loader = loader(self.trainingSetLMDBPath)
+    local loader = Loader(self.trainingSetLMDBPath)
     local specBuf, labelBuf, sizesBuf
 
     -- load first batch
     local inds = self.indexer:nxt_sorted_inds()
     self.pool:addjob(function()
-        return loader:nxt_batch(inds, false)
+        return oader:nxt_batch(inds, false)
     end,
         function(spect, label, sizes)
             specBuf = spect

@@ -2,7 +2,7 @@ require 'cunn'
 require 'rnn'
 require 'nngraph'
 require 'MaskRNN'
-require 'ReverseRNN'
+require 'ReverseMaskRNN'
 require 'cudnn'
 
 local ffi = require 'ffi'
@@ -19,7 +19,7 @@ function makeDataParallel(model, nGPU, is_cudnn)
             dpt = nn.DataParallelTable(1):add(model, gpus):threads(function()
                 require 'nngraph'
                 require 'MaskRNN'
-                require 'ReverseRNN'
+                require 'ReverseMaskRNN'
                 if is_cudnn then
                     local cudnn = require 'cudnn'
                     cudnn.fastest = true

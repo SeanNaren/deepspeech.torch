@@ -1,6 +1,6 @@
-require 'loader'
-require 'util'
-require 'mapper'
+require 'Loader'
+require 'Util'
+require 'Mapper'
 require 'torch'
 require 'xlua'
 require 'cutorch'
@@ -16,7 +16,7 @@ function WEREvaluator:__init(_path, mapper, testBatchSize, nbOfTestIterations, l
     self.testBatchSize = testBatchSize
     self.nbOfTestIterations = nbOfTestIterations
     self.indexer = indexer(_path, testBatchSize)
-    self.pool = threads.Threads(1, function() require 'loader' end)
+    self.pool = threads.Threads(1, function() require 'Loader' end)
     self.mapper = mapper
     self.logsPath = logsPath
     self.suffix = '_' .. os.date('%Y%m%d_%H%M%S')
