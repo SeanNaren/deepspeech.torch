@@ -65,5 +65,7 @@ script:
 - git clone https://github.com/SeanNaren/CTCSpeechRecognition.git
 - cd CTCSpeechRecognition/tests
 - export PATH=${INSTALL_PREFIX}/bin:$PATH
-- /home/travis/torch/install/bin/th test_rnn.lua
-- /home/travis/torch/install/bin/th test_evaluations.lua
+- export TESTLUA=$(which luajit lua | head -n 1)
+- echo ${TESTLUA}
+- ${TESTLUA} test_rnn.lua
+- ${TESTLUA} test_evaluations.lua
