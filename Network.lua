@@ -8,6 +8,7 @@ require 'nngraph'
 require 'CTCCriterion'
 require 'mapper'
 require 'wer_tester'
+require 'cudnn'
 
 local suffix = '_'..os.date('%Y%m%d_%H%M%S')
 local threads = require 'threads'
@@ -24,6 +25,9 @@ function Network:init(networkParams)
     if self.nGPU <= 0 then
         assert(networkParams.backend ~= 'cudnn')
     end
+    assert(networkParams.batch_size % networkParams.nGPU == 0, 'batch size must be the multiple of nGPU')
+    self.gpu_batch_size = networkParams.batch_size / networkParams.nGPU
+
     self.lmdb_path = networkParams.lmdb_path
     self.val_path = networkParams.val_path
     self.mapper = mapper(networkParams.dict_path)
@@ -73,7 +77,7 @@ end
 function Network:testNetwork()
     print('testing...')
     self.model:evaluate()
-    local wer = self.wer_tester:get_wer(self.nGPU>0, self.model, self.calSize, true) -- detail in log
+    local wer = self.wer_tester:get_wer(self.nGPU>0, cudnn.convert(self.model, nn), self.calSize, true) -- detail in log
     self.model:zeroGradParameters()
     self.model:training()
     return wer
@@ -116,6 +120,20 @@ function Network:trainNetwork(epochs, sgd_params)
                     end
                     )
 
+    local function slice(tbl, first, last, step)
+        local sliced 
+        if torch.type(tbl) == 'table' then
+            sliced = {}
+            for i = first or 1, last or #tbl, step or 1 do
+                sliced[#sliced+1] = tbl[i]
+            end
+        else
+            sliced = torch.Tensor()
+            sliced:resize(last-first+1):copy(sizes:select(first,last))
+        end
+        return sliced
+    end
+ 
     -- ===========================================================
     -- define the feval
     -- ===========================================================
@@ -135,13 +153,56 @@ function Network:trainNetwork(epochs, sgd_params)
                         )
         --------------------- fwd and bwd ---------------------
         inputs:resize(inputsCPU:size()):copy(inputsCPU) -- transfer over to GPU
-        sizes = self.calSize(sizes)
+        sizes = self.calSize(sizes)    
+        
         local predictions = self.model:forward({inputs, sizes})
-        local loss = ctcCriterion:forward(predictions, targets, sizes)
+        print(#self.model.inputGpu)
+        for i,v in ipairs(self.model.inputGpu) do
+            print(torch.type(v))
+            print(v[1]:size())
+        end
+        
+        local loss = 0
+        local gradOutput = {}
+        local num = self.gpu_batch_size
         self.model:zeroGradParameters()
-        local gradOutput = ctcCriterion:backward(predictions, targets)
+        print('num of predictions is: ', #predictions)
+        for k,v in ipairs(predictions) do
+            local targets_slice = slice(targets, 1+(k-1)*num, k*num)
+            local sizes_slice = sizes:sub(1+(k-1)*num, k*num)
+            
+--            print('========== '..k..' ===========')
+--            print(torch.type(v))
+--            print(torch.type(targets_slice))
+--            print(torch.type(sizes_slice))
+--            
+--            print(v:size())
+--            print(targets_slice)
+--            print(sizes_slice)
+
+            loss = loss + ctcCriterion:forward(v, targets_slice, sizes_slice)
+            table.insert(gradOutput, {ctcCriterion:backward(v, targets_slice)})
+        end
+        
+--        for k,v in ipairs(self.model.inputGpu) do
+--            print('========== '..k..' ===========')
+--            print('input size: ')
+--            print(v[1]:size())
+--            print('output size: ')
+--            print(gradOutput[k]:size())
+--        end
+--        
+--        print(#self.model.inputGpu)
+--        for i,v in ipairs(self.model.inputGpu) do
+--            print(torch.type(v))
+--        end
+
+        print('predictions over..')
         self.model:backward(inputs, gradOutput)
+        print('backward over..')
         gradParameters:div(inputs:size(1))
+
+
         return loss, gradParameters
     end
 
@@ -153,9 +214,11 @@ function Network:trainNetwork(epochs, sgd_params)
     -- local dataSetSize = self.indexer.len_num -- obtained when calling prep_same_len_inds
 
     for i = 1, epochs do
+--    for i = 1,1 do
         local averageLoss = 0
 
         for j = 1, self.batch_num do
+--        for j = 1,1 do
             currentLoss = 0
             cutorch.synchronize()
             local _, fs = optim.sgd(feval, x, sgd_params)
@@ -173,10 +236,10 @@ function Network:trainNetwork(epochs, sgd_params)
         print(string.format("Training Epoch: %d Average Loss: %f", i, averageLoss))
 
         -- Periodically update validation error rates
-        local wer = self:testNetwork()
-        table.insert(validationHistory, 100 * wer)
-        print('Training Epoch: '.. i ..' averaged WER: '.. 100*wer ..'%')
-        logger:add {averageLoss, wer}
+-- TODO        local wer = self:testNetwork()
+--        table.insert(validationHistory, 100 * wer)
+--        print('Training Epoch: '.. i ..' averaged WER: '.. 100*wer ..'%')
+--        logger:add {averageLoss, wer}
 
         -- periodically save the model
         if self.saveModel and i % self.snap_shot_epochs == 0 then

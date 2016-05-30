@@ -42,10 +42,10 @@ local function deepSpeech(nGPU, is_cudnn)
     feature:add(nn.SpatialBatchNormalization(32))
     feature:add(nn.ReLU(true))
     feature:add(nn.SpatialMaxPooling(2, 2, 2, 2))
-    local rnn_nFeature_input = 32 * 25
-    local rnn_nFeature_output = 400
-    feature:add(nn.View(rnn_nFeature_input, -1):setNumInputDims(3)) -- batch x features x seqLength
-    feature:add(nn.Transpose({ 2, 3 }, { 1, 2 })) -- seqLength x batch x features
+    local rnn_nFeature_input = 32 * 25 -- C x H
+    local rnn_nFeature_output = 400 -- 400-dimen vector for each time step
+    feature:add(nn.View(rnn_nFeature_input, -1):setNumInputDims(3)) -- batch(N) x features(CXH) x seqLength(W)
+    feature:add(nn.Transpose({ 2, 3 }, { 1, 2 })) -- seqLength(W) x batch(N) x features(CXH)
     feature:add(nn.View(-1, rnn_nFeature_input))   -- (seqLength x batch) x features
     local rnn = nn.Identity()({feature(input)})
     local rnn_module = get_rnn_module(rnn_nFeature_input, rnn_nFeature_output,

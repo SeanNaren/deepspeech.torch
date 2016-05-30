@@ -7,7 +7,7 @@ torch.setdefaulttensortype('torch.FloatTensor')
 seed = 10
 torch.manualSeed(seed)
 cutorch.manualSeedAll(seed)
-local epochs = 70
+local epochs = 100
 
 local networkParams = {
     loadModel = false,
@@ -15,14 +15,16 @@ local networkParams = {
     fileName = "CTCNetwork.t7",
     modelName = 'DeepSpeechModel',
     backend = 'cudnn',
-    nGPU = 1, -- Number of GPUs, set -1 to use CPU
-    lmdb_path = './prepare_an4/train/',-- online loading path
-    val_path = './prepare_an4/train/',
+    nGPU = 4, -- Number of GPUs, set -1 to use CPU
+--    lmdb_path = './prepare_librispeech/train/',-- online loading path
+--    val_path = './prepare_librispeech/test/',
+    lmdb_path = './prepare_an4/train/',
+    val_path = './prepare_an4/test/',
     dict_path = './dictionary',
     batch_size = 20,
-    test_batch_size = 20,
-    test_iter = 47,
-    snap_shot_epochs = 50
+    test_batch_size = 10,
+    test_iter = 13,
+    snap_shot_epochs = 20
 }
 --Parameters for the stochastic gradient descent (using the optim library).
 local sgdParams = {
