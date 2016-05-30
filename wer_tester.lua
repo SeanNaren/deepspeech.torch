@@ -85,7 +85,7 @@ function wer_tester:get_wer(gpu, model, calSize, verbose)
 
         -- =============== for every data point in this batch ==================
         for j = 1, self.test_batch_size do
-            
+
             local prediction_single = predictions[j]
             local predict_tokens = Evaluator.predict2tokens(prediction_single, self.mapper)
             local WER = Evaluator.sequenceErrorRate(targets[j], predict_tokens)

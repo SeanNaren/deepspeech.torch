@@ -5,7 +5,6 @@ require 'xlua'
 require 'utils_multi_gpu'
 require 'loader'
 require 'nngraph'
-require 'CTCCriterion'
 require 'mapper'
 require 'wer_tester'
 require 'cudnn'
@@ -63,7 +62,7 @@ function Network:init(networkParams)
     self.indexer = indexer(networkParams.lmdb_path, networkParams.batch_size)
     self.indexer:prep_sorted_inds()
     self.pool = threads.Threads(1,function() require 'loader' end)
-    self.batch_num = self.indexer.lmdb_size / networkParams.batch_size
+    self.batch_num = math.floor(self.indexer.lmdb_size / networkParams.batch_size)
 end
 
 
@@ -77,9 +76,11 @@ end
 function Network:testNetwork()
     print('testing...')
     self.model:evaluate()
+    self.model:SetIsInference(true)
     local wer = self.wer_tester:get_wer(self.nGPU>0, cudnn.convert(self.model, nn), self.calSize, true) -- detail in log
     self.model:zeroGradParameters()
     self.model:training()
+    self.model:SetIsInference(false)
     return wer
 end
 
@@ -92,14 +93,12 @@ function Network:trainNetwork(epochs, sgd_params)
 
     local lossHistory = {}
     local validationHistory = {}
-    local ctcCriterion = nn.CTCCriterionTest()
     local x, gradParameters = self.model:getParameters()
 
     -- inputs (preallocate)
     local inputs = torch.Tensor()
     local sizes = torch.Tensor()
     if self.nGPU > 0 then
-        ctcCriterion = ctcCriterion:cuda()
         inputs = inputs:cuda()
         sizes = sizes:cuda()
     end
@@ -120,20 +119,6 @@ function Network:trainNetwork(epochs, sgd_params)
                     end
                     )
 
-    local function slice(tbl, first, last, step)
-        local sliced 
-        if torch.type(tbl) == 'table' then
-            sliced = {}
-            for i = first or 1, last or #tbl, step or 1 do
-                sliced[#sliced+1] = tbl[i]
-            end
-        else
-            sliced = torch.Tensor()
-            sliced:resize(last-first+1):copy(sizes:select(first,last))
-        end
-        return sliced
-    end
- 
     -- ===========================================================
     -- define the feval
     -- ===========================================================
@@ -153,55 +138,12 @@ function Network:trainNetwork(epochs, sgd_params)
                         )
         --------------------- fwd and bwd ---------------------
         inputs:resize(inputsCPU:size()):copy(inputsCPU) -- transfer over to GPU
-        sizes = self.calSize(sizes)    
-        
-        local predictions = self.model:forward({inputs, sizes})
-        print(#self.model.inputGpu)
-        for i,v in ipairs(self.model.inputGpu) do
-            print(torch.type(v))
-            print(v[1]:size())
-        end
-        
-        local loss = 0
-        local gradOutput = {}
-        local num = self.gpu_batch_size
+        sizes = self.calSize(sizes)
+
+        self.model:forward({inputs, sizes})
         self.model:zeroGradParameters()
-        print('num of predictions is: ', #predictions)
-        for k,v in ipairs(predictions) do
-            local targets_slice = slice(targets, 1+(k-1)*num, k*num)
-            local sizes_slice = sizes:sub(1+(k-1)*num, k*num)
-            
---            print('========== '..k..' ===========')
---            print(torch.type(v))
---            print(torch.type(targets_slice))
---            print(torch.type(sizes_slice))
---            
---            print(v:size())
---            print(targets_slice)
---            print(sizes_slice)
-
-            loss = loss + ctcCriterion:forward(v, targets_slice, sizes_slice)
-            table.insert(gradOutput, {ctcCriterion:backward(v, targets_slice)})
-        end
-        
---        for k,v in ipairs(self.model.inputGpu) do
---            print('========== '..k..' ===========')
---            print('input size: ')
---            print(v[1]:size())
---            print('output size: ')
---            print(gradOutput[k]:size())
---        end
---        
---        print(#self.model.inputGpu)
---        for i,v in ipairs(self.model.inputGpu) do
---            print(torch.type(v))
---        end
-
-        print('predictions over..')
-        self.model:backward(inputs, gradOutput)
-        print('backward over..')
+        local loss = self.model:backward(inputs, targets)
         gradParameters:div(inputs:size(1))
-
 
         return loss, gradParameters
     end
