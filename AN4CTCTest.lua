@@ -12,17 +12,17 @@ progress = true -- Set to true if you want to see progress of calculation of WER
 local networkParams = {
     loadModel = true,
     saveModel = false,
-    fileName = "epoch_60_20160520_172809CTCNetwork.t7",
+    fileName = "CTCNetwork.t7",
     modelName = 'DeepSpeechModel',
     backend = 'cudnn',
     nGPU = 1, -- Number of GPUs, set -1 to use CPU
     lmdb_path = 'prepare_an4/train/',
 --    val_path = 'prepare_an4/test/',
-    val_path = './prepare_librispeech/train/',
+    val_path = 'prepare_an4/test/',
     dict_path = './dictionary',
-    batch_size = 1,
-    test_batch_size = 20,
-    test_iter = 200
+    batch_size = 2,
+    test_batch_size = 2,
+    test_iter = 65
 }
 
 Network:init(networkParams)

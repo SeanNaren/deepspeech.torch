@@ -12,8 +12,6 @@ local wer_tester = torch.class('wer_tester')
 
 local _loader -- ugly solution
 
-
-
 function wer_tester:__init(_path, mapper, test_batch_size, test_iter)
     _loader = loader(_path)
     self.test_batch_size = test_batch_size
@@ -24,7 +22,10 @@ function wer_tester:__init(_path, mapper, test_batch_size, test_iter)
     self.suffix = '_'..os.date('%Y%m%d_%H%M%S')
 end
 
-
+function wer_tester:predic_trans(src, nGPU)
+    local gpu_number = nGPU or 1
+    return src:view(-1, self.test_batch_size / gpu_number, src:size(2)):transpose(1,2)
+end
 
 function wer_tester:get_wer(gpu, model, calSize, verbose)
     --[[
@@ -80,12 +81,18 @@ function wer_tester:get_wer(gpu, model, calSize, verbose)
         inputs:resize(inputsCPU:size()):copy(inputsCPU)
         cutorch.synchronize()
         local predictions = model:forward({inputs,sizes_array})
-        predictions = predictions:view(-1, self.test_batch_size, predictions:size(2)):transpose(1,2)
         cutorch.synchronize()
-
+        if type(predictions) == 'table' then
+            local temp = self:predic_trans(predictions[1], #predictions)
+            for k = 2, #predictions do
+                temp = torch.cat(temp, self:predic_trans(predictions[k], #predictions), 1)
+            end
+            predictions = temp
+        else
+            predictions = self:predic_trans(predictions)
+        end
         -- =============== for every data point in this batch ==================
         for j = 1, self.test_batch_size do
-
             local prediction_single = predictions[j]
             local predict_tokens = Evaluator.predict2tokens(prediction_single, self.mapper)
             local WER = Evaluator.sequenceErrorRate(targets[j], predict_tokens)
@@ -105,8 +112,6 @@ function wer_tester:get_wer(gpu, model, calSize, verbose)
     self.pool:synchronize() -- end the last loading
     return cumWER / (self.test_iter*self.test_batch_size)
 end
-
-
 
 function wer_tester:tokens2text(tokens)
     local text = ""

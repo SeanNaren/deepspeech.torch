@@ -52,19 +52,19 @@ function indexer:prep_sorted_inds()
     --[[
         prep a table for sorted inds, can detect previously saved table in lmdb folder
     --]]
-    
+
     print('preparing sorted inds..')
     local _path = self._dir..'/'..'sorted_inds'
 
     -- check if there is previously saved inds
     if paths.filep(_path) then
-        print('found previously saved inds..')        
-        self.sorted_inds = torch.load(_path)        
+        print('found previously saved inds..')
+        self.sorted_inds = torch.load(_path)
         return
     end
 
     -- if not make a new one
-    print('did not find previously saved inds, make one now..')    
+    print('did not find previously saved inds, make one now..')
     self.db_spect:open(); local txn = self.db_spect:txn(true)
     local len_set = {}
     for i = 1, self.lmdb_size do

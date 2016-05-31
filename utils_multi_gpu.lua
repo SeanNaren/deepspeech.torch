@@ -35,13 +35,9 @@ function makeDataParallel(model, nGPU, is_cudnn)
                      require 'nngraph'
                      require 'MaskRNN'
                      require 'ReverseRNN'
-                     if is_cudnn then
-                        local cudnn = require 'cudnn'
-                        cudnn.fastest = true
-                        -- cudnn.benchmark = true
-                     else
-                        require 'rnn'
-                     end
+                     require 'rnn'
+                     local cudnn = require 'cudnn'
+                     cudnn.fastest = true
                   end)
         dpt.gradInput = nil
         model = dpt
@@ -63,19 +59,22 @@ local function cleanDPT(module)
 end
 
 function saveDataParallel(filename, model)
-   if torch.type(model) == 'nn.DataParallelTable' then
+   local model_type = torch.type(model)
+   if model_type == 'nn.DataParallelTable' or
+      model_type == 'nn.DataParallelTableTrans' then
       torch.save(filename, cleanDPT(model))
-   elseif torch.type(model) == 'nn.Sequential' then
+   elseif model_type == 'nn.Sequential' then
       local temp_model = nn.Sequential()
       for i, module in ipairs(model.modules) do
-         if torch.type(module) == 'nn.DataParallelTable' then
+         if torch.type(module) == 'nn.DataParallelTable' or
+            torch.type(module) == 'nn.DataParallelTableTrans' then
             temp_model:add(cleanDPT(module))
          else
             temp_model:add(module)
          end
       end
       torch.save(filename, temp_model)
-   elseif torch.type(model) == 'nn.gModule' then
+   elseif model_type == 'nn.gModule' then
       torch.save(filename, model)
    else
       error('This saving function only works with Sequential or DataParallelTable modules.')
@@ -84,16 +83,19 @@ end
 
 function loadDataParallel(filename, nGPU, is_cudnn)
    local model = torch.load(filename)
-   if torch.type(model) == 'nn.DataParallelTable' then
+   local model_type = torch.type(model)
+   if model_type == 'nn.DataParallelTable' or
+      model_type == 'nn.DataParallelTableTrans' then
       return makeDataParallel(model:get(1):float(), nGPU, is_cudnn)
-   elseif torch.type(model) == 'nn.Sequential' then
+   elseif model_type == 'nn.Sequential' then
       for i,module in ipairs(model.modules) do
-         if torch.type(module) == 'nn.DataParallelTable' then
+         if torch.type(module) == 'nn.DataParallelTable' or
+            torch.type(module) == 'nn.DataParallelTableTrans' then
             model.modules[i] = makeDataParallel(module:get(1):float(), nGPU, is_cudnn)
          end
       end
       return model
-   elseif torch.type(model) == 'nn.gModule' then
+   elseif model_type == 'nn.gModule' then
       model = makeDataParallel(model, nGPU, is_cudnn)
       return model
    else

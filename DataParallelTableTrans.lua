@@ -2,10 +2,6 @@
 ---- inherit DataParallel table
 local DataParallelTableTrans = torch.class('nn.DataParallelTableTrans','nn.DataParallelTable')
 
-function DataParallelTableTrans:SetIsInference(IsInference)
-   self.IsInference = IsInference
-end
-
 local function hasFlattenedParmeters(self)
    if not self.flattenedParams then
       return false
@@ -50,11 +46,7 @@ function DataParallelTableTrans:updateOutput(input)
       end
    end)
 
-   if (self.IsInference) then
-     self.output = self:_concat(self.output, self.outputGpu)
-   else
-     self.output = self.outputGpu
-   end
+   self.output = self.outputGpu
    cutorch.setDevice(prevGpuid)
 
    return self.output

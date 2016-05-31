@@ -21,9 +21,9 @@ local networkParams = {
     lmdb_path = './prepare_an4/train/',
     val_path = './prepare_an4/test/',
     dict_path = './dictionary',
-    batch_size = 20,
-    test_batch_size = 10,
-    test_iter = 13,
+    batch_size = 40,
+    test_batch_size = 2,
+    test_iter = 65,
     snap_shot_epochs = 20
 }
 --Parameters for the stochastic gradient descent (using the optim library).

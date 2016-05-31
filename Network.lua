@@ -76,11 +76,9 @@ end
 function Network:testNetwork()
     print('testing...')
     self.model:evaluate()
-    self.model:SetIsInference(true)
     local wer = self.wer_tester:get_wer(self.nGPU>0, cudnn.convert(self.model, nn), self.calSize, true) -- detail in log
     self.model:zeroGradParameters()
     self.model:training()
-    self.model:SetIsInference(false)
     return wer
 end
 
@@ -139,7 +137,6 @@ function Network:trainNetwork(epochs, sgd_params)
         --------------------- fwd and bwd ---------------------
         inputs:resize(inputsCPU:size()):copy(inputsCPU) -- transfer over to GPU
         sizes = self.calSize(sizes)
-
         self.model:forward({inputs, sizes})
         self.model:zeroGradParameters()
         local loss = self.model:backward(inputs, targets)
@@ -156,11 +153,8 @@ function Network:trainNetwork(epochs, sgd_params)
     -- local dataSetSize = self.indexer.len_num -- obtained when calling prep_same_len_inds
 
     for i = 1, epochs do
---    for i = 1,1 do
         local averageLoss = 0
-
         for j = 1, self.batch_num do
---        for j = 1,1 do
             currentLoss = 0
             cutorch.synchronize()
             local _, fs = optim.sgd(feval, x, sgd_params)
@@ -172,15 +166,14 @@ function Network:trainNetwork(epochs, sgd_params)
             xlua.progress(j, self.batch_num)
             averageLoss = averageLoss + currentLoss
         end
-
         averageLoss = averageLoss / self.batch_num -- Calculate the average loss at this epoch.
         table.insert(lossHistory, averageLoss) -- Add the average loss value to the logger.
         print(string.format("Training Epoch: %d Average Loss: %f", i, averageLoss))
 
         -- Periodically update validation error rates
--- TODO        local wer = self:testNetwork()
+        local wer = self:testNetwork()
 --        table.insert(validationHistory, 100 * wer)
---        print('Training Epoch: '.. i ..' averaged WER: '.. 100*wer ..'%')
+       print('Training Epoch: '.. i ..' averaged WER: '.. 100*wer ..'%')
 --        logger:add {averageLoss, wer}
 
         -- periodically save the model
