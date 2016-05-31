@@ -1,7 +1,7 @@
 require 'torch'
 
 -- construct an object to deal with the mapping
-local mapper = torch.class('mapper')
+local mapper = torch.class('Mapper')
 
 function mapper:__init(dict_path)
     assert(paths.filep(dict_path), dict_path..' not found')

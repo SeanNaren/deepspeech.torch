@@ -1,21 +1,17 @@
 require 'optim'
 require 'nnx'
 require 'gnuplot'
+require 'lfs'
 require 'xlua'
-require 'utils_multi_gpu'
-require 'loader'
+require 'UtilsMultiGPU'
+require 'Loader'
 require 'nngraph'
-require 'mapper'
-require 'wer_tester'
-require 'cudnn'
+require 'Mapper'
+require 'WEREvaluator'
 
-local suffix = '_'..os.date('%Y%m%d_%H%M%S')
+local suffix = '_' .. os.date('%Y%m%d_%H%M%S')
 local threads = require 'threads'
 local Network = {}
-local logger = optim.Logger('train'..suffix..'.log')
-logger:setNames {'loss', 'WER'}
-logger:style {'-', '-'}
-
 
 function Network:init(networkParams)
 
@@ -24,17 +20,22 @@ function Network:init(networkParams)
     if self.nGPU <= 0 then
         assert(networkParams.backend ~= 'cudnn')
     end
-    assert(networkParams.batch_size % networkParams.nGPU == 0, 'batch size must be the multiple of nGPU')
-    self.gpu_batch_size = networkParams.batch_size / networkParams.nGPU
+    assert(networkParams.batchSize % networkParams.nGPU == 0, 'batch size must be the multiple of nGPU')
+    assert(networkParams.validationBatchSize % networkParams.nGPU == 0, 'batch size must be the multiple of nGPU')
+    self.trainingSetLMDBPath = networkParams.trainingSetLMDBPath
+    self.validationSetLMDBPath = networkParams.validationSetLMDBPath
+    self.logsTrainPath = networkParams.logsTrainPath or nil
+    self.logsValidationPath = networkParams.logsValidationPath or nil
+    self.modelTrainingPath = networkParams.modelTrainingPath or nil
 
-    self.lmdb_path = networkParams.lmdb_path
-    self.val_path = networkParams.val_path
-    self.mapper = mapper(networkParams.dict_path)
-    self.wer_tester = wer_tester(self.val_path, self.mapper, networkParams.test_batch_size,
-        networkParams.test_iter)
+    self:makeDirectories({ self.logsTrainPath, self.logsValidationPath, self.modelTrainingPath })
+
+    self.mapper = Mapper(networkParams.dictionaryPath)
+    self.werTester = WEREvaluator(self.validationSetLMDBPath, self.mapper, networkParams.validationBatchSize,
+        networkParams.validationIterations, self.logsValidationPath)
     self.saveModel = networkParams.saveModel
     self.loadModel = networkParams.loadModel
-    self.snap_shot_epochs = networkParams.snap_shot_epochs or 10
+    self.saveModelIterations = networkParams.saveModelIterations or 10 -- Saves model every number of iterations.
 
     -- setting model saving/loading
     if (self.loadModel) then
@@ -46,42 +47,32 @@ function Network:init(networkParams)
         assert(networkParams.modelName, "Must have given a model to train.")
         self:prepSpeechModel(networkParams.modelName, networkParams.backend)
     end
-    local typename = torch.typename(self.model)
-    local print_model = self.model
-    if typename == 'nn.DataParallelTable' then
-        print_model = self.model:get(1)
-        typename = torch.typename(print_model)
-    end
-    if typename == 'nn.gModule' then
-        graph.dot(print_model.fg, networkParams.modelName, networkParams.modelName) -- view graph
-    else
-        print (print_model)
-    end
     assert((networkParams.saveModel or networkParams.loadModel) and networkParams.fileName, "To save/load you must specify the fileName you want to save to")
     -- setting online loading
-    self.indexer = indexer(networkParams.lmdb_path, networkParams.batch_size)
+    self.indexer = indexer(networkParams.trainingSetLMDBPath, networkParams.batchSize)
     self.indexer:prep_sorted_inds()
-    self.pool = threads.Threads(1,function() require 'loader' end)
-    self.batch_num = math.floor(self.indexer.lmdb_size / networkParams.batch_size)
+    self.pool = threads.Threads(1, function() require 'Loader' end)
+    self.nbBatches = math.floor(self.indexer.lmdb_size / networkParams.batchSize)
+
+    self.logger = optim.Logger(self.logsTrainPath .. 'train' .. suffix .. '.log')
+    self.logger:setNames { 'loss', 'WER' }
+    self.logger:style { '-', '-' }
 end
 
-
 function Network:prepSpeechModel(modelName, backend)
-    local model = require (modelName)
-    self.model = model[1](self.nGPU, backend=='cudnn')
+    local model = require(modelName)
+    self.model = model[1](self.nGPU, backend == 'cudnn')
     self.calSize = model[2]
 end
 
-
-function Network:testNetwork()
-    print('testing...')
+function Network:testNetwork(epoch)
     self.model:evaluate()
-    local wer = self.wer_tester:get_wer(self.nGPU>0, cudnn.convert(self.model, nn), self.calSize, true) -- detail in log
+    -- cudnn.convert(self.model, nn)
+    local wer = self.werTester:getWER(self.nGPU > 0, self.model, self.calSize, true, epoch or 1) -- details in log
     self.model:zeroGradParameters()
     self.model:training()
     return wer
 end
-
 
 function Network:trainNetwork(epochs, sgd_params)
     --[[
@@ -102,42 +93,38 @@ function Network:trainNetwork(epochs, sgd_params)
     end
 
     -- def loading buf and loader
-    local loader = loader(self.lmdb_path)
-    local spect_buf, label_buf, sizes_buf
+    local loader = Loader(self.trainingSetLMDBPath)
+    local specBuf, labelBuf, sizesBuf
 
     -- load first batch
     local inds = self.indexer:nxt_sorted_inds()
     self.pool:addjob(function()
-                        return loader:nxt_batch(inds, false)
-                    end,
-                    function(spect,label,sizes)
-                        spect_buf=spect
-                        label_buf=label
-                        sizes_buf=sizes
-                    end
-                    )
+        return loader:nxt_batch(inds, false)
+    end,
+        function(spect, label, sizes)
+            specBuf = spect
+            labelBuf = label
+            sizesBuf = sizes
+        end)
 
-    -- ===========================================================
     -- define the feval
-    -- ===========================================================
     local function feval(x_new)
         --------------------- data load ------------------------
-        self.pool:synchronize()                         -- wait previous loading
-        local inputsCPU,sizes,targets = spect_buf,sizes_buf,label_buf   -- move buf to training data
-        inds = self.indexer:nxt_sorted_inds()                  -- load nxt batch
+        self.pool:synchronize() -- wait previous loading
+        local inputsCPU, sizes, targets = specBuf, sizesBuf, labelBuf -- move buf to training data
+        inds = self.indexer:nxt_sorted_inds() -- load nxt batch
         self.pool:addjob(function()
-                            return loader:nxt_batch(inds, false)
-                        end,
-                        function(spect,label,sizes)
-                            spect_buf=spect
-                            label_buf=label
-                            sizes_buf=sizes
-                        end
-                        )
+            return loader:nxt_batch(inds, false)
+        end,
+            function(spect, label, sizes)
+                specBuf = spect
+                labelBuf = label
+                sizesBuf = sizes
+            end)
         --------------------- fwd and bwd ---------------------
         inputs:resize(inputsCPU:size()):copy(inputsCPU) -- transfer over to GPU
         sizes = self.calSize(sizes)
-        self.model:forward({inputs, sizes})
+        self.model:forward({ inputs, sizes })
         self.model:zeroGradParameters()
         local loss = self.model:backward(inputs, targets)
         gradParameters:div(inputs:size(1))
@@ -145,16 +132,13 @@ function Network:trainNetwork(epochs, sgd_params)
         return loss, gradParameters
     end
 
-    -- ==========================================================
     -- training
-    -- ==========================================================
     local currentLoss
     local startTime = os.time()
-    -- local dataSetSize = self.indexer.len_num -- obtained when calling prep_same_len_inds
 
     for i = 1, epochs do
         local averageLoss = 0
-        for j = 1, self.batch_num do
+        for j = 1, self.nbBatches do
             currentLoss = 0
             cutorch.synchronize()
             local _, fs = optim.sgd(feval, x, sgd_params)
@@ -163,25 +147,25 @@ function Network:trainNetwork(epochs, sgd_params)
                 self.model:syncParameters()
             end
             currentLoss = currentLoss + fs[1]
-            xlua.progress(j, self.batch_num)
+            xlua.progress(j, self.nbBatches)
             averageLoss = averageLoss + currentLoss
         end
-        averageLoss = averageLoss / self.batch_num -- Calculate the average loss at this epoch.
-        table.insert(lossHistory, averageLoss) -- Add the average loss value to the logger.
-        print(string.format("Training Epoch: %d Average Loss: %f", i, averageLoss))
 
-        -- Periodically update validation error rates
-        local wer = self:testNetwork()
---        table.insert(validationHistory, 100 * wer)
-       print('Training Epoch: '.. i ..' averaged WER: '.. 100*wer ..'%')
---        logger:add {averageLoss, wer}
+        averageLoss = averageLoss / self.nbBatches -- Calculate the average loss at this epoch.
+
+        -- Update validation error rates
+        local wer = self:testNetwork(i)
+
+        print(string.format("Training Epoch: %d Average Loss: %f Average Validation WER: %.2f%%", i, averageLoss, 100 * wer))
+        table.insert(lossHistory, averageLoss) -- Add the average loss value to the logger.
+        table.insert(validationHistory, 100 * wer)
+        self.logger:add { averageLoss, 100 * wer }
 
         -- periodically save the model
-        if self.saveModel and i % self.snap_shot_epochs == 0 then
+        if self.saveModel and i % self.saveModelIterations == 0 then
             print("Saving model..")
-            self:saveNetwork('epoch_'..i..suffix..self.fileName)
+            self:saveNetwork(self.modelTrainingPath .. 'model_epoch_' .. i .. suffix .. '_' .. self.fileName)
         end
-
     end
 
     local endTime = os.time()
@@ -189,25 +173,33 @@ function Network:trainNetwork(epochs, sgd_params)
     local minutesTaken = secondsTaken / 60
     print("Minutes taken to train: ", minutesTaken)
 
+    if self.saveModel then
+        print("Saving model..")
+        self:saveNetwork(self.modelTrainingPath .. 'final_model_' .. suffix .. '_' .. self.fileName)
+    end
+
     return lossHistory, validationHistory, minutesTaken
 end
 
-
 function Network:createLossGraph()
-    logger:plot()
+    self.logger:plot()
 end
-
 
 function Network:saveNetwork(saveName)
     saveDataParallel(saveName, self.model)
 end
 
-
 --Loads the model into Network.
 function Network:loadNetwork(saveName, modelName, is_cudnn)
     self.model = loadDataParallel(saveName, self.nGPU, is_cudnn)
-    local model = require (modelName)
+    local model = require(modelName)
     self.calSize = model[2]
+end
+
+function Network:makeDirectories(folderPaths)
+    for index, folderPath in ipairs(folderPaths) do
+        if (folderPath ~= nil) then os.execute("mkdir -p " .. folderPath) end
+    end
 end
 
 return Network

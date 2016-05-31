@@ -1,4 +1,3 @@
--- require ''
 ---- inherit DataParallel table
 local DataParallelTableTrans = torch.class('nn.DataParallelTableTrans','nn.DataParallelTable')
 
@@ -90,8 +89,8 @@ function DataParallelTableTrans:__backward_inner(method, input, target, scale)
       if torch.isTensor(inputGpu[i]) and inputGpu[i]:numel() == 0 then
          return torch.CudaTensor()
       else
-         require 'CTCCriterion'
-         local ctcCriterion = nn.CTCCriterionTest():cuda()
+         require 'nnx'
+         local ctcCriterion = nn.CTCCriterion():cuda()
          local targets_slice = slice(target, 1+(i-1)*batch_size, i*batch_size)
          loss[i] = ctcCriterion:forward(outputGpu[i], targets_slice, sizeGpu[i])
          local gradOutput = ctcCriterion:backward(outputGpu[i], targets_slice)

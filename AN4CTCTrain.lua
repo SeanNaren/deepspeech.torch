@@ -1,4 +1,4 @@
---[[Trains the CTC model using the AN4 audio database. Training time as of now takes less than 40 minutes on a GTX 970.]]
+--[[Trains the CTC model using the AN4 audio database.]]
 
 local Network = require 'Network'
 
@@ -7,24 +7,25 @@ torch.setdefaulttensortype('torch.FloatTensor')
 seed = 10
 torch.manualSeed(seed)
 cutorch.manualSeedAll(seed)
-local epochs = 100
+local epochs = 70
 
 local networkParams = {
     loadModel = false,
     saveModel = true,
-    fileName = "CTCNetwork.t7",
     modelName = 'DeepSpeechModel',
     backend = 'cudnn',
     nGPU = 2, -- Number of GPUs, set -1 to use CPU
---    lmdb_path = './prepare_librispeech/train/',-- online loading path
---    val_path = './prepare_librispeech/test/',
-    lmdb_path = './prepare_an4/train/',
-    val_path = './prepare_an4/test/',
-    dict_path = './dictionary',
-    batch_size = 40,
-    test_batch_size = 2,
-    test_iter = 65,
-    snap_shot_epochs = 20
+    trainingSetLMDBPath = './prepare_an4/train/',-- online loading path data.
+    validationSetLMDBPath = './prepare_an4/test/',
+    logsTrainPath = './logs/TrainingLoss/',
+    logsValidationPath = './logs/ValidationScores/',
+    modelTrainingPath = './models/',
+    fileName = 'CTCNetwork.t7',
+    dictionaryPath = './dictionary',
+    batchSize = 20,
+    validationBatchSize = 2,
+    validationIterations = 65,
+    saveModelIterations = 50
 }
 --Parameters for the stochastic gradient descent (using the optim library).
 local sgdParams = {
@@ -39,8 +40,6 @@ local sgdParams = {
 --Create and train the network based on the parameters and training data.
 Network:init(networkParams)
 
--- Network:trainNetwork(trainingDataSet, nil, epochs, sgdParams)
--- lets test jit loading
 Network:trainNetwork(epochs, sgdParams)
 
 --Creates the loss plot.

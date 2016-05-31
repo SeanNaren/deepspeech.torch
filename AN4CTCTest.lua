@@ -1,32 +1,28 @@
 --[[Calulates the WER using the AN4 Audio database test set.
--- Uses model created by AN4CTCTrain and a simple spell checker.]]
+-- Uses model created by AN4CTCTrain.]]
 
 local Network = require 'Network'
-local Evaluator = require 'Evaluator'
-require 'nn'
-require 'rnn'
-
-progress = true -- Set to true if you want to see progress of calculation of WER.
 
 -- Load the network from the saved model.
 local networkParams = {
     loadModel = true,
     saveModel = false,
-    fileName = "CTCNetwork.t7",
+    fileName = arg[1] or "./models/CTCNetwork.t7", -- Rename the evaluated model to CTCNetwork.t7 or pass the file path as an argument.
     modelName = 'DeepSpeechModel',
     backend = 'cudnn',
     nGPU = 1, -- Number of GPUs, set -1 to use CPU
-    lmdb_path = 'prepare_an4/train/',
---    val_path = 'prepare_an4/test/',
-    val_path = 'prepare_an4/test/',
-    dict_path = './dictionary',
-    batch_size = 2,
-    test_batch_size = 2,
-    test_iter = 65
+    trainingSetLMDBPath = './prepare_an4/train/', -- online loading path
+    validationSetLMDBPath = './prepare_an4/test/',
+    logsTrainPath = './logs/TrainingLoss/',
+    logsValidationPath = './logs/TestScores/',
+    modelTrainingPath = './models/',
+    dictionaryPath = './dictionary',
+    batchSize = 1,
+    validationBatchSize = 1,
+    validationIterations = 130 -- batch size 1, goes through 130 samples.
 }
 
 Network:init(networkParams)
-print("Network loaded")
 
-wer = Network:testNetwork()
-print('Testing iter: '..networkParams.test_iter..' averaged WER: '.. 100*wer ..'%')
+local wer = Network:testNetwork()
+print(string.format('Number of iterations: %d average WER: %2.f%%', networkParams.validationIterations, 100 * wer))
