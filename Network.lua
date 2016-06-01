@@ -62,14 +62,13 @@ end
 function Network:prepSpeechModel(modelName, backend)
     local model = require(modelName)
     self.model = model[1](self.nGPU, backend == 'cudnn')
-    self.calSize = model[2]
+    self.calSizeOfSequences = model[2]
 end
 
 function Network:testNetwork(epoch)
     self.model:evaluate()
     -- cudnn.convert(self.model, nn)
-    local wer = self.werTester:getWER(self.nGPU > 0, self.model, self.calSize, true, epoch or 1) -- details in log
-    self.model:zeroGradParameters()
+    local wer = self.werTester:getWER(self.nGPU > 0, self.model, self.calSizeOfSequences, true, epoch or 1) -- details in log
     self.model:training()
     return wer
 end
@@ -85,11 +84,18 @@ function Network:trainNetwork(epochs, sgd_params)
     local x, gradParameters = self.model:getParameters()
 
     -- inputs (preallocate)
-    local inputs = torch.Tensor()
-    local sizes = torch.Tensor()
+    -- local inputs = torch.Tensor()
+    -- local sizes = torch.Tensor()
+    local criterion
+    if self.nGPU <= 1 then
+        criterion = nn.CTCCriterion()
+    end
     if self.nGPU > 0 then
-        inputs = inputs:cuda()
-        sizes = sizes:cuda()
+        -- inputs = inputs:cuda()
+        -- sizes = sizes:cuda()
+        if self.nGPU == 1 then
+            criterion = criterion:cuda()
+        end
     end
 
     -- def loading buf and loader
@@ -111,22 +117,35 @@ function Network:trainNetwork(epochs, sgd_params)
     local function feval(x_new)
         --------------------- data load ------------------------
         self.pool:synchronize() -- wait previous loading
-        local inputsCPU, sizes, targets = specBuf, sizesBuf, labelBuf -- move buf to training data
+        local inputs, sizes, targets = specBuf, sizesBuf, labelBuf -- move buf to training data
         inds = self.indexer:nxt_sorted_inds() -- load nxt batch
         self.pool:addjob(function()
             return loader:nxt_batch(inds, false)
         end,
-            function(spect, label, sizes)
+            function(spect, label, size)
                 specBuf = spect
                 labelBuf = label
-                sizesBuf = sizes
+                sizesBuf = size
             end)
         --------------------- fwd and bwd ---------------------
-        inputs:resize(inputsCPU:size()):copy(inputsCPU) -- transfer over to GPU
-        sizes = self.calSize(sizes)
-        self.model:forward({ inputs, sizes })
-        self.model:zeroGradParameters()
-        local loss = self.model:backward(inputs, targets)
+        -- inputs:resize(inputsCPU:size()):copy(inputsCPU) -- transfer over to GPU
+        sizes = self.calSizeOfSequences(sizes)
+        if self.nGPU > 0 then
+            inputs = inputs:cuda()
+            sizes = sizes:cuda()
+        end
+        local loss
+        if criterion then
+            local output = self.model:forward({ inputs, sizes })
+            loss = criterion:forward(output, targets, sizes)
+            local gradOutput = criterion:backward(output, targets)
+            self.model:zeroGradParameters()
+            self.model:backward(inputs, gradOutput)
+        else
+            self.model:forward({ inputs, sizes })
+            self.model:zeroGradParameters()
+            loss = self.model:backward(inputs, targets)
+        end
         gradParameters:div(inputs:size(1))
 
         return loss, gradParameters
@@ -140,12 +159,7 @@ function Network:trainNetwork(epochs, sgd_params)
         local averageLoss = 0
         for j = 1, self.nbBatches do
             currentLoss = 0
-            cutorch.synchronize()
             local _, fs = optim.sgd(feval, x, sgd_params)
-            cutorch.synchronize()
-            if self.model.needsSync then
-                self.model:syncParameters()
-            end
             currentLoss = currentLoss + fs[1]
             xlua.progress(j, self.nbBatches)
             averageLoss = averageLoss + currentLoss
@@ -193,7 +207,7 @@ end
 function Network:loadNetwork(saveName, modelName, is_cudnn)
     self.model = loadDataParallel(saveName, self.nGPU, is_cudnn)
     local model = require(modelName)
-    self.calSize = model[2]
+    self.calSizeOfSequences = model[2]
 end
 
 function Network:makeDirectories(folderPaths)

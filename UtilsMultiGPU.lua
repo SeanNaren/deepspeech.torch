@@ -12,55 +12,62 @@ function makeDataParallel(model, nGPU, is_cudnn)
             cudnn.fastest = true
             model = cudnn.convert(model, cudnn)
         end
-        gpus = torch.range(1, nGPU):totable()
+        if nGPU > 1 then
+            gpus = torch.range(1, nGPU):totable()
 
-        dpt = nn.DataParallelTableTrans(1)
-        dpt:add(model, gpus) -- now use our impl instead; nn.DataParallelTable(1)
-        dpt:threads(function()
-                     require 'nngraph'
-                     require 'MaskRNN'
-                     require 'ReverseMaskRNN'
-                     require 'rnn'
-                     require 'cudnn'
-                  end)
-        dpt.gradInput = nil
-        model = dpt
+            dpt = nn.DataParallelTableTrans(1, true, true)
+            dpt:add(model, gpus) -- now use our impl instead; nn.DataParallelTable(1)
+            dpt:threads(function()
+                         require 'nngraph'
+                         require 'MaskRNN'
+                         require 'ReverseMaskRNN'
+                         require 'rnn'
+                         require 'cudnn'
+                      end)
+            dpt.gradInput = nil
+            model = dpt
+        end
         model:cuda()
     end
     return model
 end
 
-local function cleanDPT(module)
-   -- This assumes this DPT was created by the function above: all the
-   -- module.modules are clones of the same network on different GPUs
-   -- hence we only need to keep one when saving the model to the disk.
-   local newDPT = nn.DataParallelTableTrans(1)
-   cutorch.setDevice(default_GPU)
-   newDPT:add(module:get(1), default_GPU)
-   return newDPT
-end
-
 function saveDataParallel(filename, model)
    local model_type = torch.type(model)
+   model:clearState()
    if model_type == 'nn.DataParallelTable' or
       model_type == 'nn.DataParallelTableTrans' then
-      torch.save(filename, cleanDPT(model))
+      model = model:get(1)
    elseif model_type == 'nn.Sequential' then
       local temp_model = nn.Sequential()
       for i, module in ipairs(model.modules) do
          if torch.type(module) == 'nn.DataParallelTable' or
             torch.type(module) == 'nn.DataParallelTableTrans' then
-            temp_model:add(cleanDPT(module))
+            temp_model:add(module:get(1))
          else
             temp_model:add(module)
          end
       end
-      torch.save(filename, temp_model)
-   elseif model_type == 'nn.gModule' then
-      torch.save(filename, model)
+      model = temp_model
    else
-      error('This saving function only works with Sequential or DataParallelTable modules.')
+      assert(model_type == 'nn.gModule',
+        'This saving function only works with Sequential, gModule or DataParallelTable modules.')
    end
+   if torch.type(model) == 'nn.gModule' then
+      for _,node in ipairs(model.backwardnodes) do
+         if node.data.module then
+            node.data.module.reverse_gradOutput = nil
+            node.data.module._gradOutput = nil
+         end
+      end
+      for _,node in ipairs(model.forwardnodes) do
+         if node.data.module then
+            node.data.module.reverse_input = nil
+            node.data.module._input = nil
+         end
+      end
+   end
+   torch.save(filename, model)
 end
 
 function loadDataParallel(filename, nGPU, is_cudnn)

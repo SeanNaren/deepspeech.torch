@@ -66,22 +66,23 @@ function WEREvaluator:getWER(gpu, model, calSizeOfSequences, verbose, epoch)
     for i = 1, self.nbOfTestIterations do
         -- get buf and fetch next one
         self.pool:synchronize()
-        local inputsCPU, targets, sizes_array = spect_buf, label_buf, sizes_buf
+        local inputs, sizes, targets = specBuf, sizesBuf, labelBuf -- move buf to training data
         inds = self.indexer:nxt_inds()
         self.pool:addjob(function()
             return _loader:nxt_batch(inds, true)
         end,
-            function(spect, label, sizes)
+            function(spect, label, size)
                 spect_buf = spect
                 label_buf = label
-                sizes_buf = sizes
+                sizes_buf = size
             end)
 
-        sizes_array = calSizeOfSequences(sizes_array)
-        inputs:resize(inputsCPU:size()):copy(inputsCPU)
-        cutorch.synchronize()
-        local predictions = model:forward({ inputs, sizes_array })
-        cutorch.synchronize()
+        sizes = calSizeOfSequences(sizes)
+        if gpu > 0 then
+            inputs = inputs:cuda()
+            sizes = sizes:cuda()
+        end
+        local predictions = model:forward({ inputs, sizes })
         if type(predictions) == 'table' then
             local temp = self:predicTrans(predictions[1], #predictions)
             for k = 2, #predictions do
