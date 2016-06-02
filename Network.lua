@@ -83,16 +83,11 @@ function Network:trainNetwork(epochs, sgd_params)
     local validationHistory = {}
     local x, gradParameters = self.model:getParameters()
 
-    -- inputs (preallocate)
-    -- local inputs = torch.Tensor()
-    -- local sizes = torch.Tensor()
     local criterion
     if self.nGPU <= 1 then
         criterion = nn.CTCCriterion()
     end
     if self.nGPU > 0 then
-        -- inputs = inputs:cuda()
-        -- sizes = sizes:cuda()
         if self.nGPU == 1 then
             criterion = criterion:cuda()
         end
@@ -178,7 +173,7 @@ function Network:trainNetwork(epochs, sgd_params)
         -- periodically save the model
         if self.saveModel and i % self.saveModelIterations == 0 then
             print("Saving model..")
-            self:saveNetwork(self.modelTrainingPath .. 'model_epoch_' .. i .. suffix .. '_' .. self.fileName)
+            self:saveNetwork(self.modelTrainingPath .. 'model_epoch_' .. i .. suffix .. '.t7')
         end
     end
 
@@ -189,7 +184,7 @@ function Network:trainNetwork(epochs, sgd_params)
 
     if self.saveModel then
         print("Saving model..")
-        self:saveNetwork(self.modelTrainingPath .. 'final_model_' .. suffix .. '_' .. self.fileName)
+        self:saveNetwork(self.modelTrainingPath .. 'final_model' .. suffix .. '.t7')
     end
 
     return lossHistory, validationHistory, minutesTaken
@@ -205,9 +200,14 @@ end
 
 --Loads the model into Network.
 function Network:loadNetwork(saveName, modelName, is_cudnn)
-    self.model = loadDataParallel(saveName, self.nGPU, is_cudnn)
+    print ('loading model ' .. saveName)
     local model = require(modelName)
+    self.model = model[1](self.nGPU, is_cudnn)
+    local weights, gradParameters = self.model:getParameters()
     self.calSizeOfSequences = model[2]
+    model = loadDataParallel(saveName, self.nGPU, is_cudnn)
+    local weights_to_copy, _ = model:getParameters()
+    weights:copy(weights_to_copy)
 end
 
 function Network:makeDirectories(folderPaths)

@@ -40,7 +40,7 @@ function WEREvaluator:getWER(gpu, model, calSizeOfSequences, verbose, epoch)
     if (gpu) then
         inputs = inputs:cuda()
     end
-    local spect_buf, label_buf, sizes_buf
+    local specBuf, labelBuf, sizesBuf
 
     -- get first batch
     local inds = self.indexer:nxt_inds()
@@ -48,9 +48,9 @@ function WEREvaluator:getWER(gpu, model, calSizeOfSequences, verbose, epoch)
             return _loader:nxt_batch(inds, false)
         end,
         function(spect, label, sizes)
-            spect_buf = spect
-            label_buf = label
-            sizes_buf = sizes
+            specBuf = spect
+            labelBuf = label
+            sizesBuf = sizes
         end)
 
     if verbose then
@@ -72,13 +72,12 @@ function WEREvaluator:getWER(gpu, model, calSizeOfSequences, verbose, epoch)
             return _loader:nxt_batch(inds, true)
         end,
             function(spect, label, size)
-                spect_buf = spect
-                label_buf = label
-                sizes_buf = size
+                specBuf = spect
+                labelBuf = label
+                sizesBuf = size
             end)
-
         sizes = calSizeOfSequences(sizes)
-        if gpu > 0 then
+        if gpu then
             inputs = inputs:cuda()
             sizes = sizes:cuda()
         end
