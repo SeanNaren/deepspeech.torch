@@ -29,7 +29,7 @@ function MaskRNN:updateOutput(input)
     self._input = input[1]:view(-1, input[2]:size(1), input[1]:size(2))
     self.output = self.module:updateOutput(self._input)
     self:filter(self.output, input[2])
-    self.output = self.output:view(self._input:size(1) * self._input:size(2), -1)
+    self.output = self.output:view(-1, self.output:size(3))
     return self.output
 end
 

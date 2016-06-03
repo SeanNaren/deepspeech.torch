@@ -1,6 +1,5 @@
 --Retrieves audio datasets. Currently retrieves the AN4 dataset by giving the folder directory.
 require 'lfs'
-require 'audio'
 require 'xlua'
 require 'lmdb'
 require 'torch'
@@ -71,6 +70,7 @@ function util.mk_lmdb(root_path, index_path, dict_path, out_dir, windowSize, str
             where wave_file_path should be absolute path
     --]]
 
+    require 'audio'
     local startTime = os.time()
     local mapper = Mapper(dict_path)
 
