@@ -80,5 +80,12 @@ local function calculateInputSizes(sizes)
     sizes = torch.floor((sizes - 2) / 2 + 1) -- pool1
     return sizes
 end
+local function get_min_width()
+    local width = 1
+    width = (width+1) * 2 + 2
+    width = (width+1) * 2 + 21
+    width = (width+1) * 2 + 41
+    return width
+end
 
-return { deepSpeech, calculateInputSizes }
+return { deepSpeech, calculateInputSizes, get_min_width }

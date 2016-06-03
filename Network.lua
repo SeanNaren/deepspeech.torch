@@ -59,16 +59,15 @@ function Network:init(networkParams)
     self.logsTrainPath = networkParams.logsTrainPath or nil
     self.logsValidationPath = networkParams.logsValidationPath or nil
     self.modelTrainingPath = networkParams.modelTrainingPath or nil
+    self.trainIteration = networkParams.trainIteration
+    self.testGap = networkParams.testGap
 
     self:makeDirectories({ self.logsTrainPath, self.logsValidationPath, self.modelTrainingPath })
 
     self.mapper = Mapper(networkParams.dictionaryPath)
-    self.werTester = WEREvaluator(self.validationSetLMDBPath, self.mapper, networkParams.validationBatchSize,
-        networkParams.validationIterations, self.logsValidationPath)
     self.saveModel = networkParams.saveModel
     self.loadModel = networkParams.loadModel
-    self.saveModelIterations = networkParams.saveModelIterations or 10 -- Saves model every number of iterations.
-
+    self.saveModelIterations = networkParams.saveModelIterations or 1000 -- Saves model every number of iterations.
     -- setting model saving/loading
     if (self.loadModel) then
         assert(networkParams.fileName, "Filename hasn't been given to load model.")
@@ -80,11 +79,21 @@ function Network:init(networkParams)
         self:prepSpeechModel(networkParams.modelName)
     end
     assert((networkParams.saveModel or networkParams.loadModel) and networkParams.fileName, "To save/load you must specify the fileName you want to save to")
+
     -- setting online loading
-    self.indexer = indexer(networkParams.trainingSetLMDBPath, networkParams.batchSize)
-    self.indexer:prep_sorted_inds()
-    self.pool = threads.Threads(1, function() require 'Loader' end)
-    self.nbBatches = math.floor(self.indexer.lmdb_size / networkParams.batchSize)
+    self.pool = threads.Threads(1,
+                                function()
+                                    require 'Loader'
+                                    require 'Mapper'
+                                end,
+                                function()
+                                    trainLoader = Loader(networkParams.trainingSetLMDBPath, networkParams.batchSize)
+                                    trainLoader:prep_sorted_inds()
+                                end)
+    self.pool:synchronize() -- needed?
+
+    self.werTester = WEREvaluator(self.validationSetLMDBPath, self.mapper, networkParams.validationBatchSize,
+        networkParams.validationIterations, self.logsValidationPath)
 
     self.logger = optim.Logger(self.logsTrainPath .. 'train' .. suffix .. '.log')
     self.logger:setNames { 'loss', 'WER' }
@@ -97,17 +106,21 @@ function Network:prepSpeechModel(modelName)
     self.calSizeOfSequences = model[2]
 end
 
-function Network:testNetwork(epoch)
+function Network:testNetwork(currentIteration)
     self.model:evaluate()
-    if self.
-    self.model = convertBN(self.model, nn)
-    local wer = self.werTester:getWER(self.nGPU > 0, self.model, self.calSizeOfSequences, true, epoch or 1) -- details in log
-    self.model = convertBN(self.model, cudnn)
+    if self.isCUDNN then
+        self.model = convertBN(self.model, nn)
+    end
+    local wer = self.werTester:getWER(self.nGPU > 0, self.model, self.calSizeOfSequences, true, currentIteration) -- details in log
+    self.model:zeroGradParameters()
+    if self.isCUDNN then
+        self.model = convertBN(self.model, cudnn)
+    end
     self.model:training()
     return wer
 end
 
-function Network:trainNetwork(epochs, sgd_params)
+function Network:trainNetwork(sgd_params)
     --[[
         train network with self-defined feval (sgd inside); use ctc for evaluation
     --]]
@@ -115,7 +128,10 @@ function Network:trainNetwork(epochs, sgd_params)
 
     local lossHistory = {}
     local validationHistory = {}
+
     local x, gradParameters = self.model:getParameters()
+    torch.save('saved_w',self.model.weight)
+    torch.save('saved_b',self.model.bias)
 
     local criterion
     if self.nGPU <= 1 then
@@ -127,14 +143,12 @@ function Network:trainNetwork(epochs, sgd_params)
         end
     end
 
-    -- def loading buf and loader
-    local loader = Loader(self.trainingSetLMDBPath)
+    -- def loading buf
     local specBuf, labelBuf, sizesBuf
 
     -- load first batch
-    local inds = self.indexer:nxt_sorted_inds()
     self.pool:addjob(function()
-        return loader:nxt_batch(inds, false)
+        return trainLoader:nxt_batch(trainLoader.SORTED, false)
     end,
         function(spect, label, sizes)
             specBuf = spect
@@ -147,9 +161,8 @@ function Network:trainNetwork(epochs, sgd_params)
         --------------------- data load ------------------------
         self.pool:synchronize() -- wait previous loading
         local inputs, sizes, targets = specBuf, sizesBuf, labelBuf -- move buf to training data
-        inds = self.indexer:nxt_sorted_inds() -- load nxt batch
         self.pool:addjob(function()
-            return loader:nxt_batch(inds, false)
+            return trainLoader:nxt_batch(trainLoader.SORTED, false)
         end,
             function(spect, label, size)
                 specBuf = spect
@@ -157,7 +170,6 @@ function Network:trainNetwork(epochs, sgd_params)
                 sizesBuf = size
             end)
         --------------------- fwd and bwd ---------------------
-        -- inputs:resize(inputsCPU:size()):copy(inputsCPU) -- transfer over to GPU
         sizes = self.calSizeOfSequences(sizes)
         if self.nGPU > 0 then
             inputs = inputs:cuda()
@@ -181,33 +193,36 @@ function Network:trainNetwork(epochs, sgd_params)
     end
 
     -- training
-    local currentLoss
     local startTime = os.time()
+    local averageLoss = 0
 
-    for i = 1, epochs do
-        local averageLoss = 0
-        for j = 1, self.nbBatches do
-            currentLoss = 0
-            local _, fs = optim.sgd(feval, x, sgd_params)
-            currentLoss = currentLoss + fs[1]
-            xlua.progress(j, self.nbBatches)
-            averageLoss = averageLoss + currentLoss
+    for j = 1,self.trainIteration do
+
+        local _, fs = optim.sgd(feval, x, sgd_params)
+        averageLoss = averageLoss + fs[1]
+
+        local p = j % self.testGap; if p == 0 then p = self.testGap end
+        xlua.progress(p, self.testGap)
+
+        if j % self.testGap == 0 then
+            averageLoss = averageLoss / self.testGap -- Calculate the average loss at this epoch.
+            -- Update validation error rates
+            local wer = self:testNetwork(j)
+
+            print(string.format("Training Iteration: %d Average Loss: %f Average Validation WER: %.2f%%",
+                j, averageLoss, 100 * wer))
+            table.insert(lossHistory, averageLoss) -- Add the average loss value to the logger.
+            table.insert(validationHistory, 100 * wer)
+            self.logger:add { averageLoss, 100 * wer }
+
+            averageLoss = 0
         end
 
-        averageLoss = averageLoss / self.nbBatches -- Calculate the average loss at this epoch.
-
-        -- Update validation error rates
-        local wer = self:testNetwork(i)
-
-        print(string.format("Training Epoch: %d Average Loss: %f Average Validation WER: %.2f%%", i, averageLoss, 100 * wer))
-        table.insert(lossHistory, averageLoss) -- Add the average loss value to the logger.
-        table.insert(validationHistory, 100 * wer)
-        self.logger:add { averageLoss, 100 * wer }
-
         -- periodically save the model
-        if self.saveModel and i % self.saveModelIterations == 0 then
+        if self.saveModel and j % self.saveModelIterations == 0 then
             print("Saving model..")
-            self:saveNetwork(self.modelTrainingPath .. 'model_epoch_' .. i .. suffix .. '.t7')
+            self:saveNetwork(self.modelTrainingPath .. '_iteration_' .. j ..
+                suffix .. '_' .. self.fileName)
         end
     end
 
