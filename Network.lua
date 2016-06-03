@@ -13,12 +13,44 @@ local suffix = '_' .. os.date('%Y%m%d_%H%M%S')
 local threads = require 'threads'
 local Network = {}
 
+local function replace(self, callback)
+  local out = callback(self)
+  if self.modules then
+    for i, module in ipairs(self.modules) do
+      self.modules[i] = replace(module, callback)
+    end
+  end
+  return out
+end
+
+local function convertBN(net, dst)
+    return replace(net, function(x)
+        local y = 0
+        local src = dst == nn and cudnn or nn
+        local src_prefix = src == nn and 'nn.' or 'cudnn.'
+        local dst_prefix = dst == nn and 'nn.' or 'cudnn.'
+
+        local function convert(v)
+            local y = {}
+            torch.setmetatable(y, dst_prefix..v)
+            for k,u in pairs(x) do y[k] = u end
+            if src == cudnn and x.clearDesc then x.clearDesc(y) end
+            return y
+        end
+        if torch.typename(x) == src_prefix..'BatchNormalization' then
+            y = convert('BatchNormalization')
+        end
+        return y == 0 and x or y
+    end)
+end
+
 function Network:init(networkParams)
 
     self.fileName = networkParams.fileName -- The file name to save/load the network from.
     self.nGPU = networkParams.nGPU
+    self.isCUDNN = networkParams.backend == 'cudnn'
     if self.nGPU <= 0 then
-        assert(networkParams.backend ~= 'cudnn')
+        assert(not self.isCUDNN)
     end
     assert(networkParams.batchSize % networkParams.nGPU == 0, 'batch size must be the multiple of nGPU')
     assert(networkParams.validationBatchSize % networkParams.nGPU == 0, 'batch size must be the multiple of nGPU')
@@ -42,10 +74,10 @@ function Network:init(networkParams)
         assert(networkParams.fileName, "Filename hasn't been given to load model.")
         self:loadNetwork(networkParams.fileName,
             networkParams.modelName,
-            networkParams.backend == 'cudnn')
+            self.isCUDNN)
     else
         assert(networkParams.modelName, "Must have given a model to train.")
-        self:prepSpeechModel(networkParams.modelName, networkParams.backend)
+        self:prepSpeechModel(networkParams.modelName)
     end
     assert((networkParams.saveModel or networkParams.loadModel) and networkParams.fileName, "To save/load you must specify the fileName you want to save to")
     -- setting online loading
@@ -59,16 +91,18 @@ function Network:init(networkParams)
     self.logger:style { '-', '-' }
 end
 
-function Network:prepSpeechModel(modelName, backend)
+function Network:prepSpeechModel(modelName)
     local model = require(modelName)
-    self.model = model[1](self.nGPU, backend == 'cudnn')
+    self.model = model[1](self.nGPU, self.isCUDNN)
     self.calSizeOfSequences = model[2]
 end
 
 function Network:testNetwork(epoch)
     self.model:evaluate()
-    -- cudnn.convert(self.model, nn)
+    if self.
+    self.model = convertBN(self.model, nn)
     local wer = self.werTester:getWER(self.nGPU > 0, self.model, self.calSizeOfSequences, true, epoch or 1) -- details in log
+    self.model = convertBN(self.model, cudnn)
     self.model:training()
     return wer
 end
@@ -199,13 +233,12 @@ function Network:saveNetwork(saveName)
 end
 
 --Loads the model into Network.
-function Network:loadNetwork(saveName, modelName, is_cudnn)
+function Network:loadNetwork(saveName, modelName)
     print ('loading model ' .. saveName)
-    local model = require(modelName)
-    self.model = model[1](self.nGPU, is_cudnn)
+    local model
+    self.prepSpeechModel(model, modelName)
     local weights, gradParameters = self.model:getParameters()
-    self.calSizeOfSequences = model[2]
-    model = loadDataParallel(saveName, self.nGPU, is_cudnn)
+    model = loadDataParallel(saveName, self.nGPU, self.isCUDNN)
     local weights_to_copy, _ = model:getParameters()
     weights:copy(weights_to_copy)
 end
