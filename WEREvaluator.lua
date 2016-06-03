@@ -9,14 +9,21 @@ local Evaluator = require 'Evaluator'
 
 local WEREvaluator = torch.class('WEREvaluator')
 
-local _loader
-
 function WEREvaluator:__init(_path, mapper, testBatchSize, nbOfTestIterations, logsPath)
-    _loader = Loader(_path)
+
     self.testBatchSize = testBatchSize
     self.nbOfTestIterations = nbOfTestIterations
-    self.indexer = indexer(_path, testBatchSize)
-    self.pool = threads.Threads(1, function() require 'Loader' end)
+    
+    self.pool = threads.Threads(1, 
+                                function()
+                                    require 'Mapper'
+                                    require 'Loader' 
+                                end,
+                                function()
+                                    testLoader = Loader(_path, testBatchSize)
+                                end)
+    self.pool:synchronize() -- needed?
+
     self.mapper = mapper
     self.logsPath = logsPath
     self.suffix = '_' .. os.date('%Y%m%d_%H%M%S')
@@ -27,7 +34,7 @@ function WEREvaluator:predicTrans(src, nGPU)
     return src:view(-1, self.testBatchSize / gpu_number, src:size(2)):transpose(1,2)
 end
 
-function WEREvaluator:getWER(gpu, model, calSizeOfSequences, verbose, epoch)
+function WEREvaluator:getWER(gpu, model, calSizeOfSequences, verbose, currentIteration)
     --[[
         load test_iter*batch_size data point from test set; compute average WER
 
@@ -43,9 +50,8 @@ function WEREvaluator:getWER(gpu, model, calSizeOfSequences, verbose, epoch)
     local spect_buf, label_buf, sizes_buf
 
     -- get first batch
-    local inds = self.indexer:nxt_inds()
     self.pool:addjob(function()
-            return _loader:nxt_batch(inds, false)
+            return testLoader:nxt_batch(testLoader.DEFAULT, false)
         end,
         function(spect, label, sizes)
             spect_buf = spect
@@ -56,7 +62,7 @@ function WEREvaluator:getWER(gpu, model, calSizeOfSequences, verbose, epoch)
     if verbose then
         local f = assert(io.open(self.logsPath .. 'WER_Test' .. self.suffix .. '.log', 'a'), "Could not create validation test logs, does the folder "
                 .. self.logsPath .. " exist?")
-        f:write('======================== BEGIN WER TEST EPOCH: ' .. epoch .. ' =========================\n')
+        f:write('======================== BEGIN WER TEST currentIteration: ' .. currentIteration .. ' =========================\n')
         f:close()
     end
 
@@ -67,9 +73,8 @@ function WEREvaluator:getWER(gpu, model, calSizeOfSequences, verbose, epoch)
         -- get buf and fetch next one
         self.pool:synchronize()
         local inputsCPU, targets, sizes_array = spect_buf, label_buf, sizes_buf
-        inds = self.indexer:nxt_inds()
         self.pool:addjob(function()
-            return _loader:nxt_batch(inds, true)
+            return testLoader:nxt_batch(testLoader.DEFAULT, false)
         end,
             function(spect, label, sizes)
                 spect_buf = spect

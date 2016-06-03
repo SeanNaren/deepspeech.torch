@@ -7,14 +7,13 @@ torch.setdefaulttensortype('torch.FloatTensor')
 seed = 10
 torch.manualSeed(seed)
 cutorch.manualSeedAll(seed)
-local epochs = 70
 
 local networkParams = {
     loadModel = false,
     saveModel = true,
     modelName = 'DeepSpeechModel',
     backend = 'cudnn',
-    nGPU = 2, -- Number of GPUs, set -1 to use CPU
+    nGPU = 1, -- Number of GPUs, set -1 to use CPU
     trainingSetLMDBPath = './prepare_an4/train/',-- online loading path data.
     validationSetLMDBPath = './prepare_an4/test/',
     logsTrainPath = './logs/TrainingLoss/',
@@ -22,10 +21,12 @@ local networkParams = {
     modelTrainingPath = './models/',
     fileName = 'CTCNetwork.t7',
     dictionaryPath = './dictionary',
+    trainIteration= 47*70,
     batchSize = 20,
     validationBatchSize = 2,
     validationIterations = 65,
-    saveModelIterations = 50
+    testGap = 47*2,
+    saveModelIterations = 47*20 -- iterations! Intead of Epoch
 }
 --Parameters for the stochastic gradient descent (using the optim library).
 local sgdParams = {
@@ -40,7 +41,7 @@ local sgdParams = {
 --Create and train the network based on the parameters and training data.
 Network:init(networkParams)
 
-Network:trainNetwork(epochs, sgdParams)
+Network:trainNetwork(sgdParams)
 
 --Creates the loss plot.
 Network:createLossGraph()
