@@ -71,6 +71,7 @@ function Loader:prep_sorted_inds()
     if paths.filep(indicesFilePath) then
         print('found previously saved inds..')
         self.sorted_inds = torch.load(indicesFilePath)
+        self.lmdb_size = #self.sorted_inds
         return
     end
 
@@ -84,7 +85,7 @@ function Loader:prep_sorted_inds()
         local lengthOfAudio = txn:get(i):size(2) -- get the len of spect
         if lengthOfAudio >= self.min_width then
             true_size = true_size + 1
-            table.insert(self.sorted_inds, { true_size, lengthOfAudio })
+            table.insert(self.sorted_inds, { i, lengthOfAudio })
             if lengths[lengthOfAudio] == nil then lengths[lengthOfAudio] = true end
             if i % 100 == 0 then xlua.progress(i, self.lmdb_size) end
         end

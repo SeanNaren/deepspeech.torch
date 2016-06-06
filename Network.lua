@@ -130,8 +130,6 @@ function Network:trainNetwork(sgd_params)
     local validationHistory = {}
 
     local x, gradParameters = self.model:getParameters()
-    torch.save('saved_w',self.model.weight)
-    torch.save('saved_b',self.model.bias)
 
     local criterion
     if self.nGPU <= 1 then

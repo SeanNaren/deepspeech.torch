@@ -23,8 +23,8 @@ local networkParams = {
     dictionaryPath = './dictionary',
     trainIteration= 47*70,
     batchSize = 20,
-    validationBatchSize = 2,
-    validationIterations = 65,
+    validationBatchSize = 20,
+    validationIterations = 7,
     testGap = 47*2,
     saveModelIterations = 47*20 -- iterations! Intead of Epoch
 }
