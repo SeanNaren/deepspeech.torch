@@ -5,6 +5,7 @@ require 'xlua'
 require 'paths'
 tds = require 'tds'
 local model_t = require 'DeepSpeechModel'
+local cal_size = model_t[2]
 local get_min_width = model_t[3]
 
 --[[
@@ -71,28 +72,37 @@ function Loader:prep_sorted_inds()
     if paths.filep(indicesFilePath) then
         print('found previously saved inds..')
         self.sorted_inds = torch.load(indicesFilePath)
+        print('original size: '..self.lmdb_size..' valid data: '..#self.sorted_inds)
         self.lmdb_size = #self.sorted_inds
         return
     end
 
     -- if not make a new one
     print('did not find previously saved indices, generating.')
+
     self.db_spect:open(); local txn = self.db_spect:txn(true)
+    self.db_label:open(); local txn_label = self.db_label:txn(true)
+
     local lengths = {}
     -- those shorter than min_width are ignored
     local true_size = 0
     for i = 1, self.lmdb_size do
         local lengthOfAudio = txn:get(i):size(2) -- get the len of spect
-        if lengthOfAudio >= self.min_width then
+        local lengthOfLabel = #(torch.deserialize(txn_label:get(i)))
+
+        if lengthOfAudio >= self.min_width and cal_size(lengthOfAudio) >= lengthOfLabel then
             true_size = true_size + 1
             table.insert(self.sorted_inds, { i, lengthOfAudio })
             if lengths[lengthOfAudio] == nil then lengths[lengthOfAudio] = true end
             if i % 100 == 0 then xlua.progress(i, self.lmdb_size) end
         end
     end
+    
 
+    print('original size: '..self.lmdb_size..' valid data: '..true_size)
     self.lmdb_size = true_size -- set size to true size
     txn:abort(); self.db_spect:close()
+    txn_label:abort(); self.db_label:close()
 
     local function comp(a, b) return a[2] < b[2] end
     table.sort(self.sorted_inds, comp)
@@ -199,7 +209,7 @@ function Loader:nxt_batch(mode, flag)
     local cnt = 1
     -- reads out a batch and store in lists
     for _, ind in next, inds, nil do
-        local tensor = txn_spect:get(ind):float()
+        local tensor = txn_spect:get(ind)
         local label = torch.deserialize(txn_label:get(ind))
 
         h = tensor:size(1)
@@ -239,22 +249,26 @@ function Loader:nxt_default_batch(flag)
     self.db_label:open(); local txn_label = self.db_label:txn(true)
     if flag then self.db_trans:open(); txn_trans = self.db_trans:txn(true) end
 
-    local batch_cnt = 0
     -- reads out a batch and store in lists
+    local batch_cnt = 0
     while batch_cnt < self.batch_size do
-        local tensor = txn_spect:get(self.cnt):float()
-        if tensor:size(2) >= self.min_width then
+        
+        local tensor = txn_spect:get(self.cnt)
+        local label = torch.deserialize(txn_label:get(self.cnt))
+        local width = tensor:size(2)
+
+        if width >= self.min_width and cal_size(width) >= #label then
             batch_cnt = batch_cnt + 1
 
-            local label = torch.deserialize(txn_label:get(self.cnt))
             h = tensor:size(1)
-            table.insert(sizes_list,tensor:size(2))
-            if max_w < tensor:size(2) then max_w = tensor:size(2) end -- find the max len in this batch
+            table.insert(sizes_list, width)
+            if max_w < width then max_w = width end -- find the max len in this batch
 
             tensor_list:insert(tensor)
             table.insert(label_list, label)
             if flag then table.insert(trans_list, torch.deserialize(txn_trans:get(self.cnt))) end
         end
+
         self.cnt = self.cnt + 1
         if self.cnt > self.lmdb_size then self.cnt = self.cnt % self.lmdb_size end
     end

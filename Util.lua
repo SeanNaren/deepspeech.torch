@@ -95,8 +95,7 @@ function util.mk_lmdb(root_path, index_path, dict_path, out_dir, windowSize, str
         
         if spect:size(2) >= #label then -- ensure more frames than label
             -- put into lmdb
-            spect = spect:float()
-            txn_spect:put(cnt, spect:byte())
+            txn_spect:put(cnt, spect:float())
             txn_label:put(cnt, torch.serialize(label))
             txn_trans:put(cnt, torch.serialize(modified_trans))
             saved_cnt = saved_cnt + 1
