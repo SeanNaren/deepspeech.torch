@@ -31,13 +31,38 @@ local function BRNN(feat, seqLengths, rnnModule, rnnHiddenSize)
     rnn:add(nn.BatchNormalization(rnnHiddenSize, 1e-3))
     return rnn({ fwdLstm, bwdLstm })
 end
--- Creates the covnet+rnn structure.
-local function deepSpeech(nGPU, isCUDNN)
+
+-- Based on convolution kernel and strides.
+local function calculateInputSizes(sizes)
+    sizes = torch.floor((sizes - 41) / 2 + 1) -- conv1
+    sizes = torch.floor((sizes - 21) / 2 + 1) -- conv2
+    sizes = torch.floor((sizes - 2) / 2 + 1) -- pool1
+    return sizes
+end
+
+
+local function get_min_width()
+    local width = 1
+    width = (width+1) * 2 + 2
+    width = (width+1) * 2 + 21
+    width = (width+1) * 2 + 41
+    return width
+end
+
+
+local function deepSpeech(nGPU, isCUDNN, height)
+    --[[
+        Creates the covnet+rnn structure.
+        
+        height(optional): specify the height of input default is 129
+    --]]
+
     local GRU = false
     local seqLengths = nn.Identity()()
     local input = nn.Identity()()
     local feature = nn.Sequential()
-
+    height = height or 129 -- set to 129 if nil
+    
     -- (nInputPlane, nOutputPlane, kW, kH, [dW], [dH], [padW], [padH]) conv layers.
     feature:add(nn.SpatialConvolution(1, 32, 41, 11, 2, 2))
     feature:add(nn.SpatialBatchNormalization(32, 1e-3))
@@ -47,7 +72,10 @@ local function deepSpeech(nGPU, isCUDNN)
     feature:add(nn.ReLU(true))
     feature:add(nn.SpatialMaxPooling(2, 2, 2, 2)) -- TODO the DS2 architecture does not include this layer, but mem overhead increases.
 
-    local rnnInputsize = 32 * 25 -- based on the above convolutions.
+
+    -- TODO should ask arg for flogbank size, and compute this through variable 
+    local tmp = torch.rand(1, 1, height, get_min_width()*2) --init something
+    local rnnInputsize = 32 * feature:forward(tmp):size(3) -- outputPlanes X outputHeight
     local rnnHiddenSize = 400 -- size of rnn hidden layers
     local nbOfHiddenLayers = 4
 
@@ -73,19 +101,5 @@ local function deepSpeech(nGPU, isCUDNN)
     return model
 end
 
--- Based on convolution kernel and strides.
-local function calculateInputSizes(sizes)
-    sizes = torch.floor((sizes - 41) / 2 + 1) -- conv1
-    sizes = torch.floor((sizes - 21) / 2 + 1) -- conv2
-    sizes = torch.floor((sizes - 2) / 2 + 1) -- pool1
-    return sizes
-end
-local function get_min_width()
-    local width = 1
-    width = (width+1) * 2 + 2
-    width = (width+1) * 2 + 21
-    width = (width+1) * 2 + 41
-    return width
-end
 
 return { deepSpeech, calculateInputSizes, get_min_width }
