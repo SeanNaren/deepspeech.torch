@@ -10,7 +10,7 @@ function test.evaluator()
     local target = { "test", "a", "sentence" }
 
     local prediction = { "a", "sentence" }
-    local deletion = evaluator.sequenkceErrorRate(target, prediction)
+    local deletion = evaluator.sequenceErrorRate(target, prediction)
     local prediction = { "test", "a", "sentence", "inserted" }
     local insertion = evaluator.sequenceErrorRate(target, prediction)
     local prediction = { "test", "substituted", "sentence" }
