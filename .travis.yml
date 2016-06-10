@@ -64,7 +64,7 @@ script:
 - cd ${ROOT_TRAVIS_DIR}
 - git clone https://github.com/SeanNaren/CTCSpeechRecognition.git
 - cd CTCSpeechRecognition/tests
-- cp ../* ${INSTALL_PREFIX}/share/lua/5.1/
+- rsync -av --progress ../* ${INSTALL_PREFIX}/share/lua/5.1/ --exclude ../tests --exclude ../prepare_an4/
 - export PATH=${INSTALL_PREFIX}/bin:$PATH
 - export TESTLUA=$(which luajit lua | head -n 1)
 - echo ${TESTLUA}
