@@ -1,6 +1,5 @@
 --Retrieves audio datasets. Currently retrieves the AN4 dataset by giving the folder directory.
 require 'lfs'
-require 'audio'
 require 'xlua'
 require 'lmdb'
 require 'torch'
@@ -35,7 +34,7 @@ local function trans2tokens(line, _mapper)
         table.insert(label, _mapper.alphabet2token[character])
     end
 
-    return torch.serialize(label), torch.serialize(line)
+    return label, line
 end
 
 local function start_txn(_path, _name)
@@ -71,6 +70,7 @@ function util.mk_lmdb(root_path, index_path, dict_path, out_dir, windowSize, str
             where wave_file_path should be absolute path
     --]]
 
+    require 'audio'
     local startTime = os.time()
     local mapper = Mapper(dict_path)
 
@@ -80,6 +80,7 @@ function util.mk_lmdb(root_path, index_path, dict_path, out_dir, windowSize, str
     local db_trans, txn_trans = start_txn(out_dir .. '/trans', 'trans')
 
     local cnt = 1
+    local saved_cnt = 1
     local show_gap = 100
     for line in io.lines(index_path) do
         -- print('processing ' .. line .. ' cnt: ' .. cnt)
@@ -91,12 +92,14 @@ function util.mk_lmdb(root_path, index_path, dict_path, out_dir, windowSize, str
         -- make spect
         local wave = audio.load(root_path .. wave_path)
         local spect = audio.spectrogram(wave, windowSize, 'hamming', stride) -- freq-by-frames tensor
-
-        -- put into lmdb
-        spect = spect:float()
-        txn_spect:put(cnt, spect:byte())
-        txn_label:put(cnt, label)
-        txn_trans:put(cnt, modified_trans)
+        
+        if spect:size(2) >= #label then -- ensure more frames than label
+            -- put into lmdb
+            txn_spect:put(cnt, spect:float())
+            txn_label:put(cnt, torch.serialize(label))
+            txn_trans:put(cnt, torch.serialize(modified_trans))
+            saved_cnt = saved_cnt + 1
+        end
 
         -- commit buffer
         if cnt % show_gap == 0 then
@@ -108,7 +111,7 @@ function util.mk_lmdb(root_path, index_path, dict_path, out_dir, windowSize, str
         xlua.progress(cnt % show_gap + 1, show_gap)
         cnt = cnt + 1
     end
-    print('total ' .. cnt .. ' items in ' .. os.time() - startTime .. 's')
+    print('total '..cnt..' items scanned, '..saved_cnt..' items saved in ' .. os.time() - startTime .. 's')
     -- close
     end_txn(db_spect, txn_spect)
     end_txn(db_label, txn_label)

@@ -30,7 +30,7 @@ function ReverseMaskRNN:updateOutput(input)
     self.reverse_input = self:reverse(self.reverse_input, input[2])
     local reverse_output = self.module:updateOutput(self.reverse_input)
     self.output = self:reverse(reverse_output, input[2])
-    self.output = self.output:view(self.reverse_input:size(1) * self.reverse_input:size(2), -1)
+    self.output = self.output:view(-1, reverse_output:size(3))
     return self.output
 end
 

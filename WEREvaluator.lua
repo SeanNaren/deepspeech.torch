@@ -9,20 +9,32 @@ local Evaluator = require 'Evaluator'
 
 local WEREvaluator = torch.class('WEREvaluator')
 
-local _loader
-
 function WEREvaluator:__init(_path, mapper, testBatchSize, nbOfTestIterations, logsPath)
-    _loader = Loader(_path)
+
     self.testBatchSize = testBatchSize
     self.nbOfTestIterations = nbOfTestIterations
-    self.indexer = indexer(_path, testBatchSize)
-    self.pool = threads.Threads(1, function() require 'Loader' end)
+
+    self.pool = threads.Threads(1,
+                                function()
+                                    require 'Mapper'
+                                    require 'Loader'
+                                end,
+                                function()
+                                    testLoader = Loader(_path, testBatchSize)
+                                end)
+    self.pool:synchronize() -- needed?
+
     self.mapper = mapper
     self.logsPath = logsPath
     self.suffix = '_' .. os.date('%Y%m%d_%H%M%S')
 end
 
-function WEREvaluator:getWER(gpu, model, calSizeOfSequences, verbose, epoch)
+function WEREvaluator:predicTrans(src, nGPU)
+    local gpu_number = nGPU or 1
+    return src:view(-1, self.testBatchSize / gpu_number, src:size(2)):transpose(1,2)
+end
+
+function WEREvaluator:getWER(gpu, model, calSizeOfSequences, verbose, currentIteration)
     --[[
         load test_iter*batch_size data point from test set; compute average WER
 
@@ -35,23 +47,22 @@ function WEREvaluator:getWER(gpu, model, calSizeOfSequences, verbose, epoch)
     if (gpu) then
         inputs = inputs:cuda()
     end
-    local spect_buf, label_buf, sizes_buf
+    local specBuf, labelBuf, sizesBuf
 
     -- get first batch
-    local inds = self.indexer:nxt_inds()
     self.pool:addjob(function()
-        return _loader:nxt_batch(inds, false)
-    end,
+            return testLoader:nxt_batch(testLoader.DEFAULT, false)
+        end,
         function(spect, label, sizes)
-            spect_buf = spect
-            label_buf = label
-            sizes_buf = sizes
+            specBuf = spect
+            labelBuf = label
+            sizesBuf = sizes
         end)
 
     if verbose then
         local f = assert(io.open(self.logsPath .. 'WER_Test' .. self.suffix .. '.log', 'a'), "Could not create validation test logs, does the folder "
                 .. self.logsPath .. " exist?")
-        f:write('======================== BEGIN WER TEST EPOCH: ' .. epoch .. ' =========================\n')
+        f:write('======================== BEGIN WER TEST currentIteration: ' .. currentIteration .. ' =========================\n')
         f:close()
     end
 
@@ -61,23 +72,30 @@ function WEREvaluator:getWER(gpu, model, calSizeOfSequences, verbose, epoch)
     for i = 1, self.nbOfTestIterations do
         -- get buf and fetch next one
         self.pool:synchronize()
-        local inputsCPU, targets, sizes_array = spect_buf, label_buf, sizes_buf
-        inds = self.indexer:nxt_inds()
+        local inputs, sizes, targets = specBuf, sizesBuf, labelBuf -- move buf to training data
         self.pool:addjob(function()
-            return _loader:nxt_batch(inds, true)
+            return testLoader:nxt_batch(testLoader.DEFAULT, false)
         end,
-            function(spect, label, sizes)
-                spect_buf = spect
-                label_buf = label
-                sizes_buf = sizes
+            function(spect, label, size)
+                specBuf = spect
+                labelBuf = label
+                sizesBuf = size
             end)
-
-        sizes_array = calSizeOfSequences(sizes_array)
-        inputs:resize(inputsCPU:size()):copy(inputsCPU)
-        cutorch.synchronize()
-        local predictions = model:forward({ inputs, sizes_array })
-        predictions = predictions:view(-1, self.testBatchSize, predictions:size(2)):transpose(1, 2)
-        cutorch.synchronize()
+        sizes = calSizeOfSequences(sizes)
+        if gpu then
+            inputs = inputs:cuda()
+            sizes = sizes:cuda()
+        end
+        local predictions = model:forward({ inputs, sizes })
+        if type(predictions) == 'table' then
+            local temp = self:predicTrans(predictions[1], #predictions)
+            for k = 2, #predictions do
+                temp = torch.cat(temp, self:predicTrans(predictions[k], #predictions), 1)
+            end
+            predictions = temp
+        else
+            predictions = self:predicTrans(predictions)
+        end
 
         -- =============== for every data point in this batch ==================
         for j = 1, self.testBatchSize do
@@ -87,6 +105,7 @@ function WEREvaluator:getWER(gpu, model, calSizeOfSequences, verbose, epoch)
             cumWER = cumWER + WER
             table.insert(werPredictions, { wer = WER * 100, target = self:tokens2text(targets[j]), prediction = self:tokens2text(predict_tokens) })
         end
+        xlua.progress(i, self.nbOfTestIterations)
     end
 
     local function comp(a, b) return a.wer < b.wer end
