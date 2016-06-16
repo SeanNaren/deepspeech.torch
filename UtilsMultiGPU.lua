@@ -4,6 +4,7 @@ require 'nngraph'
 require 'MaskRNN'
 require 'ReverseMaskRNN'
 require 'cudnn'
+require 'BatchRNNReLU'
 
 local ffi = require 'ffi'
 

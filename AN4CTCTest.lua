@@ -24,5 +24,7 @@ local networkParams = {
 
 Network:init(networkParams)
 
+print("Testing network...")
 local wer = Network:testNetwork()
 print(string.format('Number of iterations: %d average WER: %2.f%%', networkParams.validationIterations, 100 * wer))
+print(string.format('More information written to log file at %s', networkParams.logsValidationPath))

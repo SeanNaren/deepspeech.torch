@@ -18,7 +18,7 @@ function Network:init(networkParams)
     self.fileName = networkParams.fileName -- The file name to save/load the network from.
     self.nGPU = networkParams.nGPU
     if self.nGPU <= 0 then
-        assert(networkParams.backend ~= 'cudnn')
+        assert(networkParams.backend ~= 'cudnn', "Can't have cuDNN backend when set to CPU mode")
     end
     self.trainingSetLMDBPath = networkParams.trainingSetLMDBPath
     self.validationSetLMDBPath = networkParams.validationSetLMDBPath
@@ -32,6 +32,7 @@ function Network:init(networkParams)
     self.werTester = WEREvaluator(self.validationSetLMDBPath, self.mapper, networkParams.validationBatchSize,
         networkParams.validationIterations, self.logsValidationPath)
     self.saveModel = networkParams.saveModel
+    self.saveModelInTraining = networkParams.saveModelInTraining or false
     self.loadModel = networkParams.loadModel
     self.saveModelIterations = networkParams.saveModelIterations or 10 -- Saves model every number of iterations.
 
@@ -81,6 +82,8 @@ function Network:trainNetwork(epochs, sgd_params)
     local validationHistory = {}
     local ctcCriterion = nn.CTCCriterion()
     local x, gradParameters = self.model:getParameters()
+
+    print("number of parameters: ", gradParameters:size())
 
     -- inputs (preallocate)
     local inputs = torch.Tensor()
@@ -163,7 +166,7 @@ function Network:trainNetwork(epochs, sgd_params)
         self.logger:add { averageLoss, 100 * wer }
 
         -- periodically save the model
-        if self.saveModel and i % self.saveModelIterations == 0 then
+        if self.saveModelInTraining and i % self.saveModelIterations == 0 then
             print("Saving model..")
             self:saveNetwork(self.modelTrainingPath .. 'model_epoch_' .. i .. suffix .. '_' .. self.fileName)
         end

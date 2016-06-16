@@ -14,7 +14,7 @@ local networkParams = {
     loadModel = false,
     saveModel = true,
     modelName = 'DeepSpeechModel',
-    backend = 'cudnn',
+    backend = 'cudnn', -- switch to rnn to use CPU
     nGPU = 1, -- Number of GPUs, set -1 to use CPU
     trainingSetLMDBPath = './prepare_an4/train/',-- online loading path data.
     validationSetLMDBPath = './prepare_an4/test/',
@@ -24,13 +24,14 @@ local networkParams = {
     fileName = 'CTCNetwork.t7',
     dictionaryPath = './dictionary',
     batchSize = 20,
-    validationBatchSize = 2,
+    validationBatchSize = 1,
     validationIterations = 65,
+    saveModelInTraining = false, -- saves model periodically through training
     saveModelIterations = 50
 }
 --Parameters for the stochastic gradient descent (using the optim library).
 local sgdParams = {
-    learningRate = 1e-3,
+    learningRate = 5e-4,
     learningRateDecay = 1e-9,
     weightDecay = 0,
     momentum = 0.9,

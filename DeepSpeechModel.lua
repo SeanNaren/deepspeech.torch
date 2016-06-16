@@ -2,6 +2,7 @@ require 'nngraph'
 require 'MaskRNN'
 require 'ReverseMaskRNN'
 require 'UtilsMultiGPU'
+require 'BatchRNNReLU'
 
 -- Chooses RNN based on if GRU or backend GPU support.
 local function getRNNModule(nIn, nHidden, GRU, is_cudnn)
@@ -16,7 +17,7 @@ local function getRNNModule(nIn, nHidden, GRU, is_cudnn)
     end
     if is_cudnn then
         require 'cudnn'
-        return cudnn.LSTM(nIn, nHidden, 1)
+        return cudnn.BatchRNNReLU(nIn, nHidden, 1)
     else
         require 'rnn'
     end
@@ -29,25 +30,28 @@ local function BRNN(feat, seqLengths, rnnModule)
     local bwdLstm = nn.ReverseMaskRNN(rnnModule:clone())({ feat, seqLengths })
     return nn.CAddTable()({ fwdLstm, bwdLstm })
 end
+
+local function ReLU(isCUDNN)
+    if(isCUDNN) then return cudnn.ClippedReLU(true, 20) else return nn.ReLU(true) end
+end
+
 -- Creates the covnet+rnn structure.
 local function deepSpeech(nGPU, isCUDNN)
     local GRU = false
     local seqLengths = nn.Identity()()
     local input = nn.Identity()()
     local feature = nn.Sequential()
-
     -- (nInputPlane, nOutputPlane, kW, kH, [dW], [dH], [padW], [padH]) conv layers.
-    feature:add(nn.SpatialConvolution(1, 32, 41, 11, 2, 2))
+    feature:add(nn.SpatialConvolution(1, 32, 11, 41, 2, 2))
     feature:add(nn.SpatialBatchNormalization(32))
-    feature:add(nn.ReLU(true))
-    feature:add(nn.SpatialConvolution(32, 32, 21, 11, 2, 1))
+    feature:add(ReLU(isCUDNN))
+    feature:add(nn.SpatialConvolution(32, 32, 11, 21, 2, 1))
     feature:add(nn.SpatialBatchNormalization(32))
-    feature:add(nn.ReLU(true))
-    feature:add(nn.SpatialMaxPooling(2, 2, 2, 2)) -- TODO the DS2 architecture does not include this layer, but mem overhead increases.
+    feature:add(ReLU(isCUDNN))
 
-    local rnnInputsize = 32 * 25 -- based on the above convolutions.
-    local rnnHiddenSize = 400 -- size of rnn hidden layers
-    local nbOfHiddenLayers = 4
+    local rnnInputsize = 32 * 41 -- based on the above convolutions.
+    local rnnHiddenSize = 600 -- size of rnn hidden layers
+    local nbOfHiddenLayers = 7
 
     feature:add(nn.View(rnnInputsize, -1):setNumInputDims(3)) -- batch x features x seqLength
     feature:add(nn.Transpose({ 2, 3 }, { 1, 2 })) -- seqLength x batch x features
@@ -61,7 +65,6 @@ local function deepSpeech(nGPU, isCUDNN)
         rnnHiddenSize, GRU, isCUDNN)
 
     for i = 1, nbOfHiddenLayers do
-        rnn = nn.Sequential():add(nn.BatchNormalization(rnnHiddenSize))(rnn)
         rnn = BRNN(rnn, seqLengths, rnn_module)
     end
 
@@ -75,9 +78,8 @@ end
 
 -- Based on convolution kernel and strides.
 local function calculateInputSizes(sizes)
-    sizes = torch.floor((sizes - 41) / 2 + 1) -- conv1
-    sizes = torch.floor((sizes - 21) / 2 + 1) -- conv2
-    sizes = torch.floor((sizes - 2) / 2 + 1) -- pool1
+    sizes = torch.floor((sizes - 11) / 2 + 1) -- conv1
+    sizes = torch.floor((sizes - 11) / 2 + 1) -- conv2
     return sizes
 end
 
