@@ -2,7 +2,6 @@ require 'nngraph'
 require 'MaskRNN'
 require 'ReverseMaskRNN'
 require 'UtilsMultiGPU'
-require 'BatchRNNReLU'
 
 -- Chooses RNN based on if GRU or backend GPU support.
 local function getRNNModule(nIn, nHidden, GRU, is_cudnn)
@@ -16,7 +15,7 @@ local function getRNNModule(nIn, nHidden, GRU, is_cudnn)
         return nn.GRU(nIn, nHidden)
     end
     if is_cudnn then
-        require 'cudnn'
+        require 'BatchRNNReLU'
         return cudnn.BatchRNNReLU(nIn, nHidden, 1)
     else
         require 'rnn'
@@ -32,11 +31,12 @@ local function BRNN(feat, seqLengths, rnnModule)
 end
 
 local function ReLU(isCUDNN)
-    if(isCUDNN) then return cudnn.ClippedReLU(true, 20) else return nn.ReLU(true) end
+    if (isCUDNN) then return cudnn.ClippedReLU(true, 20) else return nn.ReLU(true) end
 end
 
 -- Creates the covnet+rnn structure.
 local function deepSpeech(nGPU, isCUDNN)
+    if (isCUDNN) then require 'cudnn' end
     local GRU = false
     local seqLengths = nn.Identity()()
     local input = nn.Identity()()
@@ -59,7 +59,7 @@ local function deepSpeech(nGPU, isCUDNN)
 
     local rnn = nn.Identity()({ feature(input) })
     local rnn_module = getRNNModule(rnnInputsize, rnnHiddenSize,
-                                        GRU, isCUDNN)
+        GRU, isCUDNN)
     rnn = BRNN(rnn, seqLengths, rnn_module)
     rnn_module = getRNNModule(rnnHiddenSize,
         rnnHiddenSize, GRU, isCUDNN)

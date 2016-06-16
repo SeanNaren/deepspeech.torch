@@ -3,8 +3,6 @@ require 'rnn'
 require 'nngraph'
 require 'MaskRNN'
 require 'ReverseMaskRNN'
-require 'cudnn'
-require 'BatchRNNReLU'
 
 local ffi = require 'ffi'
 
@@ -24,6 +22,7 @@ function makeDataParallel(model, nGPU, is_cudnn)
                 if is_cudnn then
                     local cudnn = require 'cudnn'
                     cudnn.fastest = true
+                    require 'BatchRNNReLU'
                     -- cudnn.benchmark = true
                 else
                     require 'rnn'
@@ -68,6 +67,10 @@ function saveDataParallel(filename, model)
 end
 
 function loadDataParallel(filename, nGPU, is_cudnn)
+    if (is_cudnn) then
+        require 'cudnn'
+        require 'BatchRNNReLU'
+    end
     local model = torch.load(filename)
     if torch.type(model) == 'nn.DataParallelTable' then
         return makeDataParallel(model:get(1):float(), nGPU, is_cudnn)

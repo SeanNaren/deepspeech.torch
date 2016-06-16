@@ -83,7 +83,7 @@ function Network:trainNetwork(epochs, sgd_params)
     local ctcCriterion = nn.CTCCriterion()
     local x, gradParameters = self.model:getParameters()
 
-    print("number of parameters: ", gradParameters:size())
+    print("Number of parameters: ", gradParameters:size(1))
 
     -- inputs (preallocate)
     local inputs = torch.Tensor()
