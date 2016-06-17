@@ -2,12 +2,6 @@
 
 local Network = require 'Network'
 
---Training parameters
-torch.setdefaulttensortype('torch.FloatTensor')
-seed = 10
-torch.manualSeed(seed)
-cutorch.manualSeedAll(seed)
-
 local epochs = 70
 
 local networkParams = {

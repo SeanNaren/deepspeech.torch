@@ -13,12 +13,22 @@ local suffix = '_' .. os.date('%Y%m%d_%H%M%S')
 local threads = require 'threads'
 local Network = {}
 
-function Network:init(networkParams)
+--Training parameters
+seed = 10
+torch.setdefaulttensortype('torch.FloatTensor')
+torch.manualSeed(seed)
 
+function Network:init(networkParams)
     self.fileName = networkParams.fileName -- The file name to save/load the network from.
     self.nGPU = networkParams.nGPU
-    if self.nGPU <= 0 then
+    self.gpu = self.nGPU > 0
+
+    if not self.gpu then
         assert(networkParams.backend ~= 'cudnn', "Can't have cuDNN backend when set to CPU mode")
+    else
+        require 'cutorch'
+        require 'cunn'
+        cutorch.manualSeedAll(seed)
     end
     self.trainingSetLMDBPath = networkParams.trainingSetLMDBPath
     self.validationSetLMDBPath = networkParams.validationSetLMDBPath
@@ -66,10 +76,14 @@ end
 
 function Network:testNetwork(epoch)
     self.model:evaluate()
-    local wer = self.werTester:getWER(self.nGPU > 0, self.model, self.calSize, true, epoch or 1) -- details in log
+    local wer = self.werTester:getWER(self.gpu, self.model, self.calSize, true, epoch or 1) -- details in log
     self.model:zeroGradParameters()
     self.model:training()
     return wer
+end
+
+local function synchronize(self)
+    if self.gpu then cutorch.synchronize() end
 end
 
 function Network:trainNetwork(epochs, sgd_params)
@@ -88,7 +102,7 @@ function Network:trainNetwork(epochs, sgd_params)
     -- inputs (preallocate)
     local inputs = torch.Tensor()
     local sizes = torch.Tensor()
-    if self.nGPU > 0 then
+    if self.gpu then
         ctcCriterion = ctcCriterion:cuda()
         inputs = inputs:cuda()
         sizes = sizes:cuda()
@@ -144,9 +158,9 @@ function Network:trainNetwork(epochs, sgd_params)
 
         for j = 1, self.nbBatches do
             currentLoss = 0
-            cutorch.synchronize()
+            synchronize(self)
             local _, fs = optim.sgd(feval, x, sgd_params)
-            cutorch.synchronize()
+            synchronize(self)
             if self.model.needsSync then
                 self.model:syncParameters()
             end

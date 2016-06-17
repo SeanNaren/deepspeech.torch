@@ -1,4 +1,3 @@
-require 'cunn'
 require 'rnn'
 require 'nngraph'
 require 'MaskRNN'
