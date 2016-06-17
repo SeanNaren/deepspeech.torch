@@ -19,7 +19,7 @@ local networkParams = {
     dictionaryPath = './dictionary',
     batchSize = 20,
     validationBatchSize = 1,
-    validationIterations = 65,
+    validationIterations = 20,
     saveModelInTraining = false, -- saves model periodically through training
     saveModelIterations = 50
 }
