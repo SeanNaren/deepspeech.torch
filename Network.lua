@@ -140,7 +140,7 @@ function Network:trainNetwork(epochs, sgd_params)
         --------------------- fwd and bwd ---------------------
         inputs:resize(inputsCPU:size()):copy(inputsCPU) -- transfer over to GPU
         sizes = self.calSize(sizes)
-        local predictions = self.model:forward({ inputs, sizes })
+        local predictions = self.model:forward(inputs)
         local loss = ctcCriterion:forward(predictions, targets, sizes)
         self.model:zeroGradParameters()
         local gradOutput = ctcCriterion:backward(predictions, targets)
