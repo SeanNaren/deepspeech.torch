@@ -1,4 +1,4 @@
-# Util
+# Utils
 
 Contains methods to access LMDB database and convert the AN4 dataset into the appropriate format.
 
