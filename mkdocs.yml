@@ -13,4 +13,4 @@ pages:
 - [WEREvaluator.md, WEREvaluator]
 - [Utils.md, Utils]
 - [UtilsMultiGPU.md, UtilsMultiGPU]
-- [Loader.md, Loader, Indexer]
+- [Loader.md, Loader]
