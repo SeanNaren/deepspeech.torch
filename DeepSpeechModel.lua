@@ -1,6 +1,3 @@
-require 'nngraph'
-require 'MaskRNN'
-require 'ReverseMaskRNN'
 require 'UtilsMultiGPU'
 
 -- Chooses RNN based on if GRU or backend GPU support.
@@ -42,7 +39,7 @@ local function deepSpeech(nGPU, isCUDNN)
     conv:add(ReLU(isCUDNN))
 
     local rnnInputsize = 32 * 41 -- based on the above convolutions.
-    local rnnHiddenSize = 1320 -- size of rnn hidden layers
+    local rnnHiddenSize = 700 -- size of rnn hidden layers
     local nbOfHiddenLayers = 7
 
     conv:add(nn.View(rnnInputsize, -1):setNumInputDims(3)) -- batch x features x seqLength

@@ -1,7 +1,5 @@
 require 'rnn'
 require 'nngraph'
-require 'MaskRNN'
-require 'ReverseMaskRNN'
 
 local ffi = require 'ffi'
 
@@ -16,8 +14,6 @@ function makeDataParallel(model, nGPU, is_cudnn)
             gpus = torch.range(1, nGPU):totable()
             dpt = nn.DataParallelTable(1):add(model, gpus):threads(function()
                 require 'nngraph'
-                require 'MaskRNN'
-                require 'ReverseMaskRNN'
                 if is_cudnn then
                     local cudnn = require 'cudnn'
                     cudnn.fastest = true
@@ -45,9 +41,9 @@ local function cleanDPT(module)
     return newDPT
 end
 
-function saveDataParallel(filename, model)
+function saveDataParallel(fileName, model)
     if torch.type(model) == 'nn.DataParallelTable' then
-        torch.save(filename, cleanDPT(model))
+        torch.save(fileName, cleanDPT(model))
     elseif torch.type(model) == 'nn.Sequential' then
         local temp_model = nn.Sequential()
         for i, module in ipairs(model.modules) do
@@ -57,9 +53,9 @@ function saveDataParallel(filename, model)
                 temp_model:add(module)
             end
         end
-        torch.save(filename, temp_model)
+        torch.save(fileName, temp_model)
     elseif torch.type(model) == 'nn.gModule' then
-        torch.save(filename, model)
+        torch.save(fileName, model)
     else
         error('This saving function only works with Sequential or DataParallelTable modules.')
     end

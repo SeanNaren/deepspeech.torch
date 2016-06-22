@@ -76,7 +76,7 @@ end
 
 function Network:testNetwork(epoch)
     self.model:evaluate()
-    local wer = self.werTester:getWER(self.gpu, self.model, self.calSize, true, epoch or 1) -- details in log
+    local wer = self.werTester:getWER(self.gpu, self.model, true, epoch or 1) -- details in log
     self.model:zeroGradParameters()
     self.model:training()
     return wer

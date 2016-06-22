@@ -4,26 +4,19 @@ require 'lmdb'
 require 'xlua'
 require 'paths'
 tds = require 'tds'
---[[
-
-    this file defines indexer and loader:
-        - indexer returns different inds of nxt btach
-        - loader loads data from lmdb given the inds
-
---]]
 
 torch.setdefaulttensortype('torch.FloatTensor')
 
 local indexer = torch.class('indexer')
 
-function indexer:__init(_dir, batch_size)
+function indexer:__init(dirPath, batchSize)
 
-    self.db_spect = lmdb.env { Path = _dir .. '/spect', Name = 'spect' }
-    self.db_label = lmdb.env { Path = _dir .. '/label', Name = 'label' }
-    self.db_trans = lmdb.env { Path = _dir .. '/trans', Name = 'trans' }
-    self._dir = _dir
+    self.db_spect = lmdb.env { Path = dirPath .. '/spect', Name = 'spect' }
+    self.db_label = lmdb.env { Path = dirPath .. '/label', Name = 'label' }
+    self.db_trans = lmdb.env { Path = dirPath .. '/trans', Name = 'trans' }
+    self._dir = dirPath
 
-    self.batch_size = batch_size
+    self.batch_size = batchSize
     self.cnt = 1
 
     -- get the size of lmdb
@@ -82,7 +75,6 @@ function indexer:prep_sorted_inds()
     for _ in pairs(lengths) do self.len_num = self.len_num + 1 end -- number of different seqLengths
     torch.save(indicesFilePath, self.sorted_inds)
 end
-
 
 function indexer:nxt_sorted_inds()
     local meta_inds = self:nxt_inds()
@@ -148,17 +140,17 @@ end
 
 local Loader = torch.class('Loader')
 
-function Loader:__init(_dir)
+function Loader:__init(dirPath)
     --[[
         _dir: dir contains 3 lmdbs
     --]]
 
-    self.db_spect = lmdb.env { Path = _dir .. '/spect', Name = 'spect' }
-    self.db_label = lmdb.env { Path = _dir .. '/label', Name = 'label' }
-    self.db_trans = lmdb.env { Path = _dir .. '/trans', Name = 'trans' }
+    self.db_spect = lmdb.env { Path = dirPath .. '/spect', Name = 'spect' }
+    self.db_label = lmdb.env { Path = dirPath .. '/label', Name = 'label' }
+    self.db_trans = lmdb.env { Path = dirPath .. '/trans', Name = 'trans' }
 end
 
-function Loader:nxt_batch(inds, flag)
+function Loader:nxt_batch(indices, includeTranscripts)
     --[[
         return a batch by loading from lmdb just-in-time
 
@@ -176,12 +168,12 @@ function Loader:nxt_batch(inds, flag)
 
     self.db_spect:open(); local txn_spect = self.db_spect:txn(true) -- readonly
     self.db_label:open(); local txn_label = self.db_label:txn(true)
-    if flag then self.db_trans:open(); txn_trans = self.db_trans:txn(true) end
+    if includeTranscripts then self.db_trans:open(); txn_trans = self.db_trans:txn(true) end
 
-    local sizes_array = torch.Tensor(#inds)
+    local sizes_array = torch.Tensor(#indices)
     local cnt = 1
     -- reads out a batch and store in lists
-    for _, ind in next, inds, nil do
+    for _, ind in next, indices, nil do
         local tensor = txn_spect:get(ind):float()
         local label = torch.deserialize(txn_label:get(ind))
 
@@ -191,19 +183,19 @@ function Loader:nxt_batch(inds, flag)
 
         tensor_list:insert(tensor)
         table.insert(label_list, label)
-        if flag then table.insert(trans_list, torch.deserialize(txn_trans:get(ind))) end
+        if includeTranscripts then table.insert(trans_list, torch.deserialize(txn_trans:get(ind))) end
     end
 
     -- store tensors into a fixed len tensor_array TODO should find a better way to do this
-    local tensor_array = torch.Tensor(#inds, 1, h, max_w):zero()
+    local tensor_array = torch.Tensor(#indices, 1, h, max_w):zero()
     for ind, tensor in ipairs(tensor_list) do
         tensor_array[ind][1]:narrow(2, 1, tensor:size(2)):copy(tensor)
     end
 
     txn_spect:abort(); self.db_spect:close()
     txn_label:abort(); self.db_label:close()
-    if flag then txn_trans:abort(); self.db_trans:close() end
+    if includeTranscripts then txn_trans:abort(); self.db_trans:close() end
 
-    if flag then return tensor_array, label_list, sizes_array, trans_list end
+    if includeTranscripts then return tensor_array, label_list, sizes_array, trans_list end
     return tensor_array, label_list, sizes_array
 end

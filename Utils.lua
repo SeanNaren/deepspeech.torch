@@ -55,21 +55,6 @@ local function end_txn(db, txn)
 end
 
 function util.mk_lmdb(root_path, index_path, dict_path, out_dir, windowSize, stride)
-    --[[
-        read index and dict files and make lmdb
-
-        input:
-            index_path: path to the index file
-            dict_path: path to the dict file
-            out_dir: dir to store lmdb
-            windowSize, stride: hyperparas for making spects
-
-        NOTE:
-            line sturct of dict file: <char/word>
-
-            line struct of index file: <wave_file_path>@<transcript>@,
-            where wave_file_path should be absolute path
-    --]]
 
     local startTime = os.time()
     local mapper = Mapper(dict_path)
