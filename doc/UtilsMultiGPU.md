@@ -12,7 +12,7 @@ Converts the model into a multi-gpu set up if necessary using DataParallelTable.
 
 `is_cudnn` Set to true if using cuDNN backend.
 
-## saveDataParallel(filename, model)
+### saveDataParallel(filename, model)
 
 Saves the model to disk.
 
