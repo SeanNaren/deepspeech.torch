@@ -18,13 +18,16 @@ function BatchRNN:__init(inputDim, outputDim)
     self.rnn = cudnn.RNN(outputDim, outputDim, 1)
     local rnn = self.rnn
     rnn.inputMode = 'CUDNN_SKIP_INPUT'
+    rnn.bidirectional = 'CUDNN_BIDIRECTIONAL'
+    rnn.numDirections = 2
     rnn:reset()
-
     self:add(self.view_in)
     self:add(nn.Linear(inputDim, outputDim, false))
     self:add(nn.BatchNormalization(outputDim))
     self:add(self.view_out)
     self:add(rnn)
+    self:add(nn.View(-1, 2, outputDim):setNumInputDims(2))
+    self:add(nn.Sum(3))
 end
 
 function BatchRNN:updateOutput(input)
@@ -35,9 +38,18 @@ function BatchRNN:updateOutput(input)
 end
 
 function BatchRNN:__tostring__()
-    if self.module.__tostring__ then
-        return torch.type(self) .. ' @ ' .. self.module:__tostring__()
-    else
-        return torch.type(self) .. ' @ ' .. torch.type(self.module)
+    local tab = '  '
+    local line = '\n'
+    local next = ' -> '
+    local str = 'BatchRNN'
+    str = str .. ' {' .. line .. tab .. '[input'
+    for i=1,#self.modules do
+        str = str .. next .. '(' .. i .. ')'
     end
+    str = str .. next .. 'output]'
+    for i=1,#self.modules do
+        str = str .. line .. tab .. '(' .. i .. '): ' .. tostring(self.modules[i]):gsub(line, line .. tab)
+    end
+    str = str .. line .. '}'
+    return str
 end

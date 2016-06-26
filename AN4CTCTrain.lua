@@ -25,7 +25,7 @@ local networkParams = {
 }
 --Parameters for the stochastic gradient descent (using the optim library).
 local sgdParams = {
-    learningRate = 5e-4,
+    learningRate = 3e-4,
     learningRateDecay = 1e-9,
     weightDecay = 0,
     momentum = 0.9,

@@ -1,5 +1,5 @@
 require 'Loader'
-require 'Util'
+require 'Utils'
 require 'Mapper'
 require 'torch'
 require 'xlua'
@@ -10,18 +10,18 @@ local WEREvaluator = torch.class('WEREvaluator')
 
 local _loader
 
-function WEREvaluator:__init(_path, mapper, testBatchSize, nbOfTestIterations, logsPath)
-    _loader = Loader(_path)
+function WEREvaluator:__init(datasetPath, mapper, testBatchSize, nbOfTestIterations, logsPath)
+    _loader = Loader(datasetPath)
     self.testBatchSize = testBatchSize
     self.nbOfTestIterations = nbOfTestIterations
-    self.indexer = indexer(_path, testBatchSize)
+    self.indexer = indexer(datasetPath, testBatchSize)
     self.pool = threads.Threads(1, function() require 'Loader' end)
     self.mapper = mapper
     self.logsPath = logsPath
     self.suffix = '_' .. os.date('%Y%m%d_%H%M%S')
 end
 
-function WEREvaluator:getWER(gpu, model, calSizeOfSequences, verbose, epoch)
+function WEREvaluator:getWER(gpu, model, verbose, epoch)
     --[[
         load test_iter*batch_size data point from test set; compute average WER
 
@@ -71,10 +71,9 @@ function WEREvaluator:getWER(gpu, model, calSizeOfSequences, verbose, epoch)
                 sizes_buf = sizes
             end)
 
-        sizes_array = calSizeOfSequences(sizes_array)
         inputs:resize(inputsCPU:size()):copy(inputsCPU)
         if(gpu) then cutorch.synchronize() end
-        local predictions = model:forward({ inputs, sizes_array })
+        local predictions = model:forward(inputs)
         predictions = predictions:view(-1, self.testBatchSize, predictions:size(2)):transpose(1, 2)
         if(gpu) then cutorch.synchronize() end
 

@@ -1,4 +1,4 @@
-util = require '../Util'
+util = require '../Utils'
 
 assert(#arg == 1)
 
