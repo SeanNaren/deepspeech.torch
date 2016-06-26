@@ -18,14 +18,14 @@ This branch is useful for understanding how the CTC Speech System works and is v
 * AN4Phoneme: This branch is experimental and uses phonemes rather than character based predictions. This is fully credited and extended by [CCorfield](https://github.com/CCorfield) and his awesome work in porting to use phonemes.
 
 ## TODO
-* Code coverage using tests, of highest importance!
 * Finish documentation for technical and general.
 * Fix multi-GPU support by correctly handling the merging of multiple grads.
-* Add correct sequence wise batch norm to the RNN layers.
 
 ## Installation/Documentation
 
 Follow Instructions/Documentation found in the wiki [here](https://github.com/SeanNaren/CTCSpeechRecognition/wiki/Installation) to set up and run the code.
+
+Technical documentation can be found [here](http://ctcspeechrecognition.readthedocs.io/en/latest/).
 
 ## Acknowledgements
 
