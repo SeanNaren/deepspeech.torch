@@ -69,5 +69,4 @@ script:
 - export PATH=${INSTALL_PREFIX}/bin:$PATH
 - export TESTLUA=$(which luajit lua | head -n 1)
 - echo ${TESTLUA}
-- ${TESTLUA} test_rnn.lua
 - ${TESTLUA} test_evaluations.lua
