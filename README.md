@@ -1,6 +1,8 @@
 # CTCSpeechRecognition
 
 [![Build Status](https://travis-ci.org/SeanNaren/CTCSpeechRecognition.svg?branch=master)](https://travis-ci.org/SeanNaren/CTCSpeechRecognition)
+[![Documentation Status](https://readthedocs.org/projects/ctcspeechrecognition/badge/?version=latest)](http://ctcspeechrecognition.readthedocs.io/en/latest/?badge=latest)
+
 
 Implementation of [Baidu Warp-CTC](https://github.com/baidu-research/warp-ctc) using torch7.
 Creates a network based on the [DeepSpeech2](http://arxiv.org/pdf/1512.02595v1.pdf) architecture using the Torch7 library, trained with the CTC activation function.
