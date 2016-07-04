@@ -50,7 +50,6 @@ end
 
 local function end_txn(db, txn)
     txn:commit()
-    txn:abort()
     db:close()
 end
 
