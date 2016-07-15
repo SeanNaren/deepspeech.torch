@@ -9,11 +9,11 @@ local windowSize = 0.02 * 16000
 local stride = 0.01 * 16000
 
 util.mk_lmdb(arg[1], 'train_index.txt', 
-			'../an4.phone',
-			'../an4.dic',
+			'an4/etc/an4.phone',
+			'an4/etc/an4.dic',
 			out_dir..'train', windowSize, stride)
 
 util.mk_lmdb(arg[1], 'test_index.txt', 
-			'../an4.phone',
-			'../an4.dic',
+			'an4/etc/an4.phone',
+			'an4/etc/an4.dic',
 			out_dir..'test', windowSize, stride)
