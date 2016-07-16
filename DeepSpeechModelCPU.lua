@@ -25,7 +25,7 @@ local function deepSpeech(GRU)
 
     local fullConnected = nn.Sequential()
     fullConnected:add(nn.BatchNormalization(rnnHiddenSize))
-    fullConnected:add(nn.Linear(rnnHiddenSize, 28))
+    fullConnected:add(nn.Linear(rnnHiddenSize, 40))
 
     model:add(nn.SequenceWise(fullConnected)) -- allows us to maintain 3D structure
     model:add(nn.Transpose({1, 2})) -- batch x seqLength x features

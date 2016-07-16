@@ -64,6 +64,8 @@ function Network:trainNetwork(dataset, epochs, sgd_params, validationDataset)
 
     local x, gradParameters = self.model:getParameters()
 
+    print("Number of parameters: ", x:size(1))
+
     -- inputs (preallocate)
     local inputs = torch.Tensor()
     if self.gpu then
