@@ -13,8 +13,8 @@ local function getRNNModule(nIn, nHidden, GRU, is_cudnn)
         return nn.GRU(nIn, nHidden)
     end
     if is_cudnn then
-        require 'BatchRNNReLU'
-        return cudnn.BatchRNNReLU(nIn, nHidden, 1)
+        require 'BatchBRNNReLU'
+        return cudnn.BatchBRNNReLU(nIn, nHidden, 1)
     else
         require 'rnn'
     end

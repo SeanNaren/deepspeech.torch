@@ -18,8 +18,7 @@ function makeDataParallel(model, nGPU, is_cudnn)
                 if is_cudnn then
                     local cudnn = require 'cudnn'
                     cudnn.fastest = true
-                    require 'BatchRNNReLU'
-                    -- cudnn.benchmark = true
+                    require 'BatchBRNNReLU'
                 else
                     require 'rnn'
                 end

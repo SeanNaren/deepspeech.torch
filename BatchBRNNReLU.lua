@@ -1,11 +1,11 @@
-require 'BatchRNN'
+require 'BatchBRNN'
 ------------------------------------------------------------------------
 --[[ BatchBRNNReLU ]] --
 -- Based On BatchBRNN. Adds ClippedReLU non-linearity to Vanilla BRNN.
 ------------------------------------------------------------------------
-local BatchRNNReLU, parent = torch.class('cudnn.BatchRNNReLU', 'cudnn.BatchRNN')
+local BatchBRNNReLU, parent = torch.class('cudnn.BatchBRNNReLU', 'cudnn.BatchBRNN')
 
-function BatchRNNReLU:__init(inputDim, outputDim)
+function BatchBRNNReLU:__init(inputDim, outputDim)
     parent.__init(self, inputDim, outputDim)
     local rnn = self.rnn
     rnn.mode = 'CUDNN_RNN_RELU'
