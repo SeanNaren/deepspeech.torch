@@ -15,7 +15,7 @@ local function deepSpeech(GRU)
 
     local rnnInputsize = 32 * 41 -- based on the above convolutions.
     local rnnHiddenSize = 1000 -- size of rnn hidden layers
-    local nbOfHiddenLayers = 8
+    local nbOfHiddenLayers = 7
     model:add(nn.View(rnnInputsize, -1):setNumInputDims(3)) -- batch x features x seqLength
     model:add(nn.Transpose({ 2, 3 }, { 1, 2 })) -- seqLength x batch x features
 
