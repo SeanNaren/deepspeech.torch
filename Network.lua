@@ -60,7 +60,7 @@ end
 function Network:trainNetwork(dataset, epochs, sgd_params, validationDataset)
     local lossHistory = {}
     local validationHistory = {}
-    local ctcCriterion = nn.CTCCriterion()
+    local ctcCriterion = nn.CTCCriterion(true)
 
     local x, gradParameters = self.model:getParameters()
 
@@ -69,7 +69,7 @@ function Network:trainNetwork(dataset, epochs, sgd_params, validationDataset)
     -- inputs (preallocate)
     local inputs = torch.Tensor()
     if self.gpu then
-        ctcCriterion = nn.CTCCriterion():cuda()
+        ctcCriterion = nn.CTCCriterion(true):cuda()
         inputs = inputs:cuda()
     end
 

@@ -21,8 +21,8 @@ local dictionaryDirPath = "/home/sean/Work/CTCSpeechRecognition/an4.dict"
 local folderDirPath = "/home/sean/Work/CTCSpeechRecognition/Audio/an4"
 
 --Window size and stride for the spectrogram transformation.
-local windowSize = 256
-local stride = 75
+local windowSize = 0.02 * 16000
+local stride = 0.01 * 16000
 
 AN4PhonemeDictionary.init(dictionaryDirPath)
 
