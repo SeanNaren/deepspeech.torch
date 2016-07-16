@@ -1,7 +1,7 @@
 local AN4CTCCorpus = require 'AN4CTCCorpus'
 local AN4CTCBatcher = require 'Batcher'
 local Network = require 'Network'
-local DeepSpeechModel = require 'DeepSpeechModel'
+local DeepSpeechModel = require 'DeepSpeechModel' -- for cpu mode switch to DeepSpeechModelCPU
 local AN4PhonemeDictionary = require 'AN4PhonemeDictionary'
 
 --Training parameters
@@ -25,8 +25,8 @@ local sgdParams = {
     nesterov = true
 }
 
-local folderDirPath = "/root/CTCSpeechRecognition/Audio/an4"
-local dictionaryDirPath = "/root/CTCSpeechRecognition/an4.dict"
+local dictionaryDirPath = "/home/sean/Work/CTCSpeechRecognition/an4.dict"
+local folderDirPath = "/home/sean/Work/CTCSpeechRecognition/Audio/an4"
 
 AN4PhonemeDictionary.init(dictionaryDirPath)
 

@@ -1,7 +1,6 @@
 require 'optim'
 require 'nnx'
 require 'BRNN'
-require 'ctchelpers'
 require 'gnuplot'
 require 'xlua'
 local PERCalculator = require 'PERCalculator'
@@ -21,6 +20,7 @@ function Network:init(networkParams)
     if (self.gpu) then -- Load gpu modules.
     require 'cunn'
     require 'cudnn'
+    require 'SequenceWise'
     end
     if (self.loadModel) then
         assert(networkParams.fileName, "Filename hasn't been given to load model.")
@@ -77,7 +77,8 @@ function Network:trainNetwork(dataset, epochs, sgd_params, validationDataset)
         inputs:resize(inputsCPU:size()):copy(inputsCPU)
         gradParameters:zero()
         local predictions = self.model:forward(inputs)
-        local loss = ctcCriterion:forward(predictions, targets)
+        local sizes = torch.Tensor(predictions:size(1)):fill(predictions:size(2))
+        local loss = ctcCriterion:forward(predictions, targets, sizes)
         self.model:zeroGradParameters()
         local gradOutput = ctcCriterion:backward(predictions, targets)
         self.model:backward(inputs, gradOutput)
