@@ -5,14 +5,14 @@ require 'SequenceWise'
 local function deepSpeech(GRU)
 
     local model = nn.Sequential()
-    model:add(cudnn.SpatialConvolution(1, 32, 41, 11, 2, 2))
+    model:add(cudnn.SpatialConvolution(1, 32, 11, 41, 2, 2))
     model:add(cudnn.SpatialBatchNormalization(32))
-    model:add(cudnn.ReLU(true))
-    model:add(cudnn.SpatialConvolution(32, 32, 21, 11, 2, 1))
+    model:add(cudnn.ClippedReLU(true, 20))
+    model:add(cudnn.SpatialConvolution(32, 32, 11, 21, 2, 1))
     model:add(cudnn.SpatialBatchNormalization(32))
-    model:add(cudnn.ReLU(true))
-    model:add(nn.SpatialMaxPooling(2, 2, 2, 2))
-    local rnnInputsize = 32 * 25 -- based on the above convolutions.
+    model:add(cudnn.ClippedReLU(true, 20))
+
+    local rnnInputsize = 32 * 41 -- based on the above convolutions.
     local rnnHiddenSize = 400 -- size of rnn hidden layers
     local nbOfHiddenLayers = 4
     model:add(nn.View(rnnInputsize, -1):setNumInputDims(3)) -- batch x features x seqLength
@@ -24,11 +24,9 @@ local function deepSpeech(GRU)
         model:add(cudnn.BLSTM(rnnInputsize, rnnHiddenSize, nbOfHiddenLayers))
     end
 
-    model:add(nn.View(-1, 2, rnnHiddenSize):setNumInputDims(2)) -- sum the outgoing weights
-    model:add(nn.Sum(3))
     local fullConnected = nn.Sequential()
-    fullConnected:add(nn.BatchNormalization(rnnHiddenSize))
-    fullConnected:add(nn.Linear(rnnHiddenSize, 40))
+    fullConnected:add(nn.BatchNormalization(rnnHiddenSize * 2))
+    fullConnected:add(nn.Linear(rnnHiddenSize * 2, 40))
 
     model:add(nn.SequenceWise(fullConnected)) -- allows us to maintain 3D structure
     model:add(nn.Transpose({1, 2})) -- batch x seqLength x features

@@ -31,8 +31,8 @@ local folderDirPath = "/home/sean/Work/CTCSpeechRecognition/Audio/an4"
 AN4PhonemeDictionary.init(dictionaryDirPath)
 
 --Window size and stride for the spectrogram transformation.
-local windowSize = 256
-local stride = 75
+local windowSize = 0.02 * 16000
+local stride = 0.01 * 16000
 
 --The larger this value, the larger the batches, however the more padding is added to make variable sentences the same.
 local maxSizeDiff = 0 -- Setting this to zero makes it batch together the same length sentences.
