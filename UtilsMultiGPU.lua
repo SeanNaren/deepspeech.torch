@@ -62,6 +62,7 @@ function saveDataParallel(fileName, model)
 end
 
 function loadDataParallel(filename, nGPU, is_cudnn)
+    require 'SequenceWise'
     if (is_cudnn) then
         require 'cudnn'
         require 'BatchBRNNReLU'
