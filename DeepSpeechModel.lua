@@ -14,7 +14,7 @@ local function deepSpeech(GRU)
     model:add(cudnn.ClippedReLU(true, 20))
 
     local rnnInputsize = 32 * 41 -- based on the above convolutions.
-    local rnnHiddenSize = 1300 -- size of rnn hidden layers
+    local rnnHiddenSize = 1000 -- size of rnn hidden layers
     local nbOfHiddenLayers = 8
     model:add(nn.View(rnnInputsize, -1):setNumInputDims(3)) -- batch x features x seqLength
     model:add(nn.Transpose({ 2, 3 }, { 1, 2 })) -- seqLength x batch x features
@@ -36,7 +36,7 @@ local function deepSpeech(GRU)
     fullConnected:add(nn.Linear(rnnHiddenSize, 40))
 
     model:add(nn.SequenceWise(fullConnected)) -- allows us to maintain 3D structure
-    model:add(nn.Transpose({ 1, 2 }))
+    model:add(nn.Transpose({ 1, 2 })) -- batch x seqLength x features
     return model
 end
 
