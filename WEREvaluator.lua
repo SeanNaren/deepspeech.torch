@@ -74,7 +74,7 @@ function WEREvaluator:getWER(gpu, model, verbose, epoch)
         inputs:resize(inputsCPU:size()):copy(inputsCPU)
         if(gpu) then cutorch.synchronize() end
         local predictions = model:forward(inputs)
-        predictions = predictions:view(-1, self.testBatchSize, predictions:size(2)):transpose(1, 2)
+
         if(gpu) then cutorch.synchronize() end
 
         -- =============== for every data point in this batch ==================
