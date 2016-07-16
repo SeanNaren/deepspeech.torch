@@ -64,7 +64,7 @@ end
 function loadDataParallel(filename, nGPU, is_cudnn)
     if (is_cudnn) then
         require 'cudnn'
-        require 'BatchRNNReLU'
+        require 'BatchBRNNReLU'
     end
     local model = torch.load(filename)
     if torch.type(model) == 'nn.DataParallelTable' then
