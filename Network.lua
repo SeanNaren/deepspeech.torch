@@ -20,9 +20,10 @@ function Network:init(networkParams)
     if (self.gpu) then -- Load gpu modules.
     require 'cunn'
     require 'cudnn'
-    require 'SequenceWise'
     end
     if (self.loadModel) then
+        require 'SequenceWise'
+        require 'BatchBRNNReLU'
         assert(networkParams.fileName, "Filename hasn't been given to load model.")
         self:loadNetwork(networkParams.fileName)
     else
