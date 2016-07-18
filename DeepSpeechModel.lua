@@ -30,7 +30,7 @@ local function deepSpeech(nGPU, isCUDNN)
     if (isCUDNN) then require 'cudnn' end
     local GRU = false
     local conv = nn.Sequential()
-    -- (nInputPlane, nOutputPlane`, kW, kH, [dW], [dH], [padW], [padH]) conv layers.
+    -- (nInputPlane, nOutputPlane, kW, kH, [dW], [dH], [padW], [padH]) conv layers.
     conv:add(nn.SpatialConvolution(1, 32, 11, 41, 2, 2))
     conv:add(nn.SpatialBatchNormalization(32))
     conv:add(ReLU(isCUDNN))
