@@ -14,11 +14,11 @@ function makeDataParallel(model, nGPU, is_cudnn)
             gpus = torch.range(1, nGPU):totable()
             dpt = nn.DataParallelTable(1):add(model, gpus):threads(function()
                 require 'nngraph'
+                require 'SequenceWise'
                 if is_cudnn then
                     local cudnn = require 'cudnn'
                     cudnn.fastest = true
-                    require 'BatchRNNReLU'
-                    -- cudnn.benchmark = true
+                    require 'BatchBRNNReLU'
                 else
                     require 'rnn'
                 end
@@ -62,9 +62,10 @@ function saveDataParallel(fileName, model)
 end
 
 function loadDataParallel(filename, nGPU, is_cudnn)
+    require 'SequenceWise'
     if (is_cudnn) then
         require 'cudnn'
-        require 'BatchRNNReLU'
+        require 'BatchBRNNReLU'
     end
     local model = torch.load(filename)
     if torch.type(model) == 'nn.DataParallelTable' then

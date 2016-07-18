@@ -1,5 +1,5 @@
 ------------------------------------------------------------------------
---[[ BatchRNN ]] --
+--[[ BatchBRNN ]] --
 -- Adds sequence-wise batch normalization to cudnn RNN modules.
 -- For a simple RNN: ht = ReLU(B(Wixt) + Riht-1 + bRi) where B
 -- is the batch normalization.
@@ -7,9 +7,9 @@
 -- Returns seqLength x minibatch x outputDim.
 -- Can specify an rnnModule such as cudnn.LSTM (defaults to RNNReLU).
 ------------------------------------------------------------------------
-local BatchRNN, parent = torch.class('cudnn.BatchRNN', 'nn.Sequential')
+local BatchBRNN, parent = torch.class('cudnn.BatchBRNN', 'nn.Sequential')
 
-function BatchRNN:__init(inputDim, outputDim)
+function BatchBRNN:__init(inputDim, outputDim)
     parent.__init(self)
 
     self.view_in = nn.View(1, 1, -1):setNumInputDims(3)
@@ -30,18 +30,18 @@ function BatchRNN:__init(inputDim, outputDim)
     self:add(nn.Sum(3))
 end
 
-function BatchRNN:updateOutput(input)
+function BatchBRNN:updateOutput(input)
     local T, N = input:size(1), input:size(2)
     self.view_in:resetSize(T * N, -1)
     self.view_out:resetSize(T, N, -1)
     return parent.updateOutput(self, input)
 end
 
-function BatchRNN:__tostring__()
+function BatchBRNN:__tostring__()
     local tab = '  '
     local line = '\n'
     local next = ' -> '
-    local str = 'BatchRNN'
+    local str = 'BatchBRNN'
     str = str .. ' {' .. line .. tab .. '[input'
     for i=1,#self.modules do
         str = str .. next .. '(' .. i .. ')'

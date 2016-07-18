@@ -94,7 +94,7 @@ function Network:trainNetwork(epochs, sgd_params)
 
     local lossHistory = {}
     local validationHistory = {}
-    local ctcCriterion = nn.CTCCriterion()
+    local ctcCriterion = nn.CTCCriterion(true)
     local x, gradParameters = self.model:getParameters()
 
     print("Number of parameters: ", gradParameters:size(1))

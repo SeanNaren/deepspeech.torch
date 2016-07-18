@@ -1,4 +1,5 @@
 require 'UtilsMultiGPU'
+require 'SequenceWise'
 
 -- Chooses RNN based on if GRU or backend GPU support.
 local function getRNNModule(nIn, nHidden, GRU, is_cudnn)
@@ -12,8 +13,8 @@ local function getRNNModule(nIn, nHidden, GRU, is_cudnn)
         return nn.GRU(nIn, nHidden)
     end
     if is_cudnn then
-        require 'BatchRNNReLU'
-        return cudnn.BatchRNNReLU(nIn, nHidden, 1)
+        require 'BatchBRNNReLU'
+        return cudnn.BatchBRNNReLU(nIn, nHidden, 1)
     else
         require 'rnn'
     end
@@ -57,13 +58,13 @@ local function deepSpeech(nGPU, isCUDNN)
     end
 
     local post_sequential = nn.Sequential()
-    post_sequential:add(nn.View(-1, rnnHiddenSize)) -- (seqLength x batch) x features
     post_sequential:add(nn.BatchNormalization(rnnHiddenSize))
     post_sequential:add(nn.Linear(rnnHiddenSize, 35))
 
     model:add(conv)
     model:add(rnn)
-    model:add(post_sequential)
+    model:add(nn.SequenceWise(post_sequential))
+    model:add(nn.Transpose({1, 2})) -- batch x seqLength x features
     model = makeDataParallel(model, nGPU, isCUDNN)
     return model
 end
