@@ -29,12 +29,11 @@ local function trans2tokens(line, _mapper, _lexicon)
 
     local label = {}
     local transcript = {}
-    -- table.insert(label, _mapper.alphabet2token['sil'])
-    -- table.insert(transcript, 'sil')
+
     line = string.lower(line)
     line = line:gsub('^%s', ''):gsub('', ''):gsub('', ''):gsub('%(.+%)', ''):gsub('%s$', ''):gsub('<s>', ''):gsub('</s>', '')
     line = line:match("^%s*(.-)%s*$")
-    -- print(line)
+
     for i in string.gmatch(line,"%a+") do
         local phoneme = _lexicon.word2tokens[i]
         table.insert(transcript, phoneme)
@@ -42,12 +41,9 @@ local function trans2tokens(line, _mapper, _lexicon)
             table.insert(label, _mapper.alphabet2token[j])
         end
         table.insert(label, _mapper.alphabet2token['  '])
-        -- table.insert(transcript, 'sil')
     end
+    
     table.remove(label, table.getn(label))
---    print(table.getn(label))
-    -- print(table.concat(label,","))
-   -- print(table.concat(transcript," "))
     return torch.serialize(label), torch.serialize(table.concat(transcript," "))
 end
 
