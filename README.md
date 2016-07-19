@@ -22,7 +22,6 @@ I'd like to also thank [Shane Walker](https://github.com/walkers-mv) for his awe
 
 ## TODO
 * Finish documentation for technical and general.
-* Fix multi-GPU support by correctly handling the merging of multiple grads.
 
 ## Installation/Documentation
 
