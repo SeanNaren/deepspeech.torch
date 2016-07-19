@@ -1,0 +1,72 @@
+language: c
+notifications:
+  email: false
+compiler:
+  - gcc
+  - clang
+cache:
+  directories:
+  - $HOME/OpenBlasInstall
+sudo: false
+env:
+  - TORCH_LUA_VERSION=LUAJIT21
+  - TORCH_LUA_VERSION=LUA51
+  - TORCH_LUA_VERSION=LUA52
+os:
+  - linux
+matrix:
+  include:
+  - os: osx
+    env: TORCH_LUA_VERSION=LUAJIT21
+    compiler: clang
+addons:
+  apt:
+    packages:
+    - cmake
+    - gfortran
+    - gcc-multilib
+    - gfortran-multilib
+    - liblapack-dev
+    - build-essential
+    - gcc
+    - g++
+    - curl
+    - cmake
+    - libreadline-dev
+    - git-core
+    - libqt4-core
+    - libqt4-gui
+    - libqt4-dev
+    - libjpeg-dev
+    - libpng-dev
+    - ncurses-dev
+    - imagemagick
+    - libzmq3-dev
+    - gfortran
+    - unzip
+    - gnuplot
+    - gnuplot-x11
+before_script:
+- export ROOT_TRAVIS_DIR=$(pwd)
+- export INSTALL_PREFIX=~/torch/install
+-  ls $HOME/OpenBlasInstall/lib || (cd /tmp/ && git clone https://github.com/xianyi/OpenBLAS.git -b master && cd OpenBLAS && (make NO_AFFINITY=1 -j$(getconf _NPROCESSORS_ONLN) 2>/dev/null >/dev/null) && make PREFIX=$HOME/OpenBlasInstall install)
+- git clone https://github.com/torch/distro.git ~/torch --recursive
+- cd ~/torch && git submodule update --init --recursive
+- mkdir build && cd build
+- export CMAKE_LIBRARY_PATH=$HOME/OpenBlasInstall/include:$HOME/OpenBlasInstall/lib:$CMAKE_LIBRARY_PATH
+- cmake .. -DCMAKE_INSTALL_PREFIX="${INSTALL_PREFIX}" -DCMAKE_BUILD_TYPE=Release -DWITH_${TORCH_LUA_VERSION}=ON
+- make && make install
+- cd $ROOT_TRAVIS_DIR
+- export LD_LIBRARY_PATH=${INSTALL_PREFIX}/lib:$LD_LIBRARY_PATH
+- ${INSTALL_PREFIX}/bin/luarocks install nn
+- ${INSTALL_PREFIX}/bin/luarocks install dpnn
+script:
+- cd ${ROOT_TRAVIS_DIR}
+- git clone https://github.com/SeanNaren/CTCSpeechRecognition.git
+- cd CTCSpeechRecognition/tests
+- rsync -av --progress ../* ${INSTALL_PREFIX}/share/lua/5.1/ --exclude ../tests --exclude ../prepare_an4/
+- rsync -av --progress ../* ${INSTALL_PREFIX}/share/lua/5.2/ --exclude ../tests --exclude ../prepare_an4/
+- export PATH=${INSTALL_PREFIX}/bin:$PATH
+- export TESTLUA=$(which luajit lua | head -n 1)
+- echo ${TESTLUA}
+- ${TESTLUA} test_evaluations.lua

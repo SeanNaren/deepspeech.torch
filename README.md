@@ -3,27 +3,40 @@
 This branch implements CTC recognition using phonemes (trained on the AN4 dataset) rather than character based recognition. Was written by [CCorfield](https://github.com/CCorfield) on top of the current implementation
 and I thank him so much for his work and effort in bringing phoneme recognition into the repo.
 
-Work in progress. Implementation of the [Baidu Warp-CTC](https://github.com/baidu-research/warp-ctc) using torch7.
+[![Build Status](https://travis-ci.org/SeanNaren/CTCSpeechRecognition.svg?branch=master)](https://travis-ci.org/SeanNaren/CTCSpeechRecognition)
+[![Documentation Status](https://readthedocs.org/projects/ctcspeechrecognition/badge/?version=latest)](http://ctcspeechrecognition.readthedocs.io/en/latest/?badge=latest)
+
+
+Implementation of [Baidu Warp-CTC](https://github.com/baidu-research/warp-ctc) using torch7.
 Creates a network based on the [DeepSpeech2](http://arxiv.org/pdf/1512.02595v1.pdf) architecture using the Torch7 library, trained with the CTC activation function.
+
+## Features
+* Train large models with large datasets via online loading using [LMDB](https://en.wikipedia.org/wiki/Lightning_Memory-Mapped_Database) and multi-GPU support.
+* Supports variable length batches via masking.
+* Implements the AN4 Audio database as an example of how a dataset can implemented.
 
 ## Branches
 
-There are currently two branches, master and voxforge:
-* Master: This branch trains a neural network based on the [AN4 Audio database](http://www.speech.cs.cmu.edu/databases/an4/) of roughly 900 samples. Also included is a evaluation script which calculates the WER using the AN4 test dataset.
+There are currently two branches, Master and AN4Phoneme:
+* Master: This branch trains a neural network based on the [AN4 Audio database](http://www.speech.cs.cmu.edu/databases/an4/) of roughly 900 samples. Also included is an evaluation script which calculates the WER using the AN4 test dataset.
 This branch is useful for understanding how the CTC Speech System works and is very easy to run after installation. Highly recommended to checkout this branch.
-* AN4Phoneme: This branch is like the above except it uses phonemes rather than character based predictions. This is fully credited and extended by [CCorfield](https://github.com/CCorfield) and his awesome work in porting this over to use phonemes.
-* Voxforge: This branch is like the above except it uses the [Voxforge Speech Corpus](www.voxforge.org) containing roughly 100k samples. This branch is far from complete and will represent a WORKING production model.
-Once complete I will also release the fully trained model as pre-processing the dataset takes time.
+* AN4Phoneme: This branch is experimental and uses phonemes rather than character based predictions. This is fully credited and extended by [CCorfield](https://github.com/CCorfield) and his awesome work in porting to use phonemes.
 
 ## TODO
-* Figure out a method to batch together sentences of similar length with appropriate padding and be able to utitilise the varying length sentences computation supported by warp-CTC
-* Obtain a WER on the AN4 dataset around 13 using the basic spell checker. A suitable accuracy to move forward with scaling the project
-* Create a Seq2Seq Attention based spell checker trained on the [Google Billion Words](http://static.googleusercontent.com/media/research.google.com/en//pubs/archive/41880.pdf) dataset
+* Finish documentation for technical and general.
+* Fix multi-GPU support by correctly handling the merging of multiple grads.
 
-To train the network using the AN4 dataset we use the AN4CTCTrain script and the parameters configured in the script.
+## Installation/Documentation
 
-To test the network we use the AN4CTCTest script, which generates the Word Error Rate(WER) based on the AN4 test dataset and our trained model.
+Follow Instructions/Documentation found in the wiki [here](https://github.com/SeanNaren/CTCSpeechRecognition/wiki/Installation) to set up and run the code.
 
-## Installation
+Technical documentation can be found [here](http://ctcspeechrecognition.readthedocs.io/en/latest/).
 
-Follow instructions [here](https://github.com/SeanNaren/CTCSpeechRecognition/blob/master/INSTALL.md).
+## Acknowledgements
+
+Lots of people helped/contributed to this project that deserve recognition:
+* Soumith Chintala for his support on Torch7 and the vast open source projects he has contributed that made this project possible!
+* Charles Corfield for his work on the Phoneme Dataset and his overall contribution and aid throughout.
+* Will Frey for his thorough communication and aid in the development process.
+* Ding Ling, Yuan Yang and Yan Xia for their significant contribution to online training, multi-gpu support and many other important features.
+* Erich Elsen and the team from Baidu for their contribution of Warp-CTC that made this possible, and the encouraging words and support given throughout the project.

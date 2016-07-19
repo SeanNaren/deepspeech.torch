@@ -1,7 +1,4 @@
-
-
 local Evaluator = {}
-
 
 -- Calculates a sequence error rate (aka Levenshtein edit distance)
 function Evaluator.sequenceErrorRate(target, prediction)
@@ -28,31 +25,36 @@ function Evaluator.sequenceErrorRate(target, prediction)
             end
         end
     end
-    return d[#target + 1][#prediction + 1] / #target
+    local wer = d[#target + 1][#prediction + 1] / #target
+    if wer > 1 then return 1 else return wer end
 end
 
--- Turns the predictions tensor into a list of the most likely phones
-function Evaluator.getPredictedPhones(predictions)
-    local predictedPhones = {}
-    local prevPhone = 0
+
+function Evaluator.predict2tokens(predictions, mapper)
+    --[[
+        Turns the predictions tensor into a list of the most likely tokens
+
+        NOTE:
+            to compute WER we strip the begining and ending spaces
+    --]]
+    local tokens = {}
+    local blankToken = mapper.alphabet2token['$$']
+    local preToken = blankToken
 
     -- The prediction is a sequence of likelihood vectors
-    predictions = predictions:squeeze()
-    local maxValues, maxIndexes = torch.max(predictions, 2)
-    maxIndexes = maxIndexes:squeeze()
-    for i=1,maxIndexes:size(1) do
-        -- If the index is 1, that means that the prediction was a blank label
-        local phone = maxIndexes[i] - 1 -- Caveat about CTC indexes and our labeling scheme
-        if (phone ~= 0) then
-            -- We do not add the phone if it is the same as the previous phone.
-            if (phone ~= prevPhone) then
-                table.insert(predictedPhones, phone)
-                prevPhone = phone
-            end
+    local _, maxIndices = torch.max(predictions, 2)
+    maxIndices = maxIndices:squeeze()
+
+    for i=1, maxIndices:size(1) do
+        local token = maxIndices[i] - 1 -- CTC indexes start from 1, while token starts from 0
+        -- add token if it's not blank, and is not the same as pre_token
+        if token ~= blankToken and token ~= preToken then
+            table.insert(tokens, token)
+            preToken = token
         end
     end
 
-    return predictedPhones
+    return tokens
 end
 
 

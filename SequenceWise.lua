@@ -24,7 +24,6 @@ function SequenceWise:updateOutput(input)
     return parent.updateOutput(self, input)
 end
 
-
 function SequenceWise:__tostring__()
     local tab = '  '
     local line = '\n'
