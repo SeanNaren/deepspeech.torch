@@ -59,7 +59,7 @@ local function deepSpeech(nGPU, isCUDNN)
 
     local post_sequential = nn.Sequential()
     post_sequential:add(nn.BatchNormalization(rnnHiddenSize))
-    post_sequential:add(nn.Linear(rnnHiddenSize, 28))
+    post_sequential:add(nn.Linear(rnnHiddenSize, 35))
 
     model:add(conv)
     model:add(rnn)

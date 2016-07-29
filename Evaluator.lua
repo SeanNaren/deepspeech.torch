@@ -38,7 +38,7 @@ function Evaluator.predict2tokens(predictions, mapper)
             to compute WER we strip the begining and ending spaces
     --]]
     local tokens = {}
-    local blankToken = mapper.alphabet2token['$']
+    local blankToken = mapper.alphabet2token['$$']
     local preToken = blankToken
 
     -- The prediction is a sequence of likelihood vectors
