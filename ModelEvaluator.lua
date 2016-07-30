@@ -6,11 +6,11 @@ require 'xlua'
 local threads = require 'threads'
 local Evaluator = require 'Evaluator'
 
-local WEREvaluator = torch.class('WEREvaluator')
+local ModelEvaluator = torch.class('ModelEvaluator')
 
 local _loader
 
-function WEREvaluator:__init(datasetPath, mapper, testBatchSize, nbOfTestIterations, logsPath)
+function ModelEvaluator:__init(datasetPath, mapper, testBatchSize, nbOfTestIterations, logsPath)
     _loader = Loader(datasetPath)
     self.testBatchSize = testBatchSize
     self.nbOfTestIterations = nbOfTestIterations
@@ -21,7 +21,7 @@ function WEREvaluator:__init(datasetPath, mapper, testBatchSize, nbOfTestIterati
     self.suffix = '_' .. os.date('%Y%m%d_%H%M%S')
 end
 
-function WEREvaluator:getWER(gpu, model, verbose, epoch)
+function ModelEvaluator:getEvaluation(gpu, model, verbose, epoch)
     --[[
         load test_iter*batch_size data point from test set; compute average WER
 
@@ -29,7 +29,6 @@ function WEREvaluator:getWER(gpu, model, verbose, epoch)
             verbose:if true then print WER and predicted strings for each data to log
     --]]
 
-    local cumWER = 0
     local inputs = torch.Tensor()
     if (gpu) then
         inputs = inputs:cuda()
@@ -54,8 +53,9 @@ function WEREvaluator:getWER(gpu, model, verbose, epoch)
         f:close()
     end
 
-    local werPredictions = {} -- stores the predictions to order for log.
-
+    local evaluationPredictions = {} -- stores the predictions to order for log.
+    local cumCER = 0
+    local cumWER = 0
     -- ======================= for every test iteration ==========================
     for i = 1, self.nbOfTestIterations do
         -- get buf and fetch next one
@@ -81,34 +81,46 @@ function WEREvaluator:getWER(gpu, model, verbose, epoch)
         for j = 1, self.testBatchSize do
             local prediction_single = predictions[j]
             local predict_tokens = Evaluator.predict2tokens(prediction_single, self.mapper)
-            local WER = Evaluator.sequenceErrorRate(targets[j], predict_tokens)
+            local CER = Evaluator.sequenceErrorRate(targets[j], predict_tokens)
+            local targetTranscript = self:tokens2text(targets[j])
+            local predictTranscript = self:tokens2text(predict_tokens)
+            local targetWords = {}
+            for word in targetTranscript:gmatch("%S+") do table.insert(targetWords, word) end
+            local predictedWords = {}
+            for word in predictTranscript:gmatch("%S+") do table.insert(predictedWords, word) end
+            local WER = Evaluator.sequenceErrorRate(targetWords, predictedWords)
+
+            cumCER = cumCER + CER
             cumWER = cumWER + WER
-            table.insert(werPredictions, { wer = WER * 100, target = self:tokens2text(targets[j]), prediction = self:tokens2text(predict_tokens) })
+
+            table.insert(evaluationPredictions, { wer = WER * 100, cer = CER * 100, target = targetTranscript, prediction = predictTranscript})
         end
     end
 
     local function comp(a, b) return a.wer < b.wer end
 
-    table.sort(werPredictions, comp)
+    table.sort(evaluationPredictions, comp)
 
     if verbose then
-        for index, werPrediction in ipairs(werPredictions) do
-            local f = assert(io.open(self.logsPath .. 'WER_Test' .. self.suffix .. '.log', 'a'))
-            f:write(string.format("WER = %.2f%% | Text = \"%s\" | Predict = \"%s\"\n",
-                werPrediction.wer, werPrediction.target, werPrediction.prediction))
+        for index, eval in ipairs(evaluationPredictions) do
+            local f = assert(io.open(self.logsPath .. 'Evaluation_Test' .. self.suffix .. '.log', 'a'))
+            f:write(string.format("WER = %.2f%% | CER = %.2f%% | Text = \"%s\" | Predict = \"%s\"\n",
+                eval.wer, eval.cer, eval.target, eval.prediction))
             f:close()
         end
     end
     local averageWER = cumWER / (self.nbOfTestIterations * self.testBatchSize)
-    local f = assert(io.open(self.logsPath .. 'WER_Test' .. self.suffix .. '.log', 'a'))
-    f:write(string.format("Average WER = %.2f%%", averageWER * 100))
+    local averageCER = cumCER / (self.nbOfTestIterations * self.testBatchSize)
+
+    local f = assert(io.open(self.logsPath .. 'Evaluation_Test' .. self.suffix .. '.log', 'a'))
+    f:write(string.format("Average WER = %.2f%% | CER = %.2f%%", averageWER * 100, averageCER * 100))
     f:close()
 
     self.pool:synchronize() -- end the last loading
-    return averageWER
+    return averageWER, averageCER
 end
 
-function WEREvaluator:tokens2text(tokens)
+function ModelEvaluator:tokens2text(tokens)
     local text = ""
     for i, t in ipairs(tokens) do
         text = text .. self.mapper.token2alphabet[tokens[i]]

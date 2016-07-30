@@ -1,8 +1,8 @@
-# WEREvaluator
+# ModelEvaluator
 
 Handles calculation of word error rate using an LMDB dataset. For more information on the calculation, see [Evaluator](https://github.com/SeanNaren/CTCSpeechRecognition/doc/Evaluator.md).
 
-### WEREvaluator:__init(datasetPath, mapper, testBatchSize, nbOfTestIterations, logsPath)
+### ModelEvaluator:__init(datasetPath, mapper, testBatchSize, nbOfTestIterations, logsPath)
 
 `datasetPath` the path to the LMDB test dataset to use in evaluation.
 
@@ -15,9 +15,9 @@ Handles calculation of word error rate using an LMDB dataset. For more informati
 `logsPath` File path to put the details of evaluations into.
 
 
-### WEREvaluator:getWER(gpu, model, verbose, epoch)
+### ModelEvaluator:getEvaluation(gpu, model, verbose, epoch)
 
-Calculates the word error rate averaged over the test iterations. Uses the same threading as the training process does to load batches from the dataset.
+Calculates the word error rate and character error rate averaged over the test iterations. Uses the same threading as the training process does to load batches from the dataset.
 
 `gpu` Set to true to use CUDA.
 
@@ -28,7 +28,7 @@ Calculates the word error rate averaged over the test iterations. Uses the same 
 `epoch` Determines the epoch number that is written in the log files for this calculation.
 
 
-### WEREvaluator:tokens2text(tokens)
+### ModelEvaluator:tokens2text(tokens)
 
 Using the mapper converts the tokens into readable text.
 
