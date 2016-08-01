@@ -7,7 +7,7 @@ require 'UtilsMultiGPU'
 require 'Loader'
 require 'nngraph'
 require 'Mapper'
-require 'WEREvaluator'
+require 'ModelEvaluator'
 
 local suffix = '_' .. os.date('%Y%m%d_%H%M%S')
 local threads = require 'threads'
@@ -39,7 +39,7 @@ function Network:init(networkParams)
     self:makeDirectories({ self.logsTrainPath, self.logsValidationPath, self.modelTrainingPath })
 
     self.mapper = Mapper(networkParams.dictionaryPath)
-    self.werTester = WEREvaluator(self.validationSetLMDBPath, self.mapper, networkParams.validationBatchSize,
+    self.tester = ModelEvaluator(self.validationSetLMDBPath, self.mapper, networkParams.validationBatchSize,
         networkParams.validationIterations, self.logsValidationPath)
     self.saveModel = networkParams.saveModel
     self.saveModelInTraining = networkParams.saveModelInTraining or false
@@ -78,10 +78,10 @@ end
 
 function Network:testNetwork(epoch)
     self.model:evaluate()
-    local wer = self.werTester:getWER(self.gpu, self.model, true, epoch or 1) -- details in log
+    local wer, cer = self.tester:getEvaluation(self.gpu, self.model, true, epoch or 1) -- details in log
     self.model:zeroGradParameters()
     self.model:training()
-    return wer
+    return wer, cer
 end
 
 local function synchronize(self)
@@ -143,6 +143,7 @@ function Network:trainNetwork(epochs, sgd_params)
         inputs:resize(inputsCPU:size()):copy(inputsCPU) -- transfer over to GPU
         sizes = self.calSize(sizes)
         local predictions = self.model:forward(inputs)
+        predictions:add(-torch.max(predictions))
         local loss = ctcCriterion:forward(predictions, targets, sizes)
         self.model:zeroGradParameters()
         local gradOutput = ctcCriterion:backward(predictions, targets)
@@ -173,9 +174,9 @@ function Network:trainNetwork(epochs, sgd_params)
         averageLoss = averageLoss / self.nbBatches -- Calculate the average loss at this epoch.
 
         -- Update validation error rates
-        local wer = self:testNetwork(i)
+        local wer, cer = self:testNetwork(i)
 
-        print(string.format("Training Epoch: %d Average Loss: %f Average Validation WER: %.2f%%", i, averageLoss, 100 * wer))
+        print(string.format("Training Epoch: %d Average Loss: %f Average Validation WER: %.2f%% Average Validation CER: %.2f%%", i, averageLoss, 100 * wer, 100 * cer))
         table.insert(lossHistory, averageLoss) -- Add the average loss value to the logger.
         table.insert(validationHistory, 100 * wer)
         self.logger:add { averageLoss, 100 * wer }

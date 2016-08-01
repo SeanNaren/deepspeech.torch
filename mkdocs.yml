@@ -10,7 +10,7 @@ pages:
 - [DeepSpeechModel.md, DeepSpeechModel]
 - [Mapper.md, Mapper]
 - [Evaluator.md, Evaluator]
-- [WEREvaluator.md, WEREvaluator]
+- [ModelEvaluator.md, ModelEvaluator]
 - [Utils.md, Utils]
 - [UtilsMultiGPU.md, UtilsMultiGPU]
 - [Loader.md, Loader]

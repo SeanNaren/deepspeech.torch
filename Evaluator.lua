@@ -50,8 +50,8 @@ function Evaluator.predict2tokens(predictions, mapper)
         -- add token if it's not blank, and is not the same as pre_token
         if token ~= blankToken and token ~= preToken then
             table.insert(tokens, token)
-            preToken = token
         end
+        preToken = token
     end
 
     return tokens
