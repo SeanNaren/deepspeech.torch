@@ -45,7 +45,7 @@ function Network:init(networkParams)
     self.saveModelInTraining = networkParams.saveModelInTraining or false
     self.loadModel = networkParams.loadModel
     self.saveModelIterations = networkParams.saveModelIterations or 10 -- Saves model every number of iterations.
-
+    self.maxNorm = networkParams.maxNorm or 400 -- value chosen by Baidu for english speech.
     -- setting model saving/loading
     if (self.loadModel) then
         assert(networkParams.fileName, "Filename hasn't been given to load model.")
@@ -146,6 +146,10 @@ function Network:trainNetwork(epochs, sgd_params)
         self.model:zeroGradParameters()
         local gradOutput = ctcCriterion:backward(predictions, targets)
         self.model:backward(inputs, gradOutput)
+        local norm = gradParameters:norm()
+        if norm > self.maxNorm then
+            gradParameters:mul(self.maxNorm / norm)
+        end
         gradParameters:div(inputs:size(1))
         return loss, gradParameters
     end
