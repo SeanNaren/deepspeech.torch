@@ -40,10 +40,9 @@ function Evaluator.predict2tokens(predictions, mapper)
     local tokens = {}
     local blankToken = mapper.alphabet2token['$']
     local preToken = blankToken
-
     -- The prediction is a sequence of likelihood vectors
     local _, maxIndices = torch.max(predictions, 2)
-    maxIndices = maxIndices:squeeze()
+    maxIndices = maxIndices:float():squeeze()
 
     for i=1, maxIndices:size(1) do
         local token = maxIndices[i] - 1 -- CTC indexes start from 1, while token starts from 0
