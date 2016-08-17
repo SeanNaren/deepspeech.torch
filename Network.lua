@@ -209,6 +209,7 @@ function Network:createLossGraph()
 end
 
 function Network:saveNetwork(saveName)
+    self.model:clearState()
     saveDataParallel(saveName, self.model)
 end
 
