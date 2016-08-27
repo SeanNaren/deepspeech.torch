@@ -15,33 +15,25 @@ local function split(s, p)
     return rt
 end
 
-local function trans2tokens(line, _mapper)
+local function trans2tokens(line, mapper)
     --[[
         input:
             line: ERASE C Q Q F SEVEN (id)
-
         output:
             label: {3,7,1,2,8}
             line: erase c q q f seven
     --]]
-
-    local label = {}
     line = string.lower(line)
     line = line:gsub('^%s', ''):gsub('', ''):gsub('', ''):gsub('%(.+%)', ''):gsub('%s$', ''):gsub('<s>', ''):gsub('</s>', '')
-    -- strip
     line = line:match("^%s*(.-)%s*$")
-    for i = 1, #line do
-        local character = line:sub(i, i)
-        table.insert(label, _mapper.alphabet2token[character])
-    end
-
+    local label = mapper:encodeString(line)
     return torch.serialize(label), torch.serialize(line)
 end
 
-local function start_txn(_path, _name)
+local function start_txn(path, name)
     local db = lmdb.env {
-        Path = _path,
-        Name = _name
+        Path = path,
+        Name = name
     }
     db:open()
     local txn = db:txn()
@@ -66,7 +58,6 @@ function util.mk_lmdb(root_path, index_path, dict_path, out_dir, windowSize, str
     local cnt = 1
     local show_gap = 100
     for line in io.lines(index_path) do
-        -- print('processing ' .. line .. ' cnt: ' .. cnt)
         local wave_path, trans = split(line, '@')[1], split(line, '@')[2]
 
         -- make label
@@ -78,7 +69,14 @@ function util.mk_lmdb(root_path, index_path, dict_path, out_dir, windowSize, str
 
         -- put into lmdb
         spect = spect:float()
-        txn_spect:put(cnt, spect:byte())
+
+        -- normalize the data
+        local mean = spect:mean()
+        local std = spect:std()
+        spect:add(-mean)
+        spect:div(std)
+
+        txn_spect:put(cnt, spect)
         txn_label:put(cnt, label)
         txn_trans:put(cnt, modified_trans)
 

@@ -9,7 +9,7 @@ pages:
 - [Network.md, Network]
 - [DeepSpeechModel.md, DeepSpeechModel]
 - [Mapper.md, Mapper]
-- [Evaluator.md, Evaluator]
+- [SequenceError.md, SequenceError]
 - [ModelEvaluator.md, ModelEvaluator]
 - [Utils.md, Utils]
 - [UtilsMultiGPU.md, UtilsMultiGPU]

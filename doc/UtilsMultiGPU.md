@@ -2,7 +2,7 @@
 
 Handles multi-gpu setups of the architecture.
 
-### makeDataParallel(model, nGPU, is_cudnn)
+### makeDataParallel(model, nGPU)
 
 Converts the model into a multi-gpu set up if necessary using DataParallelTable.
 
@@ -10,12 +10,18 @@ Converts the model into a multi-gpu set up if necessary using DataParallelTable.
 
 `nGPU` Number of GPUs.
 
-`is_cudnn` Set to true if using cuDNN backend.
-
-### saveDataParallel(filename, model)
+### saveDataParallel(modelPath, model)
 
 Saves the model to disk.
 
-`fileName` Location to save the file.
+`modelPath` Location to save the model.
 
 `model` The Torch network model to save.
+
+### loadDataParallel(modelPath, nGPU)
+
+Loads a model saved using the above methods.
+
+`modelPath` Location to load the model.
+
+`nGPU` Number of GPUs to load to.

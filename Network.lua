@@ -18,83 +18,76 @@ seed = 10
 torch.setdefaulttensortype('torch.FloatTensor')
 torch.manualSeed(seed)
 
-function Network:init(networkParams)
-    self.fileName = networkParams.fileName -- The file name to save/load the network from.
-    self.nGPU = networkParams.nGPU
+function Network:init(opt)
+    self.fileName = opt.modelPath -- The file name to save/load the network from.
+    self.nGPU = opt.nGPU
     self.gpu = self.nGPU > 0
 
     if not self.gpu then
-        assert(networkParams.backend ~= 'cudnn', "Can't have cuDNN backend when set to CPU mode")
+        require 'rnn'
     else
         require 'cutorch'
         require 'cunn'
+        require 'cudnn'
+        require 'BatchBRNNReLU'
         cutorch.manualSeedAll(seed)
     end
-    self.trainingSetLMDBPath = networkParams.trainingSetLMDBPath
-    self.validationSetLMDBPath = networkParams.validationSetLMDBPath
-    self.logsTrainPath = networkParams.logsTrainPath or nil
-    self.logsValidationPath = networkParams.logsValidationPath or nil
-    self.modelTrainingPath = networkParams.modelTrainingPath or nil
+    self.trainingSetLMDBPath = opt.trainingSetLMDBPath
+    self.validationSetLMDBPath = opt.validationSetLMDBPath
+    self.logsTrainPath = opt.logsTrainPath or nil
+    self.logsValidationPath = opt.logsValidationPath or nil
+    self.modelTrainingPath = opt.modelTrainingPath or nil
 
     self:makeDirectories({ self.logsTrainPath, self.logsValidationPath, self.modelTrainingPath })
 
-    self.mapper = Mapper(networkParams.dictionaryPath)
-    self.tester = ModelEvaluator(self.validationSetLMDBPath, self.mapper, networkParams.validationBatchSize,
-        networkParams.validationIterations, self.logsValidationPath)
-    self.saveModel = networkParams.saveModel
-    self.saveModelInTraining = networkParams.saveModelInTraining or false
-    self.loadModel = networkParams.loadModel
-    self.saveModelIterations = networkParams.saveModelIterations or 10 -- Saves model every number of iterations.
-    self.maxNorm = networkParams.maxNorm or 400 -- value chosen by Baidu for english speech.
+    self.mapper = Mapper(opt.dictionaryPath)
+    self.tester = ModelEvaluator(self.gpu, self.validationSetLMDBPath, self.mapper,
+        opt.validationBatchSize, self.logsValidationPath)
+    self.saveModel = opt.saveModel
+    self.saveModelInTraining = opt.saveModelInTraining or false
+    self.loadModel = opt.loadModel
+    self.saveModelIterations = opt.saveModelIterations or 10 -- Saves model every number of iterations.
+    self.maxNorm = opt.maxNorm or 400 -- value chosen by Baidu for english speech.
     -- setting model saving/loading
     if (self.loadModel) then
-        assert(networkParams.fileName, "Filename hasn't been given to load model.")
-        self:loadNetwork(networkParams.fileName,
-            networkParams.modelName,
-            networkParams.backend == 'cudnn')
+        assert(opt.modelPath, "modelPath hasn't been given to load model.")
+        self:loadNetwork(opt.modelPath, opt.modelName)
     else
-        assert(networkParams.modelName, "Must have given a model to train.")
-        self:prepSpeechModel(networkParams.modelName, networkParams.backend)
+        assert(opt.modelName, "Must have given a model to train.")
+        self:prepSpeechModel(opt.modelName, opt)
     end
-    assert((networkParams.saveModel or networkParams.loadModel) and networkParams.fileName, "To save/load you must specify the fileName you want to save to")
+    assert((opt.saveModel or opt.loadModel) and opt.modelPath, "To save/load you must specify the modelPath you want to save to")
     -- setting online loading
-    self.indexer = indexer(networkParams.trainingSetLMDBPath, networkParams.batchSize)
+    self.indexer = indexer(opt.trainingSetLMDBPath, opt.batchSize)
     self.indexer:prep_sorted_inds()
     self.pool = threads.Threads(1, function() require 'Loader' end)
-    self.nbBatches = math.ceil(self.indexer.lmdb_size / networkParams.batchSize)
+    self.nbBatches = math.ceil(self.indexer.lmdb_size / opt.batchSize)
 
     self.logger = optim.Logger(self.logsTrainPath .. 'train' .. suffix .. '.log')
-    self.logger:setNames { 'loss', 'WER' }
-    self.logger:style { '-', '-' }
+    self.logger:setNames { 'loss', 'WER', 'CER' }
+    self.logger:style { '-', '-', '-' }
 end
 
-function Network:prepSpeechModel(modelName, backend)
+function Network:prepSpeechModel(modelName, opt)
     local model = require(modelName)
-    self.model = model[1](self.nGPU, backend == 'cudnn')
+    self.model = model[1](opt)
     self.calSize = model[2]
 end
 
 function Network:testNetwork(epoch)
     self.model:evaluate()
-    local wer, cer = self.tester:getEvaluation(self.gpu, self.model, true, epoch or 1) -- details in log
+    local wer, cer = self.tester:runEvaluation(self.model, true, epoch or 1) -- details in log
     self.model:zeroGradParameters()
     self.model:training()
     return wer, cer
 end
 
-local function synchronize(self)
-    if self.gpu then cutorch.synchronize() end
-end
-
-function Network:trainNetwork(epochs, sgd_params)
-    --[[
-        train network with self-defined feval (sgd inside); use ctc for evaluation
-    --]]
+function Network:trainNetwork(epochs, optimizerParams)
     self.model:training()
 
     local lossHistory = {}
     local validationHistory = {}
-    local ctcCriterion = nn.CTCCriterion(true)
+    local criterion = nn.CTCCriterion(true)
     local x, gradParameters = self.model:getParameters()
 
     print("Number of parameters: ", gradParameters:size(1))
@@ -103,7 +96,7 @@ function Network:trainNetwork(epochs, sgd_params)
     local inputs = torch.Tensor()
     local sizes = torch.Tensor()
     if self.gpu then
-        ctcCriterion = ctcCriterion:cuda()
+        criterion = criterion:cuda()
         inputs = inputs:cuda()
         sizes = sizes:cuda()
     end
@@ -125,10 +118,10 @@ function Network:trainNetwork(epochs, sgd_params)
 
     -- define the feval
     local function feval(x_new)
-        --------------------- data load ------------------------
         self.pool:synchronize() -- wait previous loading
         local inputsCPU, sizes, targets = specBuf, sizesBuf, labelBuf -- move buf to training data
-        inds = self.indexer:nxt_sorted_inds() -- load nxt batch
+
+        inds = self.indexer:nxt_sorted_inds() -- load nxt batch whilst training
         self.pool:addjob(function()
             return loader:nxt_batch(inds, false)
         end,
@@ -137,20 +130,18 @@ function Network:trainNetwork(epochs, sgd_params)
                 labelBuf = label
                 sizesBuf = sizes
             end)
-        --------------------- fwd and bwd ---------------------
+
         inputs:resize(inputsCPU:size()):copy(inputsCPU) -- transfer over to GPU
         sizes = self.calSize(sizes)
         local predictions = self.model:forward(inputs)
-        predictions:add(-torch.max(predictions))
-        local loss = ctcCriterion:forward(predictions, targets, sizes)
+        local loss = criterion:forward(predictions, targets, sizes)
         self.model:zeroGradParameters()
-        local gradOutput = ctcCriterion:backward(predictions, targets)
+        local gradOutput = criterion:backward(predictions, targets)
         self.model:backward(inputs, gradOutput)
         local norm = gradParameters:norm()
         if norm > self.maxNorm then
             gradParameters:mul(self.maxNorm / norm)
         end
-        gradParameters:div(inputs:size(1))
         return loss, gradParameters
     end
 
@@ -163,12 +154,8 @@ function Network:trainNetwork(epochs, sgd_params)
 
         for j = 1, self.nbBatches do
             currentLoss = 0
-            synchronize(self)
-            local _, fs = optim.sgd(feval, x, sgd_params)
-            synchronize(self)
-            if self.model.needsSync then
-                self.model:syncParameters()
-            end
+            local _, fs = optim.sgd(feval, x, optimizerParams)
+            if self.gpu then cutorch.synchronize() end
             currentLoss = currentLoss + fs[1]
             xlua.progress(j, self.nbBatches)
             averageLoss = averageLoss + currentLoss
@@ -176,13 +163,18 @@ function Network:trainNetwork(epochs, sgd_params)
 
         averageLoss = averageLoss / self.nbBatches -- Calculate the average loss at this epoch.
 
+        -- anneal learningRate
+        optimizerParams.learningRate = optimizerParams.learningRate / (optimizerParams.learningRateAnnealing or 1)
+
         -- Update validation error rates
         local wer, cer = self:testNetwork(i)
 
-        print(string.format("Training Epoch: %d Average Loss: %f Average Validation WER: %.2f%% Average Validation CER: %.2f%%", i, averageLoss, 100 * wer, 100 * cer))
+        print(string.format("Training Epoch: %d Average Loss: %f Average Validation WER: %.2f%% Average Validation CER: %.2f%%",
+            i, averageLoss, 100 * wer, 100 * cer))
+
         table.insert(lossHistory, averageLoss) -- Add the average loss value to the logger.
         table.insert(validationHistory, 100 * wer)
-        self.logger:add { averageLoss, 100 * wer }
+        self.logger:add { averageLoss, 100 * wer, 100 * cer }
 
         -- periodically save the model
         if self.saveModelInTraining and i % self.saveModelIterations == 0 then
@@ -214,8 +206,8 @@ function Network:saveNetwork(saveName)
 end
 
 --Loads the model into Network.
-function Network:loadNetwork(saveName, modelName, is_cudnn)
-    self.model = loadDataParallel(saveName, self.nGPU, is_cudnn)
+function Network:loadNetwork(saveName, modelName)
+    self.model = loadDataParallel(saveName, self.nGPU)
     local model = require(modelName)
     self.calSize = model[2]
 end

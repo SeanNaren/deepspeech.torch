@@ -148,6 +148,9 @@ function Loader:__init(dirPath)
     self.db_spect = lmdb.env { Path = dirPath .. '/spect', Name = 'spect' }
     self.db_label = lmdb.env { Path = dirPath .. '/label', Name = 'label' }
     self.db_trans = lmdb.env { Path = dirPath .. '/trans', Name = 'trans' }
+    self.db_spect:open()
+    self.size = self.db_spect:stat()['entries']
+    self.db_spect:close()
 end
 
 function Loader:nxt_batch(indices, includeTranscripts)
