@@ -14,7 +14,7 @@ cmd:option('-saveModelInTraining', false, 'save model periodically through train
 cmd:option('-modelTrainingPath', './models/', ' Path to save periodic training models')
 cmd:option('-saveModelIterations', 50, 'When to save model through training')
 cmd:option('-modelPath', 'deepspeech.t7', 'Path of final model to save/load')
-cmd:option('-dictionaryPath', './dictionary', ' File containing the dictionary to use')
+cmd:option('-dictionaryPath', './an4.phone', ' File containing the dictionary to use')
 cmd:option('-epochs', 70, 'Number of epochs for training')
 cmd:option('-learningRate', 3e-4, ' Training learning rate')
 cmd:option('-learningRateAnnealing', 1.1, 'Factor to anneal lr every epoch')

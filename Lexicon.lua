@@ -1,4 +1,3 @@
--- [Do I need this to be fixed?] --
 require 'torch'
 require 'string'
 
@@ -13,14 +12,13 @@ function lexicon:__init(lexPath)
     -- make maps
     for line in io.lines(lexPath) do
         line = string.lower(line)
-        entry = string.split(line, "%s+")
-        word = entry[1]
+        local entry = string.split(line, "%s+")
+        local word = entry[1]
         if word:match("2") then
             word = word:match("(%a+)")
         end
-        head = table.remove(entry, 1)
-        phones = table.concat(entry," ")
-        -- print(word,phones)
+        table.remove(entry, 1)
+        local phones = table.concat(entry," ")
         self.word2tokens[word] = phones
     end
 end
