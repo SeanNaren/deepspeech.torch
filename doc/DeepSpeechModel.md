@@ -2,13 +2,11 @@
 
 Defines the deep speech 2 conv+rnn architecture.
 
-### deepSpeech(nGPU, isCUDNN)
+### deepSpeech(nGPU)
 
 Defines the torch architecture for Deep Speech 2 as a function that can be called. Returns the final model
 
 `nGPU` Number of GPUs that will be used.
-
-`isCUDNN` Set to true if using cuDNN backend.
 
 Also defined in this class are a few variables that can be modified if so chosen:
 
