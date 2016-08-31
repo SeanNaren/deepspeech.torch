@@ -35,7 +35,7 @@ function test.evaluator()
 end
 
 function test.mapper()
-    local dir_path = '../dictionary'
+    local dir_path = 'test_dictionary'
     local mapper = Mapper(dir_path)
     local alphabet = {
         '$', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r',
@@ -49,7 +49,7 @@ function test.mapper()
 end
 
 function test.mapperDecode()
-    local dir_path = '../dictionary'
+    local dir_path = 'test_dictionary'
     local mapper = Mapper(dir_path)
     local predictions = torch.Tensor({ { 1, 2, 3 }, { 2, 3, 1 }, { 1, 2, 3 } })
     local tokens = mapper:decodeOutput(predictions)
