@@ -1,44 +1,43 @@
---[[Trains the CTC model using the AN4 audio database.]]
-
 local Network = require 'Network'
 
-local epochs = 70
+-- Options can be overrided on command line run.
+local cmd = torch.CmdLine()
+cmd:option('-loadModel', false, 'Load previously saved model')
+cmd:option('-saveModel', true, 'Save model after training/testing')
+cmd:option('-modelName', 'DeepSpeechModel', 'Name of class containing architecture')
+cmd:option('-nGPU', 1, 'Number of GPUs, set -1 to use CPU')
+cmd:option('-trainingSetLMDBPath', './prepare_an4/train/', 'Path to LMDB training dataset')
+cmd:option('-validationSetLMDBPath', './prepare_an4/test/', 'Path to LMDB test dataset')
+cmd:option('-logsTrainPath', './logs/TrainingLoss/', ' Path to save Training logs')
+cmd:option('-logsValidationPath', './logs/ValidationScores/', ' Path to save Validation logs')
+cmd:option('-saveModelInTraining', false, 'save model periodically through training')
+cmd:option('-modelTrainingPath', './models/', ' Path to save periodic training models')
+cmd:option('-saveModelIterations', 50, 'When to save model through training')
+cmd:option('-modelPath', 'deepspeech.t7', 'Path of final model to save/load')
+cmd:option('-dictionaryPath', './dictionary', ' File containing the dictionary to use')
+cmd:option('-epochs', 70, 'Number of epochs for training')
+cmd:option('-learningRate', 3e-4, ' Training learning rate')
+cmd:option('-learningRateAnnealing', 1.1, 'Factor to anneal lr every epoch')
+cmd:option('-momentum', 0.90, 'Momentum for SGD')
+cmd:option('-batchSize', 20, 'Batch size in training')
+cmd:option('-validationBatchSize', 20, 'Batch size for validation')
+cmd:option('-hiddenSize', 1760, 'RNN hidden sizes')
+cmd:option('-nbOfHiddenLayers', 7, 'Number of rnn layers')
 
-local networkParams = {
-    loadModel = false,
-    saveModel = true,
-    modelName = 'DeepSpeechModel',
-    backend = 'cudnn', -- switch to rnn to use CPU
-    nGPU = 1, -- Number of GPUs, set -1 to use CPU
-    trainingSetLMDBPath = './prepare_an4/train/',-- online loading path data.
-    validationSetLMDBPath = './prepare_an4/test/',
-    logsTrainPath = './logs/TrainingLoss/',
-    logsValidationPath = './logs/ValidationScores/',
-    modelTrainingPath = './models/',
-    fileName = 'CTCNetwork.t7',
-    dictionaryPath = './an4.phone',
-    batchSize = 20,
-    validationBatchSize = 1,
-    validationIterations = 20,
-    saveModelInTraining = false, -- saves model periodically through training
-    saveModelIterations = 50
-}
+local opt = cmd:parse(arg)
 --Parameters for the stochastic gradient descent (using the optim library).
-local sgdParams = {
-    learningRate = 3e-4,
-    learningRateDecay = 1e-9,
-    weightDecay = 0,
-    momentum = 0.9,
+local optimParams = {
+    learningRate = opt.learningRate,
+    learningRateAnnealing = opt.learningRateAnnealing,
+    momentum = opt.momentum,
     dampening = 0,
     nesterov = true
 }
 
 --Create and train the network based on the parameters and training data.
-Network:init(networkParams)
+Network:init(opt)
 
-Network:trainNetwork(epochs, sgdParams)
+Network:trainNetwork(opt.epochs, optimParams)
 
 --Creates the loss plot.
 Network:createLossGraph()
-
-print("finished")

@@ -16,17 +16,14 @@ local function split(s, p)
     return rt
 end
 
-
-local function trans2tokens(line, _mapper, _lexicon)
+local function trans2tokens(line, mapper, lexicon)
     --[[
         input:
             line: ERASE C Q Q F SEVEN (id)
-
         output:
             label: {3,7,1,2,8}
             line: erase c q q f seven
     --]]
-
     local label = {}
     local transcript = {}
 
@@ -35,22 +32,22 @@ local function trans2tokens(line, _mapper, _lexicon)
     line = line:match("^%s*(.-)%s*$")
 
     for i in string.gmatch(line,"%a+") do
-        local phoneme = _lexicon.word2tokens[i]
+        local phoneme = lexicon.word2tokens[i]
         table.insert(transcript, phoneme)
         for j in string.gmatch(phoneme,"%a+") do
-            table.insert(label, _mapper.alphabet2token[j])
+            table.insert(label, mapper.alphabet2token[j])
         end
-        table.insert(label, _mapper.alphabet2token['  '])
+        table.insert(label, mapper.alphabet2token['  '])
     end
     
     table.remove(label, table.getn(label))
     return torch.serialize(label), torch.serialize(table.concat(transcript," "))
 end
 
-local function start_txn(_path, _name)
+local function start_txn(path, name)
     local db = lmdb.env {
-        Path = _path,
-        Name = _name
+        Path = path,
+        Name = name
     }
     db:open()
     local txn = db:txn()
@@ -76,7 +73,6 @@ function util.mk_lmdb(root_path, index_path, dict_path, lex_path, out_dir, windo
     local cnt = 1
     local show_gap = 100
     for line in io.lines(index_path) do
-        -- print('processing ' .. line .. ' cnt: ' .. cnt)
         local wave_path, trans = split(line, '@')[1], split(line, '@')[2]
 
         -- make label
@@ -88,7 +84,14 @@ function util.mk_lmdb(root_path, index_path, dict_path, lex_path, out_dir, windo
 
         -- put into lmdb
         spect = spect:float()
-        txn_spect:put(cnt, spect:byte())
+
+        -- normalize the data
+        local mean = spect:mean()
+        local std = spect:std()
+        spect:add(-mean)
+        spect:div(std)
+
+        txn_spect:put(cnt, spect)
         txn_label:put(cnt, label)
         txn_trans:put(cnt, modified_trans)
 

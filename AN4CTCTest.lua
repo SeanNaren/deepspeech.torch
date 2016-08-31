@@ -1,30 +1,24 @@
---[[Calulates the WER using the AN4 Audio database test set.
--- Uses model created by AN4CTCTrain.]]
-
 local Network = require 'Network'
 
--- Load the network from the saved model.
-local networkParams = {
-    loadModel = true,
-    saveModel = false,
-    fileName = arg[1] or "./models/CTCNetwork.t7", -- Rename the evaluated model to CTCNetwork.t7 or pass the file path as an argument.
-    modelName = 'DeepSpeechModel',
-    backend = 'cudnn',
-    nGPU = 1, -- Number of GPUs, set -1 to use CPU
-    trainingSetLMDBPath = './prepare_an4/train/', -- online loading path
-    validationSetLMDBPath = './prepare_an4/test/',
-    logsTrainPath = './logs/TrainingLoss/',
-    logsValidationPath = './logs/TestScores/',
-    modelTrainingPath = './models/',
-    dictionaryPath = './an4.phone',
-    batchSize = 1,
-    validationBatchSize = 1,
-    validationIterations = 130 -- batch size 1, goes through 130 samples.
-}
+-- Load the network from the saved model. Options can be overrided on command line run.
+local cmd = torch.CmdLine()
+cmd:option('-loadModel', true, 'Load previously saved model')
+cmd:option('-saveModel', false, 'Save model after training/testing')
+cmd:option('-modelName', 'DeepSpeechModel', 'Name of class containing architecture')
+cmd:option('-nGPU', 1, 'Number of GPUs, set -1 to use CPU')
+cmd:option('-trainingSetLMDBPath', './prepare_an4/train/', 'Path to LMDB training dataset')
+cmd:option('-validationSetLMDBPath', './prepare_an4/test/', 'Path to LMDB test dataset')
+cmd:option('-logsTrainPath', './logs/TrainingLoss/', ' Path to save Training logs')
+cmd:option('-logsValidationPath', './logs/ValidationScores/', ' Path to save Validation logs')
+cmd:option('-modelPath', 'deepspeech.t7', 'Path of final model to save/load')
+cmd:option('-dictionaryPath', './dictionary', ' File containing the dictionary to use')
+cmd:option('-batchSize', 20, 'Batch size in training')
+cmd:option('-validationBatchSize', 32, 'Batch size for validation')
 
-Network:init(networkParams)
+local opt = cmd:parse(arg)
+Network:init(opt)
 
 print("Testing network...")
 local wer, cer = Network:testNetwork()
-print(string.format('Number of iterations: %d average WER: %2.f%%  Average Validation CER: %.2f%%', networkParams.validationIterations, 100 * wer, 100 * cer))
-print(string.format('More information written to log file at %s', networkParams.logsValidationPath))
+print(string.format('Avg WER: %2.f%%  Avg CER: %.2f%%', 100 * wer, 100 * cer))
+print(string.format('More information written to log file at %s', opt.logsValidationPath))

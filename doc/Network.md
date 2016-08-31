@@ -12,14 +12,13 @@ local networkParams = {
     loadModel = false, -- Set to true if loading a model into the Network class rather than training.
     saveModel = true, -- Set to true if saving the model after training.
     modelName = 'DeepSpeechModel', -- The name of the lua class containing the network architecture
-    backend = 'cudnn', -- supports cudnn (GPU) and rnn (CPU)
     nGPU = 1, -- Number of GPUs, set -1 to use CPU
     trainingSetLMDBPath = './prepare_an4/train/', -- online loading path from the LMDB dataset for training.
     validationSetLMDBPath = './prepare_an4/test/', -- online loading path from the LMDB dataset for testing.
     logsTrainPath = './logs/TrainingLoss/', -- Where training logs will be stored.
     logsValidationPath = './logs/ValidationScores/', -- Where testing score logs will be stored.
     modelTrainingPath = './models/', -- Where models will be stored on saving.
-    fileName = 'CTCNetwork.t7',
+    modelPath = 'CTCNetwork.t7',
     dictionaryPath = './dictionary', -- Contains the alphabet/characters that we are to predict on.
     batchSize = 20, -- The sizes of batches that we are passing into the network in training.
     validationBatchSize = 1, -- Validation batch sizes (should be kept at 1, since we pass 1 sample at a time).
@@ -29,9 +28,9 @@ local networkParams = {
 }
 ```
 
-### Network:prepSpeechModel(networkParams)
+### Network:prepSpeechModel(modelName, opt)
 
-Used to create the model via the defined modelName using the configured backend and numbner of GPUs.
+Used to create the model via the defined modelName and options.
 
 ### Network:testNetwork(epoch)
 

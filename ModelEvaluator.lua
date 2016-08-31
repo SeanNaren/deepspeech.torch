@@ -4,41 +4,36 @@ require 'Mapper'
 require 'torch'
 require 'xlua'
 local threads = require 'threads'
-local Evaluator = require 'Evaluator'
+require 'SequenceError'
 
 local ModelEvaluator = torch.class('ModelEvaluator')
 
-local _loader
+local loader
 
-function ModelEvaluator:__init(datasetPath, mapper, testBatchSize, nbOfTestIterations, logsPath)
-    _loader = Loader(datasetPath)
+function ModelEvaluator:__init(isGPU, datasetPath, mapper, testBatchSize, logsPath)
+    loader = Loader(datasetPath)
     self.testBatchSize = testBatchSize
-    self.nbOfTestIterations = nbOfTestIterations
+    self.nbOfTestIterations = math.ceil(loader.size / testBatchSize)
     self.indexer = indexer(datasetPath, testBatchSize)
     self.pool = threads.Threads(1, function() require 'Loader' end)
     self.mapper = mapper
     self.logsPath = logsPath
     self.suffix = '_' .. os.date('%Y%m%d_%H%M%S')
+    self.sequenceError = SequenceError()
+    self.input = torch.Tensor()
+    self.isGPU = isGPU
+    if isGPU then
+        self.input = self.input:cuda()
+    end
 end
 
-function ModelEvaluator:getEvaluation(gpu, model, verbose, epoch)
-    --[[
-        load test_iter*batch_size data point from test set; compute average WER
-
-        input:
-            verbose:if true then print WER and predicted strings for each data to log
-    --]]
-
-    local inputs = torch.Tensor()
-    if (gpu) then
-        inputs = inputs:cuda()
-    end
+function ModelEvaluator:runEvaluation(model, verbose, epoch)
     local spect_buf, label_buf, sizes_buf
 
     -- get first batch
     local inds = self.indexer:nxt_inds()
     self.pool:addjob(function()
-        return _loader:nxt_batch(inds, false)
+        return loader:nxt_batch(inds, false)
     end,
         function(spect, label, sizes)
             spect_buf = spect
@@ -63,7 +58,7 @@ function ModelEvaluator:getEvaluation(gpu, model, verbose, epoch)
         local inputsCPU, targets, sizes_array = spect_buf, label_buf, sizes_buf
         inds = self.indexer:nxt_inds()
         self.pool:addjob(function()
-            return _loader:nxt_batch(inds, true)
+            return loader:nxt_batch(inds, true)
         end,
             function(spect, label, sizes)
                 spect_buf = spect
@@ -71,29 +66,24 @@ function ModelEvaluator:getEvaluation(gpu, model, verbose, epoch)
                 sizes_buf = sizes
             end)
 
-        inputs:resize(inputsCPU:size()):copy(inputsCPU)
-        if(gpu) then cutorch.synchronize() end
-        local predictions = model:forward(inputs)
-
-        if(gpu) then cutorch.synchronize() end
+        self.input:resize(inputsCPU:size()):copy(inputsCPU)
+        local predictions = model:forward(self.input)
+        if self.isGPU then cutorch.synchronize() end
 
         -- =============== for every data point in this batch ==================
         for j = 1, self.testBatchSize do
-            local prediction_single = predictions[j]
-            local predict_tokens = Evaluator.predict2tokens(prediction_single, self.mapper)
-            local CER = Evaluator.sequenceErrorRate(targets[j], predict_tokens)
-            local targetTranscript = self:tokens2text(targets[j])
-            local predictTranscript = self:tokens2text(predict_tokens)
-            local targetWords = {}
-            for word in targetTranscript:gmatch("%S+") do table.insert(targetWords, word) end
-            local predictedWords = {}
-            for word in predictTranscript:gmatch("%S+") do table.insert(predictedWords, word) end
-            local WER = Evaluator.sequenceErrorRate(targetWords, predictedWords)
+            local prediction = predictions[j]
+            local predict_tokens = self.mapper:decodeOutput(prediction)
+            local targetTranscript = self.mapper:tokensToText(targets[j])
+            local predictTranscript = self.mapper:tokensToText(predict_tokens)
+
+            local CER = self.sequenceError:calculateCER(targetTranscript, predictTranscript)
+            local WER = self.sequenceError:calculateWER(targetTranscript, predictTranscript)
 
             cumCER = cumCER + CER
             cumWER = cumWER + WER
 
-            table.insert(evaluationPredictions, { wer = WER * 100, cer = CER * 100, target = targetTranscript, prediction = predictTranscript})
+            table.insert(evaluationPredictions, { wer = WER * 100, cer = CER * 100, target = targetTranscript, prediction = predictTranscript })
         end
     end
 
@@ -118,12 +108,4 @@ function ModelEvaluator:getEvaluation(gpu, model, verbose, epoch)
 
     self.pool:synchronize() -- end the last loading
     return averageWER, averageCER
-end
-
-function ModelEvaluator:tokens2text(tokens)
-    local text = ""
-    for i, t in ipairs(tokens) do
-        text = text .. self.mapper.token2alphabet[tokens[i]]
-    end
-    return text
 end

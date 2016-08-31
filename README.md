@@ -1,14 +1,13 @@
-# CTCSpeechRecognition AN4 Phoneme Branch
-
-This branch implements CTC recognition using phonemes (trained on the AN4 dataset) rather than character based recognition. Was written by [CCorfield](https://github.com/CCorfield) on top of the current implementation
-and I thank him so much for his work and effort in bringing phoneme recognition into the repo.
-
-[![Build Status](https://travis-ci.org/SeanNaren/CTCSpeechRecognition.svg?branch=master)](https://travis-ci.org/SeanNaren/CTCSpeechRecognition)
+# deepspeech.torch AN4 Phoneme Branch
+[![Build Status](https://travis-ci.org/SeanNaren/deepspeech.torch.svg?branch=master)](https://travis-ci.org/SeanNaren/deepspeech.torch)
 [![Documentation Status](https://readthedocs.org/projects/ctcspeechrecognition/badge/?version=latest)](http://ctcspeechrecognition.readthedocs.io/en/latest/?badge=latest)
 
 
 Implementation of [Baidu Warp-CTC](https://github.com/baidu-research/warp-ctc) using torch7.
 Creates a network based on the [DeepSpeech2](http://arxiv.org/pdf/1512.02595v1.pdf) architecture using the Torch7 library, trained with the CTC activation function.
+
+This branch implements Deepspeech2 using phonemes (trained on the AN4 dataset) rather than character based recognition. Was written by [CCorfield](https://github.com/CCorfield) on top of the current implementation
+and I thank him so much for his work and effort in bringing phoneme recognition into the repo.
 
 ## Features
 * Train large models with large datasets via online loading using [LMDB](https://en.wikipedia.org/wiki/Lightning_Memory-Mapped_Database) and multi-GPU support.
@@ -23,12 +22,19 @@ This branch is useful for understanding how the CTC Speech System works and is v
 * AN4Phoneme: This branch is experimental and uses phonemes rather than character based predictions. This is fully credited and extended by [CCorfield](https://github.com/CCorfield) and his awesome work in porting to use phonemes. In addition to this
 I'd like to also thank [Shane Walker](https://github.com/walkers-mv) for his awesome recent conversion to use phonemes as well.
 
-## TODO
-* Finish documentation for technical and general.
+## Performance
+
+These results are based on training on the AN4 training set, and testing on the AN4 test set. Will be updated as architecture changes.
+
+| WER  | CER  |
+|:----:|:----:|
+| 14   | 4.22 |
+
+![Training graph](images/training_graph.png)
 
 ## Installation/Documentation
 
-Follow Instructions/Documentation found in the wiki [here](https://github.com/SeanNaren/CTCSpeechRecognition/wiki/Installation) to set up and run the code.
+Follow Instructions/Documentation found in the wiki [here](https://github.com/SeanNaren/deepspeech.torch/wiki/Installation) to set up and run the code.
 
 Technical documentation can be found [here](http://ctcspeechrecognition.readthedocs.io/en/latest/).
 

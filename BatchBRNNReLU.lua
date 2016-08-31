@@ -10,5 +10,5 @@ function BatchBRNNReLU:__init(inputDim, outputDim)
     local rnn = self.rnn
     rnn.mode = 'CUDNN_RNN_RELU'
     rnn:reset()
-    self:insert(cudnn.ClippedReLU(20, true), 6)
+    self:insert(nn.Clamp(0, 20), 6)
 end
