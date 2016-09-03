@@ -11,6 +11,5 @@ pages:
 - [Mapper.md, Mapper]
 - [SequenceError.md, SequenceError]
 - [ModelEvaluator.md, ModelEvaluator]
-- [Utils.md, Utils]
 - [UtilsMultiGPU.md, UtilsMultiGPU]
 - [Loader.md, Loader]

@@ -10,19 +10,20 @@ Creates a network based on the [DeepSpeech2](http://arxiv.org/pdf/1512.02595v1.p
 ## Features
 * Train large models with large datasets via online loading using [LMDB](https://en.wikipedia.org/wiki/Lightning_Memory-Mapped_Database) and multi-GPU support.
 * Supports variable length batches via masking.
-* Implements the AN4 Audio database as an example of how a dataset can implemented.
+* Implements the [AN4 Audio database](http://www.speech.cs.cmu.edu/databases/an4/) (50 mins of data).
+Has also been extended to train using the [LibriSpeech](http://www.openslr.org/12/) dataset (1000 hours of data). Custom dataset preparation is explained in documentation.
 
 ## Branches
 
-There are currently two branches, Master and AN4Phoneme:
-* Master: This branch trains a neural network based on the [AN4 Audio database](http://www.speech.cs.cmu.edu/databases/an4/) of roughly 900 samples. Also included is an evaluation script which calculates the WER using the AN4 test dataset.
-This branch is useful for understanding how the CTC Speech System works and is very easy to run after installation. Highly recommended to checkout this branch.
-* AN4Phoneme: This branch is experimental and uses phonemes rather than character based predictions. This is fully credited and extended by [CCorfield](https://github.com/CCorfield) and his awesome work in porting to use phonemes. In addition to this
+There are currently two branches, Master and Phoneme:
+* Master: This branch trains DeepSpeech2. Also included is an evaluation script which calculates the WER/CER, as well as a prediction script.
+This branch is useful for understanding how the DeepSpeech and CTC works and is easy to run after installation. Highly recommended to checkout this branch.
+* Phonemes: This branch is experimental and uses phonemes rather than character based predictions. This is fully credited and extended by [CCorfield](https://github.com/CCorfield) and his awesome work in porting to use phonemes. In addition to this
 I'd like to also thank [Shane Walker](https://github.com/walkers-mv) for his awesome recent conversion to use phonemes as well.
 
 ## Performance
 
-These results are based on training on the AN4 training set, and testing on the AN4 test set. Will be updated as architecture changes.
+These results are based on training on the AN4 training set, and testing on the AN4 test set. Will be updated as architecture/datasets changes.
 
 | WER  | CER  |
 |:----:|:----:|
@@ -30,9 +31,9 @@ These results are based on training on the AN4 training set, and testing on the 
 
 ![Training graph](images/training_graph.png)
 
-## Installation/Documentation
+## Installation/Data Preparation/Documentation
 
-Follow Instructions/Documentation found in the wiki [here](https://github.com/SeanNaren/deepspeech.torch/wiki/Installation) to set up and run the code.
+Follow Instructions/Data Preparation/Documentation found in the wiki [here](https://github.com/SeanNaren/deepspeech.torch/wiki/Installation) to set up and run the code.
 
 Technical documentation can be found [here](http://ctcspeechrecognition.readthedocs.io/en/latest/).
 

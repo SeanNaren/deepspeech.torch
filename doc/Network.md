@@ -65,12 +65,10 @@ After training, when called will use gnuplot (through wrapper in the optim libra
 
 Will save the model currently stored in the network class to disk, at the pre-defined save location with the given `saveName`.
 
-### Network:loadNetwork(saveName, modelName, is_cudnn)
+### Network:loadNetwork(saveName, modelName)
 
 Loads the network from the save location, stored using the pre-defined save name.
 
 `saveName` The name as to which the network was saved as
 
 `modelName` The name of the class that stores the model or architecture.
-
-`is_cudnn` Defines if we should use cuDNN for GPU support.
