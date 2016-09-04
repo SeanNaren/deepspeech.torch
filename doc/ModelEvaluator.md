@@ -10,7 +10,7 @@ Handles calculation of word error rate using an LMDB dataset. For more informati
 
 `mapper` Maps predicted numeric values to characters, see [Mapper](https://github.com/SeanNaren/CTCSpeechRecognition/doc/Mapper.md) for more details.
 
-`testBatchSize` The size of the batches (usually should be kept to 1, we test one sample at a time).
+`testBatchSize` The size of the batches to pass the network.
 
 `logsPath` File path to put the details of evaluations into.
 
@@ -18,8 +18,6 @@ Handles calculation of word error rate using an LMDB dataset. For more informati
 ### ModelEvaluator:runEvaluation(model, verbose, epoch)
 
 Calculates the word error rate and character error rate averaged over the test iterations. Uses the same threading as the training process does to load batches from the dataset.
-
-`gpu` Set to true to use CUDA.
 
 `model` The Torch model to evaluate.
 

@@ -25,8 +25,8 @@ function SequenceError:sequenceErrorRate(target, prediction)
             end
         end
     end
-    local wer = d[#target + 1][#prediction + 1] / #target
-    if wer > 1 then return 1 else return wer end
+    local errorRate = d[#target + 1][#prediction + 1] / #target
+    return errorRate
 end
 
 function SequenceError:calculateCER(targetTranscript, predictTranscript)

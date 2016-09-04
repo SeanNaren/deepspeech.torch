@@ -21,6 +21,7 @@ function mapper:__init(dictPath)
 end
 
 function mapper:encodeString(line)
+    line = string.lower(line)
     local label = {}
     for i = 1, #line do
         local character = line:sub(i, i)

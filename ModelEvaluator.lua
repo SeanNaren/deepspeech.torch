@@ -1,5 +1,4 @@
 require 'Loader'
-require 'Utils'
 require 'Mapper'
 require 'torch'
 require 'xlua'
@@ -11,7 +10,7 @@ local ModelEvaluator = torch.class('ModelEvaluator')
 local loader
 
 function ModelEvaluator:__init(isGPU, datasetPath, mapper, testBatchSize, logsPath)
-    loader = Loader(datasetPath)
+    loader = Loader(datasetPath, mapper)
     self.testBatchSize = testBatchSize
     self.nbOfTestIterations = math.ceil(loader.size / testBatchSize)
     self.indexer = indexer(datasetPath, testBatchSize)
@@ -31,9 +30,9 @@ function ModelEvaluator:runEvaluation(model, verbose, epoch)
     local spect_buf, label_buf, sizes_buf
 
     -- get first batch
-    local inds = self.indexer:nxt_inds()
+    local inds = self.indexer:nextIndices()
     self.pool:addjob(function()
-        return loader:nxt_batch(inds, false)
+        return loader:nextBatch(inds)
     end,
         function(spect, label, sizes)
             spect_buf = spect
@@ -51,14 +50,15 @@ function ModelEvaluator:runEvaluation(model, verbose, epoch)
     local evaluationPredictions = {} -- stores the predictions to order for log.
     local cumCER = 0
     local cumWER = 0
+    local numberOfSamples = 0
     -- ======================= for every test iteration ==========================
     for i = 1, self.nbOfTestIterations do
         -- get buf and fetch next one
         self.pool:synchronize()
         local inputsCPU, targets, sizes_array = spect_buf, label_buf, sizes_buf
-        inds = self.indexer:nxt_inds()
+        inds = self.indexer:nextIndices()
         self.pool:addjob(function()
-            return loader:nxt_batch(inds, true)
+            return loader:nextBatch(inds)
         end,
             function(spect, label, sizes)
                 spect_buf = spect
@@ -70,8 +70,8 @@ function ModelEvaluator:runEvaluation(model, verbose, epoch)
         local predictions = model:forward(self.input)
         if self.isGPU then cutorch.synchronize() end
 
-        -- =============== for every data point in this batch ==================
-        for j = 1, self.testBatchSize do
+        local size = predictions:size(1)
+        for j = 1, size do
             local prediction = predictions[j]
             local predict_tokens = self.mapper:decodeOutput(prediction)
             local targetTranscript = self.mapper:tokensToText(targets[j])
@@ -85,6 +85,7 @@ function ModelEvaluator:runEvaluation(model, verbose, epoch)
 
             table.insert(evaluationPredictions, { wer = WER * 100, cer = CER * 100, target = targetTranscript, prediction = predictTranscript })
         end
+        numberOfSamples = numberOfSamples + size
     end
 
     local function comp(a, b) return a.wer < b.wer end
@@ -94,16 +95,16 @@ function ModelEvaluator:runEvaluation(model, verbose, epoch)
     if verbose then
         for index, eval in ipairs(evaluationPredictions) do
             local f = assert(io.open(self.logsPath .. 'Evaluation_Test' .. self.suffix .. '.log', 'a'))
-            f:write(string.format("WER = %.2f%% | CER = %.2f%% | Text = \"%s\" | Predict = \"%s\"\n",
+            f:write(string.format("WER = %.2f | CER = %.2f | Text = \"%s\" | Predict = \"%s\"\n",
                 eval.wer, eval.cer, eval.target, eval.prediction))
             f:close()
         end
     end
-    local averageWER = cumWER / (self.nbOfTestIterations * self.testBatchSize)
-    local averageCER = cumCER / (self.nbOfTestIterations * self.testBatchSize)
+    local averageWER = cumWER / numberOfSamples
+    local averageCER = cumCER / numberOfSamples
 
     local f = assert(io.open(self.logsPath .. 'Evaluation_Test' .. self.suffix .. '.log', 'a'))
-    f:write(string.format("Average WER = %.2f%% | CER = %.2f%%", averageWER * 100, averageCER * 100))
+    f:write(string.format("Average WER = %.2f | CER = %.2f", averageWER * 100, averageCER * 100))
     f:close()
 
     self.pool:synchronize() -- end the last loading

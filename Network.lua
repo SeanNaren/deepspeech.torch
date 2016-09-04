@@ -49,7 +49,7 @@ function Network:init(opt)
     self.saveModelIterations = opt.saveModelIterations or 10 -- Saves model every number of iterations.
     self.maxNorm = opt.maxNorm or 400 -- value chosen by Baidu for english speech.
     -- setting model saving/loading
-    if (self.loadModel) then
+    if self.loadModel then
         assert(opt.modelPath, "modelPath hasn't been given to load model.")
         self:loadNetwork(opt.modelPath, opt.modelName)
     else
@@ -59,9 +59,7 @@ function Network:init(opt)
     assert((opt.saveModel or opt.loadModel) and opt.modelPath, "To save/load you must specify the modelPath you want to save to")
     -- setting online loading
     self.indexer = indexer(opt.trainingSetLMDBPath, opt.batchSize)
-    self.indexer:prep_sorted_inds()
     self.pool = threads.Threads(1, function() require 'Loader' end)
-    self.nbBatches = math.ceil(self.indexer.lmdb_size / opt.batchSize)
 
     self.logger = optim.Logger(self.logsTrainPath .. 'train' .. suffix .. '.log')
     self.logger:setNames { 'loss', 'WER', 'CER' }
@@ -102,13 +100,13 @@ function Network:trainNetwork(epochs, optimizerParams)
     end
 
     -- def loading buf and loader
-    local loader = Loader(self.trainingSetLMDBPath)
+    local loader = Loader(self.trainingSetLMDBPath, self.mapper)
     local specBuf, labelBuf, sizesBuf
 
     -- load first batch
-    local inds = self.indexer:nxt_sorted_inds()
+    local inds = self.indexer:nextIndices()
     self.pool:addjob(function()
-        return loader:nxt_batch(inds, false)
+        return loader:nextBatch(inds)
     end,
         function(spect, label, sizes)
             specBuf = spect
@@ -120,10 +118,9 @@ function Network:trainNetwork(epochs, optimizerParams)
     local function feval(x_new)
         self.pool:synchronize() -- wait previous loading
         local inputsCPU, sizes, targets = specBuf, sizesBuf, labelBuf -- move buf to training data
-
-        inds = self.indexer:nxt_sorted_inds() -- load nxt batch whilst training
+        inds = self.indexer:nextIndices() -- load next batch whilst training
         self.pool:addjob(function()
-            return loader:nxt_batch(inds, false)
+            return loader:nextBatch(inds)
         end,
             function(spect, label, sizes)
                 specBuf = spect
@@ -151,16 +148,18 @@ function Network:trainNetwork(epochs, optimizerParams)
 
     for i = 1, epochs do
         local averageLoss = 0
-        for j = 1, self.nbBatches do
+        for j = 1, self.indexer.nbOfBatches do
             currentLoss = 0
             local _, fs = optim.sgd(feval, x, optimizerParams)
             if self.gpu then cutorch.synchronize() end
             currentLoss = currentLoss + fs[1]
-            xlua.progress(j, self.nbBatches)
+            xlua.progress(j, self.indexer.nbOfBatches)
             averageLoss = averageLoss + currentLoss
         end
 
-        averageLoss = averageLoss / self.nbBatches -- Calculate the average loss at this epoch.
+        self.indexer:permuteBatchOrder()
+
+        averageLoss = averageLoss / self.indexer.nbOfBatches -- Calculate the average loss at this epoch.
 
         -- anneal learningRate
         optimizerParams.learningRate = optimizerParams.learningRate / (optimizerParams.learningRateAnnealing or 1)
@@ -168,7 +167,7 @@ function Network:trainNetwork(epochs, optimizerParams)
         -- Update validation error rates
         local wer, cer = self:testNetwork(i)
 
-        print(string.format("Training Epoch: %d Average Loss: %f Average Validation WER: %.2f%% Average Validation CER: %.2f%%",
+        print(string.format("Training Epoch: %d Average Loss: %f Average Validation WER: %.2f Average Validation CER: %.2f",
             i, averageLoss, 100 * wer, 100 * cer))
 
         table.insert(lossHistory, averageLoss) -- Add the average loss value to the logger.
