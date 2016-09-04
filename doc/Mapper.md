@@ -6,6 +6,12 @@ Defines how numeric indices are mapped to tokens and vice versa.
 
 Creates mappings based on the given dictionary file. The AN4 dictionary file can be seen [here](https://github.com/SeanNaren/CTCSpeechRecognition/dictionary).
 
+### Mapper:encodeString(string)
+
+Converts string into a set of tokens to be used as a label in training.
+
+`string` string to be converted.
+
 ### Mapper:decodeOutput(predictions)
 
 Converts predictions of the neural network into a sequence of tokens (characters) via a mapper.
