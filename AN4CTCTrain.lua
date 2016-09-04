@@ -18,6 +18,7 @@ cmd:option('-dictionaryPath', './an4.phone', ' File containing the dictionary to
 cmd:option('-epochs', 70, 'Number of epochs for training')
 cmd:option('-learningRate', 3e-4, ' Training learning rate')
 cmd:option('-learningRateAnnealing', 1.1, 'Factor to anneal lr every epoch')
+cmd:option('-maxNorm', 200, 'Max norm used to normalize gradients')
 cmd:option('-momentum', 0.90, 'Momentum for SGD')
 cmd:option('-batchSize', 20, 'Batch size in training')
 cmd:option('-validationBatchSize', 20, 'Batch size for validation')
