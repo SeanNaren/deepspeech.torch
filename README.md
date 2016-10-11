@@ -9,7 +9,7 @@ Creates a network based on the [DeepSpeech2](http://arxiv.org/pdf/1512.02595v1.p
 
 ## Features
 * Train large models with large datasets via online loading using [LMDB](https://en.wikipedia.org/wiki/Lightning_Memory-Mapped_Database) and multi-GPU support.
-* Supports variable length batches via masking.
+* Supports variable length batches via padding.
 * Implements the [AN4 Audio database](http://www.speech.cs.cmu.edu/databases/an4/) (50 mins of data).
 Has also been extended to train using the [LibriSpeech](http://www.openslr.org/12/) dataset (1000 hours of data). Custom dataset preparation is explained in documentation.
 
