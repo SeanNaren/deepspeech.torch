@@ -185,7 +185,7 @@ function parent()
 
     parallel.children:exec(looper)
 
-    -- createLMDB(dataPath .. '/train', lmdbPath .. '/train', 'train')
+    createLMDB(dataPath .. '/train', lmdbPath .. '/train', 'train')
     createLMDB(dataPath .. '/test', lmdbPath .. '/test', 'test')
     parallel.close()
 end
