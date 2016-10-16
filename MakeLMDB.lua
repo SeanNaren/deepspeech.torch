@@ -40,15 +40,16 @@ local function closeWriter(db, txn)
     db:close()
 end
 
-local function createLMDB(dataPath, lmdbPath)
+local function createLMDB(dataPath, lmdbPath, id)
     local vecs = tds.Vec()
+    local sortIdsPath = 'sort_ids_'.. id .. '.t7' -- in case of crash, sorted ids are saved
 
     local function file_exists(name)
         local f = io.open(name, "r")
         if f ~= nil then io.close(f) return true else return false end
     end
 
-    if not file_exists('sort_ids.t7') then
+    if not file_exists(sortIdsPath) then
         local size = tonumber(sys.execute("find " .. dataPath .. " -type f -name '*'" .. extension .. " | wc -l "))
         vecs:resize(size)
 
@@ -99,9 +100,9 @@ local function createLMDB(dataPath, lmdbPath)
         local function comp(a, b) return a[3] < b[3] end
 
         vecs:sort(comp)
-        torch.save('sort_ids.t7', vecs)
+        torch.save(sortIdsPath, vecs)
     else
-        vecs = torch.load('sort_ids.t7')
+        vecs = torch.load(sortIdsPath)
     end
     local size = #vecs
 
@@ -146,11 +147,9 @@ local function createLMDB(dataPath, lmdbPath)
         readerTrans:put(x, transcript)
 
         -- commit buffer
-        if x % 1000 == 0 then
+        if x % 500 == 0 then
             readerSpect:commit(); readerSpect = dbSpect:txn()
             readerTrans:commit(); readerTrans = dbTrans:txn()
-        end
-        if x % 5000 == 0 then
             collectgarbage()
         end
 
@@ -179,15 +178,15 @@ function parent()
             local object = parallel.parent:receive()
             local opts, code = unpack(object)
             local result = code(opts)
-            collectgarbage()
             parallel.parent:send(result)
+            collectgarbage()
         end
     end
 
     parallel.children:exec(looper)
 
-    createLMDB(dataPath .. '/train', lmdbPath .. '/train')
-    createLMDB(dataPath .. '/test', lmdbPath .. '/test')
+    createLMDB(dataPath .. '/train', lmdbPath .. '/train', 'train')
+    createLMDB(dataPath .. '/test', lmdbPath .. '/test', 'test')
     parallel.close()
 end
 
