@@ -2,8 +2,16 @@ require 'UtilsMultiGPU'
 
 local function RNNModule(inputDim, hiddenDim, opt)
     if opt.nGPU > 0 then
-        require 'BatchBRNNReLU'
-        return cudnn.BatchBRNNReLU(inputDim, hiddenDim)
+        if opt.LSTM then
+            local blstm = nn.Sequential()
+            blstm:add(cudnn.BLSTM(inputDim, hiddenDim, 1))
+            blstm:add(nn.View(-1, 2, hiddenDim):setNumInputDims(2)) -- have to sum activations
+            blstm:add(nn.Sum(3))
+            return blstm
+        else
+            require 'BatchBRNNReLU'
+            return cudnn.BatchBRNNReLU(inputDim, hiddenDim)
+        end
     else
         require 'rnn'
         return nn.SeqBRNN(inputDim, hiddenDim)
