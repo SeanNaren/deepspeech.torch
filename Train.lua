@@ -23,6 +23,7 @@ cmd:option('-momentum', 0.90, 'Momentum for SGD')
 cmd:option('-batchSize', 20, 'Batch size in training')
 cmd:option('-permuteBatch', false, 'Set to true if you want to permute batches AFTER the first epoch')
 cmd:option('-validationBatchSize', 20, 'Batch size for validation')
+cmd:option('-LSTM', false, 'Use LSTMs rather than RNNs')
 cmd:option('-hiddenSize', 1760, 'RNN hidden sizes')
 cmd:option('-nbOfHiddenLayers', 7, 'Number of rnn layers')
 
