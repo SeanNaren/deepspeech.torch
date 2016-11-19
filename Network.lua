@@ -37,6 +37,7 @@ function Network:init(opt)
     self.logsTrainPath = opt.logsTrainPath or nil
     self.logsValidationPath = opt.logsValidationPath or nil
     self.modelTrainingPath = opt.modelTrainingPath or nil
+    self.permuteBatch = opt.permuteBatch or false
 
     self:makeDirectories({ self.logsTrainPath, self.logsValidationPath, self.modelTrainingPath })
 
@@ -159,7 +160,7 @@ function Network:trainNetwork(epochs, optimizerParams)
             averageLoss = averageLoss + currentLoss
         end
 
-        self.indexer:permuteBatchOrder()
+        if self.permuteBatch then self.indexer:permuteBatchOrder() end
 
         averageLoss = averageLoss / self.indexer.nbOfBatches -- Calculate the average loss at this epoch.
 
