@@ -45,9 +45,8 @@ function Network:init(opt)
     self.tester = ModelEvaluator(self.gpu, self.validationSetLMDBPath, self.mapper,
         opt.validationBatchSize, self.logsValidationPath)
     self.saveModel = opt.saveModel
-    self.saveModelInTraining = opt.saveModelInTraining or false
     self.loadModel = opt.loadModel
-    self.saveModelIterations = opt.saveModelIterations or 10 -- Saves model every number of iterations.
+    self.epochSave = opt.epochSave or false -- Saves model every number of iterations.
     self.maxNorm = opt.maxNorm or 400 -- value chosen by Baidu for english speech.
     -- setting model saving/loading
     if self.loadModel then
@@ -178,7 +177,7 @@ function Network:trainNetwork(epochs, optimizerParams)
         self.logger:add { averageLoss, 100 * wer, 100 * cer }
 
         -- periodically save the model
-        if self.saveModelInTraining and i % self.saveModelIterations == 0 then
+        if self.epochSave then
             print("Saving model..")
             self:saveNetwork(self.modelTrainingPath .. 'model_epoch_' .. i .. suffix .. '_' .. self.fileName)
         end
