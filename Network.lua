@@ -55,7 +55,6 @@ function Network:init(opt)
         assert(opt.modelName, "Must have given a model to train.")
         self:prepSpeechModel(opt.modelName, opt)
     end
-    assert(opt.loadModel and opt.loadPath, "To save/load you must specify the modelPath you want to save to")
     -- setting online loading
     self.indexer = indexer(opt.trainingSetLMDBPath, opt.batchSize)
     self.pool = threads.Threads(1, function() require 'Loader' end)
