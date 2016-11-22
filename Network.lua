@@ -19,7 +19,7 @@ torch.setdefaulttensortype('torch.FloatTensor')
 torch.manualSeed(seed)
 
 function Network:init(opt)
-    self.fileName = opt.modelPath -- The file name to save/load the network from.
+    self.fileName = opt.saveFileName
     self.nGPU = opt.nGPU
     self.gpu = self.nGPU > 0
 
@@ -44,19 +44,18 @@ function Network:init(opt)
     self.mapper = Mapper(opt.dictionaryPath)
     self.tester = ModelEvaluator(self.gpu, self.validationSetLMDBPath, self.mapper,
         opt.validationBatchSize, self.logsValidationPath)
-    self.saveModel = opt.saveModel
     self.loadModel = opt.loadModel
     self.epochSave = opt.epochSave or false -- Saves model every number of iterations.
     self.maxNorm = opt.maxNorm or 400 -- value chosen by Baidu for english speech.
     -- setting model saving/loading
     if self.loadModel then
-        assert(opt.modelPath, "modelPath hasn't been given to load model.")
-        self:loadNetwork(opt.modelPath, opt.modelName)
+        assert(opt.loadPath, "loadPath hasn't been given to load model.")
+        self:loadNetwork(opt.loadPath, opt.modelName)
     else
         assert(opt.modelName, "Must have given a model to train.")
         self:prepSpeechModel(opt.modelName, opt)
     end
-    assert((opt.saveModel or opt.loadModel) and opt.modelPath, "To save/load you must specify the modelPath you want to save to")
+    assert(opt.loadModel and opt.loadPath, "To save/load you must specify the modelPath you want to save to")
     -- setting online loading
     self.indexer = indexer(opt.trainingSetLMDBPath, opt.batchSize)
     self.pool = threads.Threads(1, function() require 'Loader' end)
@@ -188,10 +187,8 @@ function Network:trainNetwork(epochs, optimizerParams)
     local minutesTaken = secondsTaken / 60
     print("Minutes taken to train: ", minutesTaken)
 
-    if self.saveModel then
-        print("Saving model..")
-        self:saveNetwork(self.modelTrainingPath .. 'final_model_' .. suffix .. '_' .. self.fileName)
-    end
+    print("Saving model..")
+    self:saveNetwork(self.modelTrainingPath .. 'final_model_' .. suffix .. '_' .. self.fileName)
 
     return lossHistory, validationHistory, minutesTaken
 end

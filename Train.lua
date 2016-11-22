@@ -3,7 +3,7 @@ local Network = require 'Network'
 -- Options can be overrided on command line run.
 local cmd = torch.CmdLine()
 cmd:option('-loadModel', false, 'Load previously saved model')
-cmd:option('-saveModel', true, 'Save model after training/testing')
+cmd:option('-loadPath', 'deepspeech.t7', 'Path to model to load')
 cmd:option('-modelName', 'DeepSpeechModel', 'Name of class containing architecture')
 cmd:option('-nGPU', 1, 'Number of GPUs, set -1 to use CPU')
 cmd:option('-trainingSetLMDBPath', './prepare_datasets/an4_lmdb/train/', 'Path to LMDB training dataset')
@@ -12,7 +12,7 @@ cmd:option('-logsTrainPath', './logs/TrainingLoss/', ' Path to save Training log
 cmd:option('-logsValidationPath', './logs/ValidationScores/', ' Path to save Validation logs')
 cmd:option('-epochSave', false, 'save model every epoch')
 cmd:option('-modelTrainingPath', './models/', ' Path to save periodic training models')
-cmd:option('-modelPath', 'deepspeech.t7', 'Path of final model to save/load')
+cmd:option('-saveFileName', 'deepspeech.t7', 'Name of model to save as')
 cmd:option('-dictionaryPath', './dictionary', ' File containing the dictionary to use')
 cmd:option('-epochs', 70, 'Number of epochs for training')
 cmd:option('-learningRate', 3e-4, ' Training learning rate')
