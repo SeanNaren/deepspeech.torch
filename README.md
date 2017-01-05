@@ -21,21 +21,46 @@ This branch is useful for understanding how the DeepSpeech and CTC works and is 
 * Phonemes: This branch is experimental and uses phonemes rather than character based predictions. This is fully credited and extended by [CCorfield](https://github.com/CCorfield) and his awesome work in porting to use phonemes. In addition to this
 I'd like to also thank [Shane Walker](https://github.com/walkers-mv) for his awesome recent conversion to use phonemes as well.
 
-## Performance
-
-These results are based on training on the AN4 training set, and testing on the AN4 test set. Will be updated as architecture/datasets changes.
-
-| WER  | CER  |
-|:----:|:----:|
-| 14   | 4.22 |
-
-![Training graph](images/training_graph.png)
-
 ## Installation/Data Preparation/Documentation
 
 Follow Instructions/Data Preparation/Documentation found in the wiki [here](https://github.com/SeanNaren/deepspeech.torch/wiki/Installation) to set up and run the code.
 
 Technical documentation can be found [here](http://ctcspeechrecognition.readthedocs.io/en/latest/).
+
+## Pre-trained Networks
+
+Pre-trained networks are available for AN4 as well as LibriSpeech for CUDA only (since they use cudnn RNNs). Download Links and accuracies are below. DeepSpeech-light is a smaller model which is less intensive to train (based on LSTMs rather than RNNs).
+
+### AN4
+
+**an4Test**
+
+|Network                | WER       | CER       |Link       |
+|-----------------|:--------:|:--------:|:--------:|
+|DeepSpeech-light| N/A     | N/A | N/A |
+|DeepSpeech | 12    | 3.07 | [Download](https://github.com/SeanNaren/deepspeech.torch/releases/download/v1.0/an4_deepspeech.t7) |
+
+### LibriSpeech
+
+**Librispeech-test-clean**
+
+|Network                | WER       | CER       |Link       |
+|-----------------|:--------:|:--------:|:--------:|
+|DeepSpeech-light| 15     | 1.34 | [Download](https://github.com/SeanNaren/deepspeech.torch/releases/download/v1.0/libri_deepspeech-light.t7) |
+|DeepSpeech | 12    | 1.55 | [Download](https://github.com/SeanNaren/deepspeech.torch/releases/download/v1.0/libri_deepspeech.t7) |
+
+**Librispeech-test-other**
+
+|Network                | WER       | CER       |Link       |
+|-----------------|:--------:|:--------:|:--------:|
+|DeepSpeech-light| 36    | 3.80 | (Download Above) |
+|DeepSpeech | 33    | 3.24 | (Download Above) |
+
+Once you're set up, you can start training from these nets by using the below parameters (you might need to change the other parameters described in the wiki) after setting the project up:
+
+```lua
+th Train.lua -loadModel -loadPath /path/to/model.t7
+```
 
 ## Acknowledgements
 
@@ -45,3 +70,4 @@ Lots of people helped/contributed to this project that deserve recognition:
 * Will Frey for his thorough communication and aid in the development process.
 * Ding Ling, Yuan Yang and Yan Xia for their significant contribution to online training, multi-gpu support and many other important features.
 * Erich Elsen and the team from Baidu for their contribution of Warp-CTC that made this possible, and the encouraging words and support given throughout the project.
+* Maciej Korzepa for his huge help in training a model on Librispeech!
